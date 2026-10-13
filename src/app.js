@@ -24,6 +24,24 @@ function err(c, status, message) {
   return json(c, status, { error: message });
 }
 
+function validatePromo(menu, code, subtotal) {
+  const c = String(code || '').trim().toUpperCase();
+  if (!c) return { ok: false };
+  const promos = Array.isArray(menu.promos) ? menu.promos : [];
+  const p = promos.find((x) => x && x.active !== false && String(x.code || '').trim().toUpperCase() === c);
+  if (!p) return { ok: false, error: 'Invalid promo code.' };
+  if (p.expiresAt && Number.isFinite(new Date(p.expiresAt).getTime()) && new Date(p.expiresAt).getTime() < Date.now())
+    return { ok: false, error: 'This promo code has expired.' };
+  if (Number(p.maxUses) > 0 && (Number(p.uses) || 0) >= Number(p.maxUses))
+    return { ok: false, error: 'This promo code has reached its usage limit.' };
+  const min = Math.max(0, Number(p.minOrder) || 0);
+  if (subtotal < min) return { ok: false, error: 'This code needs a minimum order of Rs. ' + min.toLocaleString('en-PK') + '.' };
+  let discount = p.type === 'pct' ? Math.round(subtotal * Math.max(0, Number(p.value) || 0) / 100) : Math.round(Math.max(0, Number(p.value) || 0));
+  discount = Math.max(0, Math.min(discount, subtotal));
+  if (!discount) return { ok: false, error: 'This promo code gives no discount on this order.' };
+  return { ok: true, promo: p, discount };
+}
+
 export function createApp() {
   const app = new Hono();
 
@@ -87,6 +105,14 @@ export function createApp() {
     }
     const { items: verifiedItems, serverTotal, unverifiedCount } = verifyOrderItems(items, menu);
     const deliveryFee = num(b.deliveryFee, 0, 0);
+    const deliveryZone = cleanString(b.deliveryZone, 80);
+    const promoCode = cleanString(b.promoCode, 40);
+    let promoDiscount = 0, promoApplied = '';
+    if (promoCode) {
+      const v = validatePromo(menu, promoCode, serverTotal);
+      if (!v.ok) return err(c, 400, v.error || 'Invalid promo code.');
+      promoDiscount = v.discount; promoApplied = String(v.promo.code || '').trim().toUpperCase();
+    }
     const orderId = 'KB-' + Date.now().toString(36).toUpperCase() + '-' + randomHex(2).toUpperCase();
     const order = {
       id: orderId,
@@ -98,11 +124,18 @@ export function createApp() {
       estimatedTotal: serverTotal,
       serverTotal,
       deliveryFee,
+      deliveryZone,
+      promoCode: promoApplied,
+      promoDiscount,
       unverifiedCount,
       items: verifiedItems,
     };
     const { error } = await db.from('orders').insert({ id: orderId, payload: order, status: 'New' });
     if (error) return err(c, 500, 'Could not save the order. Please try again.');
+    if (promoApplied && menu && Array.isArray(menu.promos)) {
+      const pp = menu.promos.find((x) => x && String(x.code || '').trim().toUpperCase() === promoApplied);
+      if (pp) { pp.uses = (Number(pp.uses) || 0) + 1; try { await setState(db, MENU_KEY, menu); } catch (e) { /* non-fatal */ } }
+    }
     return json(c, 201, { ok: true, orderId });
   });
 
