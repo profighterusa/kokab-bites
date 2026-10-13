@@ -541,3 +541,22 @@ footer .brand{padding:0!important}
 
 /* Remove floating hero stamp */
 .hero-stamp{display:none!important}
+
+/* ===== Hero dark-mode optimization ===== */
+body.dark-mode .hero{background:radial-gradient(ellipse at 85% 10%,#E2703A14,transparent 40%),radial-gradient(ellipse at 10% 90%,#F5B8410e,transparent 40%),#211410!important}
+body.dark-mode .hero-content{background:rgba(52,34,23,.62)!important;border-color:rgba(255,255,255,.12)!important;box-shadow:0 20px 50px rgba(0,0,0,.35),inset 1px 1px 0 rgba(255,255,255,.06)!important}
+body.dark-mode .hero h1{color:#F8EEE2!important}
+body.dark-mode .hero h1 em{color:#F08A52!important}
+body.dark-mode .hero-copy{color:#C2A88D!important}
+body.dark-mode .hero-meta{color:#C2A88D!important}
+body.dark-mode .hero-meta b{color:#F8EEE2!important}
+body.dark-mode .eyebrow{color:#F08A52!important}
+body.dark-mode .eyebrow:before{background:#F08A52!important}
+body.dark-mode .hero-slideshow{border-color:rgba(255,255,255,.14)!important;box-shadow:0 24px 60px rgba(0,0,0,.4)!important}
+body.dark-mode .slide-caption{background:rgba(40,26,18,.88)!important;border-color:rgba(255,255,255,.14)!important}
+body.dark-mode .slide-caption b{color:#F8EEE2!important}
+body.dark-mode .slide-tag{color:#F08A52!important}
+body.dark-mode .slide-price{color:#F08A52!important}
+body.dark-mode .slide-dots .dot{background:rgba(255,255,255,.25)!important}
+body.dark-mode .slide-dots .dot.active{background:#F08A52!important}
+body.dark-mode .btn-dark{background:rgba(255,255,255,.08)!important;color:#F8EEE2!important;border-color:rgba(255,255,255,.16)!important}
