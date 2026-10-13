@@ -714,3 +714,14 @@ html[data-theme="light"] body:not(.dark-mode) .hero-meta{color:#7a6a58!important
 html:not([data-theme="dark"]) body:not(.dark-mode) .hero-meta{color:#7a6a58!important}
 html[data-theme="light"] body:not(.dark-mode) .hero-meta b{color:#4A3325!important}
 html:not([data-theme="dark"]) body:not(.dark-mode) .hero-meta b{color:#4A3325!important}
+
+/* Dark theme contrast fixes + desktop hiding (2026-10-13 audit) */
+.mobile-app-nav{display:none!important}
+.app-status{display:none!important}
+body.dark-mode .floating-wa{color:#fff!important}
+body.dark-mode .review-card{background:#2b2119!important}
+body.dark-mode .review-card p{color:#e8dcc8!important}
+@media(max-width:680px){
+  .mobile-app-nav{display:grid!important}
+  .app-status{display:block!important}
+}
