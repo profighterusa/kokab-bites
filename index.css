@@ -669,15 +669,15 @@ html:not([data-theme="dark"]) body:not(.dark-mode) .drc-body h3{color:#b2542f}
 
 /* ===== Hero mockup layout: white card overlapping brown slideshow panel ===== */
 .hero{background:#FFF6EC}
-.hero-grid{display:grid;grid-template-columns:minmax(0,46fr) minmax(0,54fr);gap:0;align-items:center;max-width:1240px;margin:0 auto;padding:64px 24px;width:100%}
-.hero-content{position:relative;z-index:2;background:#ffffff;border:1px solid #ffffff;border-radius:26px;padding:clamp(30px,3.6vw,50px);margin-right:clamp(-120px,-9vw,-48px);box-shadow:0 30px 70px rgba(122,74,22,.18)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,38fr) minmax(0,62fr);gap:0;align-items:center;max-width:1280px;margin:0 auto;padding:64px 24px;width:100%}
+.hero-content{position:relative;z-index:2;background:#ffffff;border:0;border-radius:24px;padding:clamp(26px,3vw,40px);margin-right:clamp(-110px,-8vw,-44px);box-shadow:0 30px 70px rgba(122,74,22,.20)}
 .hero-content:before{display:none!important}
 .hero-content .hero-copy{color:#7a6a58}
 .hero-content .hero-meta{color:#7a6a58}
 .hero-content .hero-meta b{color:#4A3325}
-.hero-stage{position:relative;background:linear-gradient(140deg,#7d4c17,#5c320b 72%);border-radius:32px;padding:clamp(18px,2.6vw,36px);box-shadow:0 30px 70px rgba(90,50,10,.35)}
-.hero-stage:before{content:"";position:absolute;inset:14px;border:1px solid #ffffff22;border-radius:22px;pointer-events:none}
-.hero-slideshow{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:16/10;background:#2b2119;border:0;box-shadow:none;max-width:none}
+.hero-stage{position:relative;background:linear-gradient(140deg,#7d4c17,#5c320b 72%);border-radius:32px;border:0;outline:0;padding:clamp(22px,3vw,44px);box-shadow:0 30px 70px rgba(90,50,10,.35)}
+.hero-stage:before{display:none}
+.hero-slideshow{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:16/10;background:#2b2119;border:0!important;outline:0;box-shadow:none;max-width:none}
 .hero-stamp{left:3.5%;right:auto;bottom:9%}
 body.dark-mode .hero{background:#171410}
 body.dark-mode .hero-content{background:rgba(52,34,23,.88);border-color:rgba(255,255,255,.1);box-shadow:0 30px 70px rgba(0,0,0,.5)}
