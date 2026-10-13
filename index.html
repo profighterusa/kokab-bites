@@ -29,7 +29,7 @@
 <header><div class="container nav">
 <a class="brand" href="#home" aria-label="KOKAB BITES home"><img class="brand-logo" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp" alt="KOKAB BITES — Taste Good Mood Always"></a>
 <nav class="navlinks" id="navlinks"><a href="#home" data-i18n="nav_home">Home</a><a href="#categories" data-i18n="nav_explore">Explore</a><a href="#menu" data-i18n="nav_menu">Menu</a><a href="#deal" data-i18n="nav_deal">Special Deal</a><a href="#visit" data-i18n="nav_visit">Find Us</a></nav>
-<div class="nav-actions"><button class="icon-btn theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch theme">☾</button><button class="icon-btn lang-btn" id="langToggle" aria-label="Switch language / زبان بدلیں" title="اردو / English">اردو</button><button class="icon-btn install-app" id="installApp" hidden aria-label="Install KOKAB BITES app" title="Install app">⇩</button><button class="icon-btn" id="favoritesJump" aria-label="Show favourites">♡</button><button class="icon-btn" id="cartOpen" aria-label="Open cart">🛍<span class="cart-badge" id="cartCount">0</span></button><a class="btn" href="#menu" data-i18n="order_now">Order now ↗</a><button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu">☰</button></div>
+<div class="nav-actions"><button class="icon-btn theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch theme">☾</button><button class="icon-btn lang-btn" id="langToggle" aria-label="Switch language / زبان بدلیں" title="اردو / English">اردو</button><button class="icon-btn" id="favoritesJump" aria-label="Show favourites">♡</button><button class="icon-btn" id="cartOpen" aria-label="Open cart">🛍<span class="cart-badge" id="cartCount">0</span></button><a class="btn" href="#menu" data-i18n="order_now">Order now ↗</a><button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu">☰</button></div>
 </div></header>
 <main>
 <section class="hero" id="home"><div class="container hero-grid"><div class="hero-content"><div class="eyebrow" data-i18n="hero_eyebrow">Your neighbourhood food spot</div><h1>Crave it.<br><em>Bite into</em><br>happiness.</h1><p class="hero-copy">Burgers with big personality, pizza worth sharing, and shawarma made for those “just one more bite” moments.</p><div class="hero-buttons"><a class="btn" href="#menu" data-i18n-html="hero_menu">Explore the menu <span>↗</span></a><button class="btn btn-dark" onclick="openWhatsAppGeneral()" data-i18n-html="hero_chat">Chat to order <span>↗</span></button></div><div class="hero-meta"><span><i>✦</i><b>Made fresh</b>, every order</span><span><i>✦</i>Big flavour, local love</span></div></div><div class="hero-slideshow" id="heroSlideshow"><div class="slides" id="heroSlides"></div><button class="slide-arrow prev" id="slidePrev" aria-label="Previous slide">‹</button><button class="slide-arrow next" id="slideNext" aria-label="Next slide">›</button><div class="slide-dots" id="slideDots"></div></div></div><div class="hero-stamp">GOOD FOOD<strong>BETTER</strong>MOOD ALWAYS</div></section>
@@ -284,11 +284,37 @@ $("#year").textContent=new Date().getFullYear();
 loadMenuConfig().finally(()=>{setupProductOptions();renderCart();updateOpenBadge();setInterval(updateOpenBadge,5*60*1000);});
 
 (function(){
- const body=document.body,toggle=document.getElementById('themeToggle'),mobile=document.getElementById('mobileTheme'),install=document.getElementById('installApp'),status=document.getElementById('appStatus'),label=document.getElementById('connectionLabel');
+ const body=document.body,toggle=document.getElementById('themeToggle'),mobile=document.getElementById('mobileTheme'),status=document.getElementById('appStatus'),label=document.getElementById('connectionLabel');
  const setTheme=mode=>{mode=mode==='dark'?'dark':'light';body.classList.toggle('dark-mode',mode==='dark');body.dataset.theme=mode;document.documentElement.dataset.theme=mode;try{localStorage.setItem('kokab-theme',mode)}catch(e){}const icon=mode==='dark'?'☀':'☾';if(toggle){toggle.textContent=icon;toggle.setAttribute('aria-label',mode==='dark'?'Switch to light mode':'Switch to dark mode')}if(mobile)mobile.querySelector('span').textContent=icon;const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=mode==='dark'?'#202a30':'#f6f3ee'};
  let saved='light';try{saved=localStorage.getItem('kokab-theme')||'light'}catch(e){}setTheme(saved);toggle?.addEventListener('click',()=>setTheme(body.classList.contains('dark-mode')?'light':'dark'));mobile?.addEventListener('click',()=>setTheme(body.classList.contains('dark-mode')?'light':'dark'));
  const connection=()=>{const online=navigator.onLine;label.textContent=online?'Ready to browse':'Offline mode · saved menu available';status.classList.toggle('offline',!online);status.classList.add('visible');clearTimeout(window.kokabStatusTimer);if(online)window.kokabStatusTimer=setTimeout(()=>status.classList.remove('visible'),2300)};window.addEventListener('online',connection);window.addEventListener('offline',connection);
- let promptEvent=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e;install.hidden=false});install?.addEventListener('click',async()=>{if(!promptEvent){notify('Use your browser menu and choose Install app or Add to Home screen.');return}promptEvent.prompt();await promptEvent.userChoice;promptEvent=null;install.hidden=true});
+ // Advanced PWA install popup
+ (function(){
+ const overlay=document.getElementById('installOverlay'),btn=document.getElementById('installNow'),
+ close=document.getElementById('installClose'),later=document.getElementById('installLater'),
+ iosHelp=document.getElementById('installIosHelp');
+ const dismissedUntil=()=>{try{return parseInt(localStorage.getItem('kokab-install-dismissed')||'0',10)}catch(e){return 0}};
+ const rememberDismiss=days=>{try{localStorage.setItem('kokab-install-dismissed',String(Date.now()+days*864e5))}catch(e){}};
+ const isInstalled=()=>(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
+ const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
+ let promptEvent=null;
+ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e});
+ window.addEventListener('appinstalled',()=>{promptEvent=null;rememberDismiss(3650);hidePopup()});
+ const showPopup=()=>{if(!overlay||overlay.dataset.shown)return;overlay.dataset.shown='1';overlay.hidden=false;requestAnimationFrame(()=>overlay.classList.add('show'));document.body.style.overflow='hidden'};
+ const hidePopup=()=>{if(!overlay)return;overlay.classList.remove('show');setTimeout(()=>{overlay.hidden=true;document.body.style.overflow=''},280)};
+ const maybeShow=()=>{
+   if(isInstalled())return;
+   if(Date.now()<dismissedUntil())return;
+   if(isIOS()){iosHelp.hidden=false;btn.textContent='Got it';btn.onclick=()=>{hidePopup();rememberDismiss(7)};showPopup();return}
+   if(promptEvent){btn.onclick=async()=>{try{promptEvent.prompt();const c=await promptEvent.userChoice;promptEvent=null;if(c&&c.outcome==='accepted'){rememberDismiss(3650)}else{rememberDismiss(7)}}catch(e){}hidePopup()};showPopup()}
+ };
+ close?.addEventListener('click',()=>{hidePopup();rememberDismiss(7)});
+ later?.addEventListener('click',()=>{hidePopup();rememberDismiss(7)});
+ overlay?.addEventListener('click',e=>{if(e.target===overlay){hidePopup();rememberDismiss(7)}});
+ // Show ~4s after load (lets the hero + menu settle first)
+ if(document.readyState==='complete')setTimeout(maybeShow,4000);
+ else window.addEventListener('load',()=>setTimeout(maybeShow,4000));
+ })();
  // Android-style active navigation state based on the section in view.
  const mobileLinks=[...document.querySelectorAll('.mobile-app-nav a')];
  const sectionIds=mobileLinks.map(a=>(a.getAttribute('href')||'').slice(1)).filter(Boolean);
@@ -493,5 +519,25 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 else setTimeout(buildSlides,300);
 })();
 </script>
+
+<!-- KOKAB BITES install popup -->
+<div class="install-overlay" id="installOverlay" hidden>
+  <div class="install-popup" role="dialog" aria-modal="true" aria-labelledby="installTitle">
+    <button class="install-close" id="installClose" aria-label="Close">✕</button>
+    <div class="install-badge"><img src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp" alt="KOKAB BITES"></div>
+    <h3 id="installTitle">Install KOKAB BITES</h3>
+    <p class="install-sub">Add our app to your device for a faster, smoother ordering experience.</p>
+    <ul class="install-perks">
+      <li><span>⚡</span> One-tap ordering, no browser needed</li>
+      <li><span>📶</span> Menu works even when offline</li>
+      <li><span>🎁</span> First to know about new deals</li>
+    </ul>
+    <div class="install-ios-help" id="installIosHelp" hidden>
+      <p><b>On iPhone:</b> tap <b>Share</b> <span class="ios-icon">⎙</span> then choose <b>"Add to Home Screen"</b></p>
+    </div>
+    <button class="install-btn" id="installNow">Install app</button>
+    <button class="install-later" id="installLater">Not now</button>
+  </div>
+</div>
 </body>
 </html>
