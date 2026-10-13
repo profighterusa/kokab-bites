@@ -691,3 +691,15 @@ body.dark-mode .hero-content .hero-meta b{color:#fff}
 .hero-slideshow{aspect-ratio:16/10}
 .hero-stamp{top:auto;bottom:6%;left:5%;right:auto}
 }
+
+/* ===== Hero mockup: fix text contrast on white card (overrides old dark-hero rules) ===== */
+html[data-theme="light"] body:not(.dark-mode) .hero h1{color:#4A3325!important;text-shadow:none}
+html:not([data-theme="dark"]) body:not(.dark-mode) .hero h1{color:#4A3325!important;text-shadow:none}
+html[data-theme="light"] body:not(.dark-mode) .hero h1 em{color:#E2703A!important}
+html:not([data-theme="dark"]) body:not(.dark-mode) .hero h1 em{color:#E2703A!important}
+html[data-theme="light"] body:not(.dark-mode) .hero-copy{color:#7a6a58!important}
+html:not([data-theme="dark"]) body:not(.dark-mode) .hero-copy{color:#7a6a58!important}
+html[data-theme="light"] body:not(.dark-mode) .hero-meta{color:#7a6a58!important}
+html:not([data-theme="dark"]) body:not(.dark-mode) .hero-meta{color:#7a6a58!important}
+html[data-theme="light"] body:not(.dark-mode) .hero-meta b{color:#4A3325!important}
+html:not([data-theme="dark"]) body:not(.dark-mode) .hero-meta b{color:#4A3325!important}
