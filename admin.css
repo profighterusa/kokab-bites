@@ -245,3 +245,11 @@ body.dark-mode .product-status.is-soldout{background:#4a2c1a;color:#F5B841}
 .check{display:flex;gap:8px;align-items:center;cursor:pointer;font-size:14px}
 .check input{min-height:18px;min-width:18px;accent-color:var(--gold)}
 @media(max-width:640px){.modal-overlay{padding:12px}}
+
+/* Mobile sidebar definitive reset - no overlap, clean stack */
+@media(max-width:720px){
+  .sidebar{position:static!important;top:auto!important;float:none!important;transform:none!important;margin:0 0 12px 0!important}
+  .sidebar .brand{display:flex!important;visibility:visible!important;opacity:1!important;height:auto!important;overflow:visible!important}
+  .sidebar nav,.sidebar .nav{position:static!important;transform:none!important;margin:0!important}
+  .main{padding-top:0!important}
+}
