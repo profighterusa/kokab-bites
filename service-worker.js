@@ -1,6 +1,6 @@
-const CACHE_NAME = 'kokab-bites-shell-v8-advanced';
+const CACHE_NAME = 'kokab-bites-shell-v9-advanced';
 const SHELL = [
-  './', './index.html', './admin.html', './app-ui.css', './manifest.webmanifest',
+  './', './index.html', './admin.html', './app-ui.css', './index.css', './manifest.webmanifest',
   './favicon-32.png', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './logo-kokab-bites.png'
 ];
 self.addEventListener('install', event => {
