@@ -1,9 +1,19 @@
 {
-  "name": "kokab-bites-website",
-  "version": "1.0.0",
+  "name": "kokab-bites-serverless",
+  "version": "2.0.0",
   "private": true,
-  "description": "KOKAB BITES restaurant website and private admin dashboard",
-  "main": "server.js",
-  "scripts": {"start": "node server.js", "check": "node --check server.js"},
-  "engines": {"node": ">=18"}
+  "description": "KOKAB BITES \u2014 serverless menu + WhatsApp ordering platform (Vercel + Cloudflare + Supabase)",
+  "type": "module",
+  "scripts": {
+    "dev": "node dev.mjs",
+    "test": "node test/e2e.mjs",
+    "seed": "node supabase/seed.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "hono": "^4.7.0"
+  }
 }
