@@ -681,7 +681,7 @@ html:not([data-theme="dark"]) body:not(.dark-mode) .drc-body h3{color:#b2542f}
 /* ===== Hero mockup layout: white card overlapping brown slideshow panel ===== */
 .hero{background:#FFF6EC}
 .hero-grid{display:grid;grid-template-columns:minmax(0,32fr) minmax(0,68fr);gap:0;align-items:center;max-width:1360px;margin:0 auto;padding:64px 24px;width:100%}
-.hero-content{position:relative;z-index:2;background:#ffffff;border:0;border-radius:24px;padding:clamp(26px,3vw,40px);margin-right:clamp(-110px,-8vw,-44px);box-shadow:0 30px 70px rgba(122,74,22,.20)}
+.hero-content{position:relative;z-index:2;background:rgba(255,255,255,.62)!important;backdrop-filter:blur(22px) saturate(140%)!important;-webkit-backdrop-filter:blur(22px) saturate(140%);border:1px solid rgba(255,255,255,.7);border-radius:24px;padding:clamp(26px,3vw,40px);margin-right:clamp(-110px,-8vw,-44px);box-shadow:0 30px 70px rgba(122,74,22,.20)}
 .hero-content:before{display:none!important}
 .hero-content .hero-copy{color:#7a6a58}
 .hero-content .hero-meta{color:#7a6a58}
