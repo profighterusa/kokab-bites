@@ -30,7 +30,7 @@
 <div class="nav-actions"><button class="icon-btn theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch theme">☾</button><button class="icon-btn lang-btn" id="langToggle" aria-label="Switch language / زبان بدلیں" title="اردو / English">اردو</button><button class="icon-btn install-app" id="installApp" hidden aria-label="Install KOKAB BITES app" title="Install app">⇩</button><button class="icon-btn" id="favoritesJump" aria-label="Show favourites">♡</button><button class="icon-btn" id="cartOpen" aria-label="Open cart">🛍<span class="cart-badge" id="cartCount">0</span></button><a class="btn" href="#menu" data-i18n="order_now">Order now ↗</a><button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu">☰</button></div>
 </div></header>
 <main>
-<section class="hero" id="home"><div class="hero-photo"></div><div class="container"><div class="hero-content"><div class="eyebrow" data-i18n="hero_eyebrow">Your neighbourhood food spot</div><h1>Crave it.<br><em>Bite into</em><br>happiness.</h1><p class="hero-copy">Burgers with big personality, pizza worth sharing, and shawarma made for those “just one more bite” moments.</p><div class="hero-buttons"><a class="btn" href="#menu" data-i18n-html="hero_menu">Explore the menu <span>↗</span></a><button class="btn btn-dark" onclick="openWhatsAppGeneral()" data-i18n-html="hero_chat">Chat to order <span>↗</span></button></div><div class="hero-meta"><span><i>✦</i><b>Made fresh</b>, every order</span><span><i>✦</i>Big flavour, local love</span></div></div></div><div class="hero-stamp">GOOD FOOD<strong>BETTER</strong>MOOD ALWAYS</div></section>
+<section class="hero" id="home"><div class="container hero-grid"><div class="hero-content"><div class="eyebrow" data-i18n="hero_eyebrow">Your neighbourhood food spot</div><h1>Crave it.<br><em>Bite into</em><br>happiness.</h1><p class="hero-copy">Burgers with big personality, pizza worth sharing, and shawarma made for those “just one more bite” moments.</p><div class="hero-buttons"><a class="btn" href="#menu" data-i18n-html="hero_menu">Explore the menu <span>↗</span></a><button class="btn btn-dark" onclick="openWhatsAppGeneral()" data-i18n-html="hero_chat">Chat to order <span>↗</span></button></div><div class="hero-meta"><span><i>✦</i><b>Made fresh</b>, every order</span><span><i>✦</i>Big flavour, local love</span></div></div><div class="hero-slideshow" id="heroSlideshow"><div class="slides" id="heroSlides"></div><button class="slide-arrow prev" id="slidePrev" aria-label="Previous slide">‹</button><button class="slide-arrow next" id="slideNext" aria-label="Next slide">›</button><div class="slide-dots" id="slideDots"></div></div></div><div class="hero-stamp">GOOD FOOD<strong>BETTER</strong>MOOD ALWAYS</div></section>
 <div class="benefits"><div class="container benefits-grid"><div class="benefit"><span class="benefit-icon">✳</span><div><b>Freshly prepared</b><small>Made when you order</small></div></div><div class="benefit"><span class="benefit-icon">⌁</span><div><b>Flavour first</b><small>Built for real cravings</small></div></div><div class="benefit"><span class="benefit-icon">♡</span><div><b>Made to share</b><small>Good food, good company</small></div></div><div class="benefit"><span class="benefit-icon">⌖</span><div><b>Local to Gujranwala</b><small>Find us on Sadiq Road</small></div></div></div></div>
 <section class="section categories" id="categories"><div class="container"><div class="section-head"><div><div class="section-kicker" data-i18n="cat_kicker">What are you craving?</div><h2 data-i18n="cat_h2">Find your kind of delicious.</h2></div><p data-i18n="cat_p">Pick a category and discover your next favourite. Your order goes straight to our WhatsApp for confirmation.</p></div><div class="category-grid"><a class="category" href="#menu" data-jumpcat="Burgers"><span class="category-emoji">🍔</span><span><strong>Burgers</strong><br><small>Stacked with flavour ↗</small></span></a><a class="category" href="#menu" data-jumpcat="Pizza"><span class="category-emoji">🍕</span><span><strong>Pizza</strong><br><small>Slice into happiness ↗</small></span></a><a class="category" href="#menu" data-jumpcat="Shawarma & Rolls"><span class="category-emoji">🌯</span><span><strong>Shawarma & Rolls</strong><br><small>Wrapped and ready ↗</small></span></a><a class="category" href="#menu" data-jumpcat="Sides"><span class="category-emoji">🍟</span><span><strong>Sides</strong><br><small>The perfect extra ↗</small></span></a><a class="category" href="#menu" data-jumpcat="Drinks"><span class="category-emoji">🥤</span><span><strong>Drinks</strong><br><small>Make it a combo ↗</small></span></a></div></div></section>
 <section class="section menu-section" id="menu"><div class="container"><div class="section-head"><div><div class="section-kicker" data-i18n="menu_kicker">Made for your appetite</div><h2 data-i18n="menu_h2">The menu, your way.</h2></div><p data-i18n="menu_p">Choose pizza sizes, save favourites, mix items into a custom deal and review the estimated total before sending your order to WhatsApp.</p></div><div class="menu-tools"><div class="filter-list" id="filters"><button class="filter active" data-cat="All" data-i18n="filter_all">All items</button><button class="filter" data-cat="Burgers" data-i18n="filter_burgers">Burgers</button><button class="filter" data-cat="Pizza" data-i18n="filter_pizza">Pizza</button><button class="filter" data-cat="Shawarma & Rolls" data-i18n="filter_shawarma">Shawarma & Rolls</button><button class="filter" data-cat="Sides" data-i18n="filter_sides">Sides</button><button class="filter" data-cat="Drinks" data-i18n="filter_drinks">Drinks</button><button class="filter" data-cat="Favourites" data-i18n="filter_fav">♡ Favourites</button></div><label class="searchbox"><span>⌕</span><input id="search" type="search" placeholder="Search the menu…" aria-label="Search menu" data-i18n-ph="search_ph"></label></div>
@@ -127,7 +127,7 @@ let presetDeals={
 "Special Offer — 2 Shami Burgers + 2 Special Shawarmas + 1L Next Cola":{price:900,detail:"2 Shami Burgers, 2 Special Shawarmas, 1L Next Cola"}
 };
 async function loadMenuConfig(){
- try{const r=await fetch('/api/menu',{cache:'no-store'});if(!r.ok)return;menuConfig=await r.json();
+ try{const r=await fetch('/api/menu',{cache:'no-store'});if(!r.ok)return;menuConfig=await r.json();if(window.buildHeroSlides)window.buildHeroSlides();
   if(menuConfig.items)simplePrices={...simplePrices,...menuConfig.items};
   if(Array.isArray(menuConfig.customItems))menuConfig.customItems.forEach(p=>{if(p.active!==false)simplePrices[p.name]=p.price??null;});
   if(menuConfig.classicPizza)classicPizza=menuConfig.classicPizza;
@@ -439,5 +439,57 @@ document.getElementById("trackId").addEventListener("keydown", function(e){ if(e
 try{ var last = localStorage.getItem("kokab-last-order"); if(last) document.getElementById("trackId").value = last; }catch(e){}
 </script>
 
+
+<script>
+(function(){
+const BASE="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads";
+let slides=[],idx=0,timer=null;
+function buildSlides(){
+  const deals=Object.entries(((window.menuConfig||{}).deals)||{}).filter(([n,d])=>d.active).slice(0,2);
+  slides=[];
+  const imgs=["hero-deal-burger.webp","hero-deal-pizza.webp","hero-pizza.webp","hero-burger.webp"];
+  const caps=deals.map(([n,d])=>({tag:"🔥 Deal",title:n,price:"Rs "+d.price,link:"#deal"}));
+  while(caps.length<2)caps.push({tag:"🔥 Deal",title:"Special Combo Deal",price:"",link:"#deal"});
+  caps.push({tag:"🍕 Fresh",title:"Wood-fired Pizzas",price:"",link:"#menu"});
+  caps.push({tag:"🍔 Crispy",title:"Zinger Burgers",price:"",link:"#menu"});
+  const wrap=document.getElementById('heroSlides'),dots=document.getElementById('slideDots');
+  if(!wrap)return;
+  wrap.innerHTML="";dots.innerHTML="";
+  imgs.forEach((f,i)=>{
+    const c=caps[i]||caps[caps.length-1];
+    const el=document.createElement('a');
+    el.className='slide'+(i===0?' active':'');el.href=c.link;
+    el.innerHTML='<img src="'+BASE+'/'+f+'" alt="'+c.title+'" loading="'+(i===0?'eager':'lazy')+'"><span class="slide-caption"><span class="slide-tag">'+c.tag+'</span><b>'+c.title+'</b>'+(c.price?'<span class="slide-price">'+c.price+'</span>':'')+'</span>';
+    wrap.appendChild(el);
+    const d=document.createElement('button');
+    d.className='dot'+(i===0?' active':'');d.setAttribute('aria-label','Go to slide '+(i+1));
+    d.onclick=()=>go(i);dots.appendChild(d);
+  });
+  slides=[...wrap.children];
+  restart();
+}
+function go(i){
+  if(!slides.length)return;
+  slides[idx].classList.remove('active');
+  document.querySelectorAll('#slideDots .dot')[idx].classList.remove('active');
+  idx=(i+slides.length)%slides.length;
+  slides[idx].classList.add('active');
+  document.querySelectorAll('#slideDots .dot')[idx].classList.add('active');
+  restart();
+}
+function restart(){clearInterval(timer);timer=setInterval(()=>go(idx+1),5000);}
+document.getElementById('slidePrev').onclick=e=>{e.preventDefault();go(idx-1);};
+document.getElementById('slideNext').onclick=e=>{e.preventDefault();go(idx+1);};
+const sw=document.getElementById('heroSlideshow');
+sw.addEventListener('mouseenter',()=>clearInterval(timer));
+sw.addEventListener('mouseleave',restart);
+let tx=null;
+sw.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+sw.addEventListener('touchend',e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)go(idx+(dx<0?1:-1));tx=null;},{passive:true});
+window.buildHeroSlides=buildSlides;
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(buildSlides,300));
+else setTimeout(buildSlides,300);
+})();
+</script>
 </body>
 </html>
