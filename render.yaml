@@ -1,0 +1,24 @@
+# Render Blueprint for KOKAB BITES
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: kokab-bites
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/menu
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_PASSWORD
+        sync: false # set a strong 14+ character password in the Render dashboard
+      - key: DATA_DIR
+        value: /var/data
+    # Persistent disk (REQUIRED for production so menu edits, orders and
+    # uploads survive restarts/redeploys). Disks need a paid instance type:
+    # change plan to "starter" above and uncomment this block.
+    # disk:
+    #   name: kokab-data
+    #   mountPath: /var/data
+    #   sizeGB: 1

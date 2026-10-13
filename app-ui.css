@@ -1,0 +1,29 @@
+/* KOKAB BITES app-shell enhancements */
+:root{--kb-accent:#f3bd3f;--kb-accent-ink:#17130a;--kb-glass:rgba(255,255,255,.055);--kb-line:rgba(255,255,255,.12)}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{min-height:100vh;-webkit-font-smoothing:antialiased}
+button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--kb-accent);outline-offset:3px}
+img{max-width:100%;height:auto}
+.product img,.product-image img,.menu-card img{object-fit:cover}
+.mobile-app-nav{padding-bottom:env(safe-area-inset-bottom,0px)}
+.mobile-cart{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+.floating-wa{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+#customProductGrid .product{animation:kbEnter .28s ease both}
+@keyframes kbEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* KOKAB BITES forced glassmorphism + soft neumorphism skin */
+:root{--ink:#f3eee5;--ink2:#f8f4ec;--card:rgba(255,255,255,.58);--cream:#27251f;--muted:#706c62;--gold:#dcae32;--gold2:#f2c957;--red:#b92e23;--line:rgba(105,89,57,.16);--green:#25a95c;--kb-glass:rgba(255,255,255,.52);--kb-line:rgba(255,255,255,.75);color-scheme:light}
+body{background:radial-gradient(ellipse at 10% 0%,#f6dca455,transparent 34%),radial-gradient(ellipse at 90% 20%,#e6c4a833,transparent 35%),var(--ink)!important;color:var(--cream)!important;transition:background .25s,color .25s}
+body.dark-mode{--ink:#111613;--ink2:#171e19;--card:rgba(28,37,31,.76);--cream:#f5f0e5;--muted:#b0b8ae;--gold:#f4c24f;--gold2:#ffe09a;--red:#ff746a;--line:rgba(255,255,255,.12);--kb-glass:rgba(255,255,255,.075);--kb-line:rgba(255,255,255,.14);color-scheme:dark;background:radial-gradient(ellipse at 8% 0%,#d3a32a18,transparent 35%),radial-gradient(ellipse at 92% 15%,#4a8b6c15,transparent 38%),var(--ink)!important;color:var(--cream)!important}
+header,.visit-card,.map-placeholder,.product,.product-card,.deal-card,.builder-panel,.cart-panel,.cart-drawer,.section-card,.benefit,.category-card,.app-status,.mobile-app-nav,.mobile-cart,.floating-wa,.hero-stamp{backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);border:1px solid var(--kb-line)!important;box-shadow:8px 8px 22px rgba(66,53,32,.09),-7px -7px 20px rgba(255,255,255,.65),inset 1px 1px 0 rgba(255,255,255,.42)!important;border-radius:22px}
+body.dark-mode header,body.dark-mode .visit-card,body.dark-mode .map-placeholder,body.dark-mode .product,body.dark-mode .product-card,body.dark-mode .deal-card,body.dark-mode .builder-panel,body.dark-mode .cart-panel,body.dark-mode .cart-drawer,body.dark-mode .section-card,body.dark-mode .benefit,body.dark-mode .category-card,body.dark-mode .app-status,body.dark-mode .mobile-app-nav,body.dark-mode .mobile-cart,body.dark-mode .floating-wa,body.dark-mode .hero-stamp{box-shadow:9px 9px 22px rgba(0,0,0,.28),-5px -5px 18px rgba(255,255,255,.025),inset 1px 1px 0 rgba(255,255,255,.07)!important;background-color:rgba(25,32,27,.78)!important}
+header{background:rgba(255,252,245,.78)!important;border-radius:0 0 20px 20px!important}body.dark-mode header{background:rgba(17,22,19,.82)!important}
+.announcement{box-shadow:0 4px 18px #9c77221c}.hero{border-radius:0 0 34px 34px;overflow:hidden}.hero-photo{filter:saturate(.88)}.hero-content{position:relative}.hero-content:before{content:"";position:absolute;inset:35px -24px 30px -24px;z-index:-1;border-radius:30px;background:rgba(24,22,18,.18);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(3px)}
+.btn,.icon-btn,.filter,.tab,button{transition:transform .2s ease,box-shadow .2s ease,background .2s ease,border-color .2s ease}.icon-btn,.filter,.tab{box-shadow:4px 4px 10px rgba(45,38,24,.08),-3px -3px 8px rgba(255,255,255,.45)}body.dark-mode .icon-btn,body.dark-mode .filter,body.dark-mode .tab{box-shadow:4px 4px 10px #0003,-3px -3px 8px #ffffff08}.icon-btn:active,.btn:active,.mobile-cart:active{transform:translateY(1px) scale(.98)}
+input,textarea,select{border-radius:14px!important;background:rgba(255,255,255,.58)!important;border:1px solid rgba(115,96,60,.2)!important;color:var(--cream)!important;box-shadow:inset 3px 3px 7px rgba(78,63,39,.07),inset -2px -2px 6px rgba(255,255,255,.6)!important}body.dark-mode input,body.dark-mode textarea,body.dark-mode select{background:rgba(7,11,9,.52)!important;border-color:rgba(255,255,255,.13)!important;box-shadow:inset 3px 3px 8px #0005,inset -2px -2px 5px #ffffff05!important;color:var(--cream)!important}
+.benefits{background:transparent!important}.product,.deal-card,.visit-card,.map-placeholder{background:rgba(255,255,255,.48)!important}body.dark-mode .product,body.dark-mode .deal-card,body.dark-mode .visit-card,body.dark-mode .map-placeholder{background:rgba(25,32,27,.74)!important}
+.mobile-app-nav{background:rgba(255,250,241,.82)!important}body.dark-mode .mobile-app-nav{background:rgba(17,22,19,.84)!important}.mobile-cart{background:var(--gold)!important;color:#211a09!important}.floating-wa{background:rgba(37,211,102,.9)!important;color:#082511!important}
+@media(max-width:760px){.hero{border-radius:0 0 24px 24px}.hero-content:before{inset:25px -10px 22px}.mobile-app-nav{border-radius:20px 20px 0 0!important}}
