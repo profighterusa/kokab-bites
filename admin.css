@@ -245,6 +245,8 @@ body.dark-mode .product-status.is-soldout{background:#4a2c1a;color:#F5B841}
 
 /* Clean mobile sidebar - nav only grid, no brand ghost */
 @media(max-width:720px){
+  .layout{padding-top:20px!important}
+  .main{padding-top:6px!important}
   .sidebar{position:static;background:var(--sidebar);border:1px solid var(--line);border-radius:16px;padding:12px;margin:0 0 14px 0;overflow:visible}
   .sidebar .brand{display:none!important}
   .sidebar .side-label{display:none!important}
