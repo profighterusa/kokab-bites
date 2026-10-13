@@ -271,7 +271,7 @@ html[data-theme="light"] body:not(.dark-mode) footer{background:rgba(245,235,217
 html[data-theme="light"] body:not(.dark-mode) footer p,html[data-theme="light"] body:not(.dark-mode) footer small,html[data-theme="light"] body:not(.dark-mode) .footer-bottom{color:#71695d!important}
 /* The hero remains intentionally cinematic/dark in both themes. */
 html[data-theme="light"] body:not(.dark-mode) .hero{color:#fff8eb!important}
-html[data-theme="light"] body:not(.dark-mode) .hero .hero-copy,html[data-theme="light"] body:not(.dark-mode) .hero .hero-meta{color:#eee5d7!important}
+html[data-theme="light"] body:not(.dark-mode) .hero .hero-copy,html[data-theme="light"] body:not(.dark-mode) .hero .hero-meta{color:#6b5d4d!important}
 html[data-theme="light"] body:not(.dark-mode) .hero h1{color:#fff8eb!important}
 /* Dark mode surfaces */
 body.dark-mode{--ink:#101512;--ink2:#171e19;--cream:#f5f0e5;--muted:#b0b8ae;--gold:#E2703A;--gold2:#ffe09a;--line:rgba(255,255,255,.12);background:radial-gradient(ellipse at 8% 0%,#d3a32a18,transparent 35%),radial-gradient(ellipse at 92% 15%,#4a8b6c15,transparent 38%),#101512!important;color:#f5f0e5!important}
