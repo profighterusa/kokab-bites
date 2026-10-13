@@ -637,8 +637,14 @@ body.dark-mode .install-later:hover{color:#F8EEE2}
 .big-deal-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:22px;box-shadow:0 24px 60px #000a}
 .big-deal-media img[hidden]{display:none}
 .big-deal-off{position:absolute;top:-14px;right:6px;z-index:2;width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e88a52,var(--red));color:#fff;font-weight:1000;font-size:1.25rem;display:grid;place-items:center;transform:rotate(8deg);box-shadow:0 14px 30px #0009;animation:bigdeal-float 3.4s ease-in-out infinite}
+.best-deal-sticker{position:absolute;top:22px;right:22px;z-index:6;width:98px;height:98px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#FFE3A1,#F5B841 55%,#DE9427);color:#4A3325;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:900;transform:rotate(12deg);box-shadow:0 10px 24px rgba(0,0,0,.45),inset 0 2px 6px #ffffff88;pointer-events:none;animation:sticker-bob 3.2s ease-in-out infinite}
+.best-deal-sticker:before{content:"";position:absolute;inset:7px;border-radius:50%;border:2px dashed #4A332566}
+.best-deal-sticker i{font-style:normal;font-size:1.05rem;line-height:1;color:#4A3325}
+.best-deal-sticker b{font-size:.82rem;line-height:1.05;letter-spacing:.04em;text-transform:uppercase}
+@keyframes sticker-bob{0%,100%{transform:rotate(12deg) scale(1)}50%{transform:rotate(8deg) scale(1.06)}}
+@media(max-width:760px){.best-deal-sticker{width:78px;height:78px;top:14px;right:14px}.best-deal-sticker b{font-size:.68rem}.best-deal-sticker i{font-size:.9rem}}
 .big-deal-off[hidden]{display:none}
-.big-deal-ring{position:absolute;top:-34px;right:-14px;width:136px;height:136px;border:2px dashed #F5B84177;border-radius:50%;animation:bigdeal-spin 26s linear infinite;pointer-events:none}
+
 @keyframes bigdeal-float{0%,100%{transform:rotate(8deg) translateY(0)}50%{transform:rotate(8deg) translateY(-9px)}}
 @keyframes bigdeal-spin{to{transform:rotate(360deg)}}
 .deals-head{margin-bottom:26px}
@@ -665,7 +671,7 @@ html:not([data-theme="dark"]) body:not(.dark-mode) .deal-rail-card{background:#f
 html:not([data-theme="dark"]) body:not(.dark-mode) .drc-body ul{color:#5d5144}
 html:not([data-theme="dark"]) body:not(.dark-mode) .drc-body h3{color:#b2542f}
 @media(max-width:900px){.big-deal-inner{grid-template-columns:1fr}.big-deal-media{min-height:260px;grid-row:1}.big-deal-media img{position:relative;height:260px}}
-@media(max-width:560px){.big-deal-price{font-size:2.4rem}.big-deal-off{width:80px;height:80px;font-size:1.05rem}.big-deal-ring{width:112px;height:112px;top:-26px}}
+@media(max-width:560px){.big-deal-price{font-size:2.4rem}.big-deal-off{width:80px;height:80px;font-size:1.05rem}}
 
 /* ===== Hero mockup layout: white card overlapping brown slideshow panel ===== */
 .hero{background:#FFF6EC}
