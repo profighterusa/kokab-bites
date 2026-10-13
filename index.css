@@ -408,3 +408,80 @@ body.dark-mode .track-step.done{color:#a8edba;background:#173e27;border-color:#2
 .track-step.now{color:#A8542E;border-color:var(--gold);background:#fdf3d7;box-shadow:0 0 0 3px #E2703A44}
 body.dark-mode .track-step.now{color:#ffe09a;background:#3a2f14}
 .lang-btn{font-weight:900;font-size:.95rem}
+
+/* ===== CREAMY TOMATO — total light retheme (palette image reference) ===== */
+/* text-on-color: white on tomato/herb/red, cocoa on cheese/cream */
+.btn{background:#E2703A!important;color:#fff!important}
+.btn:hover{background:#C85A2E!important;color:#fff!important}
+.btn-dark{background:rgba(255,255,255,.72)!important;color:#4A3325!important;border:1px solid rgba(255,255,255,.9)!important}
+.announcement{background:#E2703A!important;color:#fff!important}
+.filter.active,.filter:hover{background:#E2703A!important;border-color:#E2703A!important;color:#fff!important}
+.product-tag{background:#E2703A!important;color:#fff!important}
+.mobile-cart{background:#E2703A!important;color:#fff!important}
+.checkout{background:#7AA93F!important;color:#fff!important}
+.add-btn{border-color:#E2703A66!important;background:#E2703A14!important;color:#C85A2E!important}
+.add-btn:hover{background:#E2703A!important;color:#fff!important}
+.cart-badge{background:#C0392B!important;color:#fff!important}
+.favorite.active{color:#E2703A!important}
+
+/* page background = palette cream, sections transparent */
+.benefits,.categories,.menu-section,.deal-section,.reviews,.visit{background:transparent!important}
+.deal-builder{background:radial-gradient(circle at 90% 0%,#E2703A12,transparent 38%),transparent!important}
+footer{background:#FBF0E1!important}
+.footer-bottom{color:#A89880!important}
+
+/* hero -> light cream */
+.hero{background:#FFF6EC!important}
+.hero-photo{opacity:.26}
+.hero:after{border-color:#E2703A30!important;box-shadow:0 0 0 50px #E2703A08,0 0 0 100px #E2703A06!important}
+.hero h1{color:#4A3325!important}
+.hero h1 em{color:#E2703A!important}
+.hero-copy{color:#8A7663!important}
+.hero-meta{color:#8A7663!important}
+.hero-meta b{color:#4A3325!important}
+.hero-stamp{background:rgba(255,255,255,.65)!important;color:#E2703A!important;border-color:#E2703A66!important}
+.hero-content:before{background:rgba(255,255,255,.38)!important;border-color:rgba(255,255,255,.65)!important}
+
+/* deal card -> light glass */
+.deal-card{background:rgba(255,255,255,.62)!important;border:1px solid rgba(255,255,255,.85)!important}
+.deal-chip{border-color:#E2703A66!important;color:#C85A2E!important}
+.deal-copy h2{color:#4A3325!important}
+.deal-copy p{color:#8A7663!important}
+.deal-items{color:#4A3325!important}
+.deal-price{color:#E2703A!important}
+.deal-visual:after{background:#E2703A!important;color:#fff!important}
+
+/* category / builder / story / reviews -> light */
+.category{background:rgba(255,255,255,.6)!important}
+.builder-panel{background:rgba(255,255,255,.62)!important;border-color:rgba(255,255,255,.85)!important}
+.builder-step{background:rgba(255,255,255,.7)!important}
+.builder-summary{background:rgba(255,255,255,.7)!important}
+.review{background:rgba(255,255,255,.6)!important}
+.review blockquote{color:#5A4A3C!important}
+.avatar{background:#F5B841!important;color:#4A3325!important}
+
+/* cart drawer -> light */
+.drawer{background:rgba(255,250,242,.94)!important}
+.cart-summary{background:rgba(255,255,255,.65)!important}
+.cart-summary-row{color:#5A4A3C!important}
+.cart-summary-row.total{color:#4A3325!important}
+.qty button{background:#FFF6EC!important;color:#4A3325!important;border-color:rgba(210,140,90,.3)!important}
+.close{background:rgba(255,255,255,.7)!important;color:#4A3325!important}
+.toast{background:rgba(255,255,255,.92)!important;color:#4A3325!important;border-color:rgba(255,255,255,.9)!important}
+.product-image{background:#F5E9D6!important}
+.empty-state{color:#8A7663!important}
+.cart-empty{color:#8A7663!important}
+.field-label{color:#5A4A3C!important}
+.checkout-note{color:#8A7663!important}
+.menu-note{color:#8A7663!important}
+.mini-deal{background:rgba(255,255,255,.6)!important;border-color:#E2703A44!important}
+.mini-deal h3{color:#C85A2E!important}
+.mini-deal ul{color:#5A4A3C!important}
+.mini-deal .deal-price-small{color:#E2703A!important}
+.price-list span{border-color:rgba(210,140,90,.25)!important;color:#5A4A3C!important}
+.story-point span{background:#E2703A18!important;color:#E2703A!important}
+.visit-row i{color:#E2703A!important}
+.section-kicker{color:#E2703A!important}
+.eyebrow{color:#E2703A!important}
+.eyebrow:before{background:#E2703A!important}
+.stars{color:#F5B841!important}
