@@ -520,3 +520,21 @@ header{background:rgba(255,250,242,.86)!important}
 .slide-dots .dot{width:9px;height:9px;border-radius:99px;border:0;background:rgba(255,255,255,.55);cursor:pointer;transition:.25s;padding:0}
 .slide-dots .dot.active{width:28px;background:#E2703A}
 @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:24px}.hero-slideshow{aspect-ratio:16/10}}
+
+/* ===== Fixes: remove logo badge, slideshow arrows, hero cutoff ===== */
+/* 1. Remove #333333 badge — clean transparent logo */
+.brand{background:transparent!important;box-shadow:none!important;padding:0!important;border-radius:0}
+.brand:hover{transform:none;box-shadow:none!important}
+footer .brand{padding:0!important}
+
+/* 2. Remove slideshow arrows */
+.slide-arrow{display:none!important}
+
+/* 3. Hero layout rebuild — no more cutoff */
+.hero{min-height:0!important;padding:56px 0 64px!important;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;max-width:1200px;margin:0 auto;padding:0 20px;width:100%}
+.hero-content{position:static!important;max-width:600px;background:rgba(255,255,255,.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.85);border-radius:28px;padding:44px 40px;box-shadow:0 20px 50px rgba(194,90,46,.12),8px 8px 22px rgba(194,90,46,.08),-7px -7px 20px rgba(255,255,255,.6)}
+.hero-content:before{display:none!important}
+.hero h1{font-size:clamp(2.6rem,5vw,4.2rem)!important;line-height:1.02}
+.hero-slideshow{width:100%;max-width:560px;justify-self:end}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:24px;padding:0 16px}.hero-content{padding:32px 26px}.hero-slideshow{max-width:100%;justify-self:stretch}.hero{padding:36px 0 44px!important}}
