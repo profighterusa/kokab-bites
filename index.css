@@ -605,3 +605,64 @@ body.dark-mode .install-later:hover{color:#F8EEE2}
 .site-banner{background:linear-gradient(90deg,#E2703A,#c25a2e);color:#fff;text-align:center;padding:11px 46px 11px 16px;font-size:.87rem;font-weight:600;position:relative;z-index:60}
 .site-banner button{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.18);border:0;color:#fff;font-size:.85rem;cursor:pointer;width:26px;height:26px;border-radius:50%;line-height:1}
 .site-banner button:hover{background:rgba(255,255,255,.32)}
+
+/* ===== Deals showcase (after hero) ===== */
+.deals-showcase{background:#141311}
+.deals-showcase[hidden]{display:none}
+.big-deal{position:relative;border-radius:30px;overflow:hidden;background:linear-gradient(115deg,#5c2115,#2b1610 62%,#1c130d);border:1px solid #E2703A4d;color:#fff7ec;margin-bottom:54px;box-shadow:0 30px 70px #00000055}
+.big-deal[hidden]{display:none}
+.big-deal-glow{position:absolute;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,#E2703A40,transparent 65%);top:-160px;right:-120px;pointer-events:none}
+.big-deal-glow:before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#F5B84130,transparent 65%);bottom:-260px;left:30%}
+.big-deal-inner{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:center;padding:clamp(26px,4.5vw,54px)}
+.big-deal-kicker{display:inline-flex;align-items:center;gap:9px;border:1px solid #F5A06A66;color:#F2B48C;padding:8px 14px;border-radius:999px;text-transform:uppercase;letter-spacing:.13em;font-size:.68rem;font-weight:900}
+.big-deal-kicker i{font-style:normal}
+.big-deal-kicker em{font-style:normal;background:var(--gold2);color:#3a2a10;border-radius:999px;padding:3px 10px;letter-spacing:.06em}
+.big-deal-kicker em[hidden]{display:none}
+.big-deal-copy h2{font-family:"Playfair Display",serif;font-size:clamp(2.4rem,4.6vw,4rem);line-height:1;margin:18px 0 10px;letter-spacing:-.02em}
+.big-deal-copy p{color:#f0d9c8;max-width:460px;line-height:1.7;margin:0 0 6px}
+.big-deal-items{list-style:none;margin:14px 0 4px;padding:0;display:grid;gap:7px;font-size:.92rem;color:#ffe9d2}
+.big-deal-items li{display:flex;gap:9px;align-items:center}
+.big-deal-buy{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:18px}
+.big-deal-prices{display:flex;align-items:baseline;gap:12px}
+.big-deal-price{font-size:3rem;font-weight:900;color:var(--gold2);letter-spacing:-.04em}
+.big-deal-old{color:#ffffff85;font-size:1.25rem}
+.big-deal-save{background:var(--green);color:#062b13;font-size:.78rem;font-weight:900;padding:6px 12px;border-radius:999px}
+.big-deal-save[hidden]{display:none}
+.btn-light{background:#FFF6EC;color:#4A3325}
+.btn-light:hover{background:#fff;color:#4A3325}
+.big-deal-timer{display:inline-flex;align-items:center;gap:10px;margin-top:16px;background:#00000045;border:1px solid #F5B84155;border-radius:999px;padding:9px 16px;font-size:.85rem;color:#ffe3b3}
+.big-deal-timer[hidden]{display:none}
+.big-deal-timer b{font-variant-numeric:tabular-nums;font-size:1.05rem;color:var(--gold2);letter-spacing:.06em}
+.big-deal-media{position:relative;min-height:360px}
+.big-deal-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:22px;box-shadow:0 24px 60px #000a}
+.big-deal-media img[hidden]{display:none}
+.big-deal-off{position:absolute;top:-14px;right:6px;z-index:2;width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e88a52,var(--red));color:#fff;font-weight:1000;font-size:1.25rem;display:grid;place-items:center;transform:rotate(8deg);box-shadow:0 14px 30px #0009;animation:bigdeal-float 3.4s ease-in-out infinite}
+.big-deal-off[hidden]{display:none}
+.big-deal-ring{position:absolute;top:-34px;right:-14px;width:136px;height:136px;border:2px dashed #F5B84177;border-radius:50%;animation:bigdeal-spin 26s linear infinite;pointer-events:none}
+@keyframes bigdeal-float{0%,100%{transform:rotate(8deg) translateY(0)}50%{transform:rotate(8deg) translateY(-9px)}}
+@keyframes bigdeal-spin{to{transform:rotate(360deg)}}
+.deals-head{margin-bottom:26px}
+.deals-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(272px,322px);gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 14px;scrollbar-width:thin}
+.deal-rail-card{scroll-snap-align:start;background:#1d1c18;border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;transition:transform .22s,border-color .22s}
+.deal-rail-card:hover{transform:translateY(-5px);border-color:#E2703A66}
+.drc-media{position:relative;height:170px;background:#2b2119;display:grid;place-items:center}
+.drc-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.drc-emoji{font-size:3rem;filter:drop-shadow(0 8px 10px #0008)}
+.drc-badge{position:absolute;top:12px;left:12px;background:var(--gold);color:#1b160a;border-radius:999px;padding:6px 11px;font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;font-weight:950}
+.drc-off{position:absolute;top:12px;right:12px;background:var(--red);color:#fff;font-weight:900;font-size:.8rem;padding:6px 11px;border-radius:999px}
+.drc-body{padding:18px;display:flex;flex-direction:column;gap:10px;flex:1}
+.drc-body h3{margin:0;font-size:1.08rem;color:var(--gold2)}
+.drc-body p{margin:0;color:var(--muted);font-size:.83rem;line-height:1.6}
+.drc-body ul{margin:0;padding-left:18px;color:#e9dfd1;line-height:1.7;font-size:.82rem}
+.drc-buy{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:auto;padding-top:6px}
+.drc-prices{display:grid}
+.drc-prices b{font-size:1.35rem;color:var(--gold)}
+.drc-prices s{color:var(--muted);font-size:.82rem}
+.drc-ends{font-size:.75rem;color:var(--gold2)}
+/* light mode */
+html:not([data-theme="dark"]) body:not(.dark-mode) .deals-showcase{background:linear-gradient(145deg,#f6ecdc,#fffaf1)}
+html:not([data-theme="dark"]) body:not(.dark-mode) .deal-rail-card{background:#fffdf8;border-color:rgba(178,82,50,.22);box-shadow:8px 8px 20px rgba(88,67,34,.08)}
+html:not([data-theme="dark"]) body:not(.dark-mode) .drc-body ul{color:#5d5144}
+html:not([data-theme="dark"]) body:not(.dark-mode) .drc-body h3{color:#b2542f}
+@media(max-width:900px){.big-deal-inner{grid-template-columns:1fr}.big-deal-media{min-height:260px;grid-row:1}.big-deal-media img{position:relative;height:260px}}
+@media(max-width:560px){.big-deal-price{font-size:2.4rem}.big-deal-off{width:80px;height:80px;font-size:1.05rem}.big-deal-ring{width:112px;height:112px;top:-26px}}
