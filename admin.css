@@ -150,3 +150,19 @@ body.dark-mode .product-status.is-soldout{background:#4a2c1a;color:#F5B841}
 .drag-handle{cursor:grab;touch-action:none}
 .admin-product-card.dragging{opacity:.45}
 .admin-product-card.drag-over{outline:2px dashed var(--gold);outline-offset:-3px}
+
+/* Phase 6: activity log + command palette */
+.activity-list{display:grid}
+.activity-row{display:flex;gap:14px;font-size:13px;border-bottom:1px solid var(--line);padding:9px 2px;align-items:baseline}
+.activity-row:last-child{border-bottom:0}
+.activity-time{color:var(--muted);font-size:11px;white-space:nowrap;min-width:150px}
+.palette-overlay{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;justify-content:center;padding:12vh 16px 16px}
+.palette-overlay.hidden{display:none!important}
+.palette{width:min(520px,100%);height:fit-content;max-height:70vh;background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;gap:10px}
+.palette-list{display:grid;gap:4px;overflow:auto}
+.palette-item{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;border-radius:11px;cursor:pointer;font-weight:600;font-size:14px}
+.palette-item small{color:var(--muted);font-weight:400}
+.palette-item.active,.palette-item:hover{background:var(--gold);color:#201a09}
+.palette-item.active small,.palette-item:hover small{color:#201a09}
+.palette-hint{font-size:11px;text-align:center}
+@media(max-width:720px){.activity-time{min-width:110px}}
