@@ -254,3 +254,19 @@ body.dark-mode .product-status.is-soldout{background:#4a2c1a;color:#F5B841}
   .sidebar nav button{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;min-width:0!important;width:100%!important;min-height:62px!important;padding:10px 4px!important;font-size:10px!important;font-weight:700!important;border-radius:12px!important;white-space:normal!important;text-align:center!important;line-height:1.25!important}
   .sidebar nav button .ico{font-size:20px!important}
 }
+
+/* Mobile header - hidden on desktop */
+.m-header{display:none}
+
+@media(max-width:720px){
+  .sidebar{display:none!important}
+  .m-header{display:block;background:var(--sidebar);border:1px solid var(--line);border-radius:18px;padding:14px;margin:0 0 14px 0}
+  .m-brand{display:flex;align-items:center;gap:11px;padding-bottom:12px}
+  .m-brand img{width:46px;height:46px;object-fit:contain;flex:none}
+  .m-brand strong{display:block;font-size:16px;letter-spacing:-.3px}
+  .m-brand small{color:var(--muted);font-size:10px;letter-spacing:1.5px;text-transform:uppercase}
+  .m-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .m-nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:64px;padding:10px 4px;font-size:10px;font-weight:700;border:1px solid transparent;background:transparent;color:#B5A48C;border-radius:13px;cursor:pointer;line-height:1.25;text-align:center}
+  .m-nav button span{font-size:21px;line-height:1}
+  .m-nav button.active,.m-nav button:hover{background:#F08A5217;border-color:#F08A5235;color:var(--gold2)}
+}
