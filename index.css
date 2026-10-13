@@ -725,3 +725,19 @@ body.dark-mode .review-card p{color:#e8dcc8!important}
   .mobile-app-nav{display:grid!important}
   .app-status{display:block!important}
 }
+
+/* Cart drawer dark mode - full dark surface with light text (2026-10-13 audit) */
+body.dark-mode .cart-drawer{background:#1e1a15!important;color:#f0e8d8!important}
+body.dark-mode .cart-drawer h2,body.dark-mode .cart-drawer h3{color:#fff8eb!important}
+body.dark-mode .cart-item{background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.1)!important}
+body.dark-mode .cart-item-name,body.dark-mode .cart-item-title{color:#fff8eb!important}
+body.dark-mode .cart-item-detail,body.dark-mode .cart-item-each{color:#c9bda8!important}
+body.dark-mode .cart-qty-val{color:#fff8eb!important}
+body.dark-mode .qty-btn,body.dark-mode .cart-remove{color:#e8dcc8!important;border-color:rgba(255,255,255,.2)!important}
+body.dark-mode .cart-summary{background:rgba(0,0,0,.3)!important}
+body.dark-mode .cart-summary-row{color:#c9bda8!important}
+body.dark-mode .cart-summary-row.total{color:#fff8eb!important}
+body.dark-mode .cart-drawer label{color:#c9bda8!important}
+body.dark-mode .cart-drawer .helper,body.dark-mode .cart-drawer .hint,body.dark-mode .cart-note{color:#a89880!important}
+body.dark-mode .cart-drawer input,body.dark-mode .cart-drawer textarea,body.dark-mode .cart-drawer select{background:#2b251d!important;color:#f0e8d8!important;border-color:rgba(255,255,255,.15)!important}
+body.dark-mode .cart-drawer input::placeholder,body.dark-mode .cart-drawer textarea::placeholder{color:#8a7a64!important}
