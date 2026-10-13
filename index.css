@@ -560,3 +560,33 @@ body.dark-mode .slide-price{color:#F08A52!important}
 body.dark-mode .slide-dots .dot{background:rgba(255,255,255,.25)!important}
 body.dark-mode .slide-dots .dot.active{background:#F08A52!important}
 body.dark-mode .btn-dark{background:rgba(255,255,255,.08)!important;color:#F8EEE2!important;border-color:rgba(255,255,255,.16)!important}
+
+/* ===== Advanced PWA install popup ===== */
+.install-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(58,37,22,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;transition:opacity .28s ease}
+.install-overlay.show{opacity:1}
+.install-popup{position:relative;width:min(400px,100%);background:#FFF6EC;border:1px solid rgba(255,255,255,.9);border-radius:28px;padding:40px 30px 28px;text-align:center;box-shadow:0 30px 80px rgba(194,90,46,.25);transform:translateY(24px) scale(.96);transition:transform .32s cubic-bezier(.2,.9,.3,1.2)}
+.install-overlay.show .install-popup{transform:none}
+.install-close{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(226,112,58,.1);color:#4A3325;font-size:15px;cursor:pointer;transition:.2s}
+.install-close:hover{background:#E2703A;color:#fff}
+.install-badge{width:88px;height:88px;margin:0 auto 16px;border-radius:26px;background:#fff;box-shadow:0 12px 30px rgba(194,90,46,.2);display:flex;align-items:center;justify-content:center;padding:10px}
+.install-badge img{width:100%;height:100%;object-fit:contain;filter:saturate(.62) brightness(1.05) contrast(.94)}
+.install-popup h3{font-family:'Sora',sans-serif;font-size:1.45rem;font-weight:800;color:#4A3325;margin:0 0 8px}
+.install-sub{color:#8a6f5c;font-size:.92rem;line-height:1.55;margin:0 0 18px}
+.install-perks{list-style:none;margin:0 0 22px;padding:0;text-align:left;display:grid;gap:10px}
+.install-perks li{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid rgba(226,112,58,.14);border-radius:16px;padding:11px 14px;font-size:.88rem;color:#4A3325;font-weight:500;box-shadow:0 4px 12px rgba(194,90,46,.06)}
+.install-perks span{font-size:1.2rem}
+.install-ios-help{background:#fff3e2;border:1px dashed rgba(226,112,58,.4);border-radius:16px;padding:12px 14px;margin:0 0 18px;font-size:.85rem;color:#4A3325;line-height:1.6}
+.install-ios-help .ios-icon{display:inline-block;background:#4A3325;color:#fff;border-radius:6px;padding:0 6px;font-size:.8rem}
+.install-btn{display:block;width:100%;padding:15px;border:0;border-radius:50px;background:linear-gradient(135deg,#E2703A,#c25a2e);color:#fff;font-weight:700;font-size:1rem;cursor:pointer;box-shadow:0 10px 24px rgba(226,112,58,.4);transition:.2s;margin-bottom:10px}
+.install-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(226,112,58,.5)}
+.install-later{display:block;width:100%;padding:10px;border:0;background:none;color:#a98a70;font-size:.9rem;cursor:pointer;font-weight:500}
+.install-later:hover{color:#4A3325}
+/* Dark mode popup */
+body.dark-mode .install-popup{background:#2a1a10;border-color:rgba(255,255,255,.12)}
+body.dark-mode .install-popup h3{color:#F8EEE2}
+body.dark-mode .install-sub{color:#C2A88D}
+body.dark-mode .install-perks li{background:#211410;border-color:rgba(255,255,255,.1);color:#F8EEE2}
+body.dark-mode .install-ios-help{background:#3a2413;border-color:rgba(240,138,82,.4);color:#F8EEE2}
+body.dark-mode .install-close{background:rgba(255,255,255,.1);color:#F8EEE2}
+body.dark-mode .install-later{color:#a98a70}
+body.dark-mode .install-later:hover{color:#F8EEE2}
