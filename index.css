@@ -600,3 +600,8 @@ body.dark-mode .install-later:hover{color:#F8EEE2}
 .product.sold-out .product-image img{filter:grayscale(.65);opacity:.55}
 .product.sold-out .add-btn{background:#cfc8b8!important;color:#6f695c!important;cursor:not-allowed;box-shadow:none!important}
 .product.sold-out .add-btn:hover{transform:none!important}
+
+/* Phase 4: announcement banner */
+.site-banner{background:linear-gradient(90deg,#E2703A,#c25a2e);color:#fff;text-align:center;padding:11px 46px 11px 16px;font-size:.87rem;font-weight:600;position:relative;z-index:60}
+.site-banner button{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.18);border:0;color:#fff;font-size:.85rem;cursor:pointer;width:26px;height:26px;border-radius:50%;line-height:1}
+.site-banner button:hover{background:rgba(255,255,255,.32)}
