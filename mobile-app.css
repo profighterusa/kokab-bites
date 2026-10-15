@@ -206,3 +206,40 @@
   /* Pressed states */
   .app-icon-btn:active, .add-btn:active { transform: scale(.96); transition: transform .1s var(--app-ease); }
 }
+
+/* ============ THEMED DROPDOWNS ============ */
+@media (max-width: 760px) {
+  .product-options select {
+    width: 100%; appearance: none; -webkit-appearance: none;
+    background: #FFFFFF; color: #2C2418;
+    border: 1.5px solid rgba(132,103,44,.25); border-radius: 14px;
+    padding: 13px 40px 13px 14px; font-size: .9rem; font-weight: 600;
+    outline: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23E2703A' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+    box-shadow: 0 2px 8px rgba(35,28,15,.06);
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  .product-options select:focus {
+    border-color: #E2703A;
+    box-shadow: 0 0 0 3px rgba(226,112,58,.15);
+  }
+  .product-options select option {
+    background: #FFFFFF; color: #2C2418; padding: 12px;
+  }
+  /* Dark mode */
+  body.dark-mode .product-options select {
+    background-color: #1E1A15; color: #F5EDE0;
+    border-color: rgba(255,255,255,.15);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23E2703A' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+  body.dark-mode .product-options select option {
+    background: #1E1A15; color: #F5EDE0;
+  }
+  .product-options label {
+    color: #E2703A !important; font-size: .72rem !important;
+    font-weight: 800 !important; letter-spacing: .06em !important;
+  }
+}
+
