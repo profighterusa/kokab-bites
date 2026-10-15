@@ -206,6 +206,36 @@ async function main() {
   r = await j('/api/menu');
   check('security headers', r.headers.get('x-content-type-options') === 'nosniff' && r.headers.get('x-frame-options') === 'DENY');
 
+  // 13. P1: delivery fee computed server-side (client value ignored)
+  const menu2 = (await j('/api/admin/menu', { headers: authH })).body;
+  menu2.settings.deliveryFee = 150; menu2.settings.freeDeliveryAbove = 2000;
+  r = await j('/api/admin/menu', { method: 'PUT', headers: { ...authH, 'Content-Type': 'application/json' }, body: JSON.stringify(menu2) });
+  check('menu settings updated', r.status === 200);
+  const orderBody = { items: [{ name: 'Zinger Burger', qty: 1 }], name: 'Sec Test', phone: '03001234567', address: 'Test', deliveryFee: 0, estimatedTotal: 99999 };
+  r = await j('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(orderBody) });
+  check('delivery fee ignored from client (small order)', r.status === 201, JSON.stringify(r.body));
+  const oid = r.body.orderId;
+  r = await j('/api/track/' + oid);
+  check('server computed delivery fee 150', r.body.deliveryFee === 150, 'got ' + r.body.deliveryFee);
+  // big order -> free delivery
+  const bigOrder = { items: [{ name: 'Zinger Burger', qty: 10 }], name: 'Sec Test', phone: '03001234567', address: 'Test', deliveryFee: 999 };
+  r = await j('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(bigOrder) });
+  const oid2 = r.body.orderId;
+  r = await j('/api/track/' + oid2);
+  check('free delivery above threshold', r.body.deliveryFee === 0, 'got ' + r.body.deliveryFee);
+
+  // 14. P2: login rate limit (5 per 5 min)
+  for (let i = 0; i < 6; i++) {
+    r = await j('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: 'wrong' }) });
+  }
+  check('login rate limited after 5 attempts', r.status === 429, 'got ' + r.status);
+
+  // 15. P3: PUT menu rejects bad shapes
+  r = await j('/api/admin/menu', { method: 'PUT', headers: { ...authH, 'Content-Type': 'application/json' }, body: JSON.stringify({ items: { 'X': -50 } }) });
+  check('menu rejects negative price', r.status === 400);
+  r = await j('/api/admin/menu', { method: 'PUT', headers: { ...authH, 'Content-Type': 'application/json' }, body: JSON.stringify({ settings: { deliveryFee: 'free' } }) });
+  check('menu rejects bad settings type', r.status === 400);
+
   api.kill();
   mock.close();
   const fails = results.filter(([s]) => s === 'FAIL').length;

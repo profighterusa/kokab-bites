@@ -59,12 +59,19 @@ export function clearSessionCookie(secure) {
 
 // Constant-time string compare for the admin password (no Buffer in Workers)
 export function safeEq(a, b) {
-  const x = enc.encode(String(a));
-  const y = enc.encode(String(b));
-  if (x.length !== y.length) return false;
+  // P3 FIX: compare fixed-length hashes so password length is not leaked by timing
+  const hx = simpleHash(String(a)), hy = simpleHash(String(b));
+  if (hx.length !== hy.length) return false;
   let d = 0;
-  for (let i = 0; i < x.length; i++) d |= x[i] ^ y[i];
+  for (let i = 0; i < hx.length; i++) d |= hx[i] ^ hy[i];
   return d === 0;
+}
+// FNV-1a 32-bit -> 4 bytes (fixed length regardless of input length)
+function simpleHash(s) {
+  let h = 0x811c9dc5;
+  const bytes = enc.encode(s);
+  for (let i = 0; i < bytes.length; i++) { h ^= bytes[i]; h = Math.imul(h, 0x01000193) >>> 0; }
+  return new Uint8Array([(h >>> 24) & 255, (h >>> 16) & 255, (h >>> 8) & 255, h & 255]);
 }
 
 export function randomHex(n) {

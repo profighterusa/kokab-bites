@@ -29,6 +29,7 @@ export function getEnv(c, key) {
 }
 
 export function clientIp(c) {
-  const h = c.req.header('x-forwarded-for') || c.req.header('cf-connecting-ip') || '';
+  // P2 FIX: prefer cf-connecting-ip (set by Cloudflare, not spoofable); x-forwarded-for is client-controlled
+  const h = c.req.header('cf-connecting-ip') || c.req.header('x-forwarded-for') || '';
   return h.split(',')[0].trim() || 'unknown';
 }

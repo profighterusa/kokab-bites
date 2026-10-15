@@ -42,6 +42,30 @@ function validatePromo(menu, code, subtotal) {
   return { ok: true, promo: p, discount };
 }
 
+// P3: basic shape validation so a bad admin write cannot silently corrupt the live menu
+function validateMenuShape(m) {
+  if (m.items !== undefined) {
+    if (!m.items || typeof m.items !== 'object' || Array.isArray(m.items)) return 'items must be an object';
+    for (const [k, v] of Object.entries(m.items)) {
+      if (v !== null && v !== undefined && !(typeof v === 'number' && v >= 0)) return 'price for "' + k + '" must be a non-negative number';
+    }
+  }
+  if (m.deals !== undefined) {
+    if (!m.deals || typeof m.deals !== 'object' || Array.isArray(m.deals)) return 'deals must be an object';
+    for (const [k, d] of Object.entries(m.deals)) {
+      if (d && d.price !== undefined && d.price !== null && !(typeof d.price === 'number' && d.price >= 0)) return 'deal price for "' + k + '" must be a non-negative number';
+    }
+  }
+  if (m.settings !== undefined) {
+    const s = m.settings;
+    if (!s || typeof s !== 'object') return 'settings must be an object';
+    for (const k of ['deliveryFee', 'freeDeliveryAbove', 'prepMinutes']) {
+      if (s[k] !== undefined && s[k] !== null && !(typeof s[k] === 'number' && s[k] >= 0)) return 'settings.' + k + ' must be a non-negative number';
+    }
+  }
+  return null;
+}
+
 export function createApp() {
   const app = new Hono();
 
@@ -104,7 +128,11 @@ export function createApp() {
       return err(c, 500, 'Menu unavailable. ' + e.message);
     }
     const { items: verifiedItems, serverTotal, unverifiedCount } = verifyOrderItems(items, menu);
-    const deliveryFee = num(b.deliveryFee, 0, 0);
+    // P1 FIX: compute delivery fee server-side, never trust client value
+    const settings = (menu && menu.settings) || {};
+    const baseFee = Math.max(0, Number(settings.deliveryFee) || 0);
+    const freeAbove = Math.max(0, Number(settings.freeDeliveryAbove) || 0);
+    const deliveryFee = (freeAbove > 0 && serverTotal >= freeAbove) ? 0 : baseFee;
     const deliveryZone = cleanString(b.deliveryZone, 80);
     const promoCode = cleanString(b.promoCode, 40);
     let promoDiscount = 0, promoApplied = '';
@@ -178,6 +206,12 @@ export function createApp() {
   }
 
   app.post('/api/admin/login', async (c) => {
+    // P2 FIX: rate-limit login attempts (5 per 5 min per IP)
+    try {
+      const db0 = getDb(c);
+      const lip = clientIp(c);
+      if (!(await rateOk(db0, 'login:' + lip, 5, 300000))) return err(c, 429, 'Too many login attempts. Try again in a few minutes.');
+    } catch { /* fail open if DB unavailable */ }
     const pw = adminPassword(c);
     if (!pw) return err(c, 503, 'Admin login is disabled. Set ADMIN_PASSWORD in the server environment first.');
     if (isProd(c) && pw.length < 14) return err(c, 503, 'Server misconfigured: ADMIN_PASSWORD must be at least 14 characters in production.');
@@ -234,6 +268,9 @@ export function createApp() {
       return err(c, 400, 'Invalid menu data.');
     }
     if (!body || typeof body !== 'object' || Array.isArray(body)) return err(c, 400, 'Invalid menu data.');
+    // P3 FIX: sanity-check menu shape before overwriting the live menu
+    const bad = validateMenuShape(body);
+    if (bad) return err(c, 400, bad);
     try {
       const db = getDb(c);
       body.lastUpdated = new Date().toISOString();
@@ -288,6 +325,8 @@ export function createApp() {
     const m = String(body.data || '').match(/^data:image\/(png|jpeg|webp);base64,([A-Za-z0-9+/=]+)$/);
     if (!m) return err(c, 400, 'Upload must be a JPG, PNG or WebP image.');
     const ext = m[1] === 'jpeg' ? 'jpg' : m[1];
+    // P2 FIX: reject oversized payloads BEFORE base64 decode (avoid huge allocation)
+    if (m[2].length > 7 * 1024 * 1024) return err(c, 400, 'Image must be smaller than 5 MB.');
     const bin = Uint8Array.from(atob(m[2]), (ch) => ch.charCodeAt(0));
     if (!bin.length || bin.length > 5 * 1024 * 1024) return err(c, 400, 'Image must be smaller than 5 MB.');
     const sigOk =
