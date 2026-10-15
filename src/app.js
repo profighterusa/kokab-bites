@@ -56,6 +56,13 @@ function validateMenuShape(m) {
       if (d && d.price !== undefined && d.price !== null && !(typeof d.price === 'number' && d.price >= 0)) return 'deal price for "' + k + '" must be a non-negative number';
     }
   }
+  if (m.categories !== undefined) {
+    if (!Array.isArray(m.categories)) return 'categories must be an array';
+    if (m.categories.length > 50) return 'too many categories';
+    for (const cat of m.categories) {
+      if (!cat || typeof cat.name !== 'string' || !cat.name.trim() || cat.name.length > 40) return 'category name must be 1-40 chars';
+    }
+  }
   if (m.settings !== undefined) {
     const s = m.settings;
     if (!s || typeof s !== 'object') return 'settings must be an object';
