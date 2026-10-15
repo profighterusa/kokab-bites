@@ -63,6 +63,14 @@ function validateMenuShape(m) {
       if (!cat || typeof cat.name !== 'string' || !cat.name.trim() || cat.name.length > 40) return 'category name must be 1-40 chars';
     }
   }
+  if (m.feedbacks !== undefined) {
+    if (!Array.isArray(m.feedbacks)) return 'feedbacks must be an array';
+    if (m.feedbacks.length > 50) return 'too many feedbacks';
+    for (const f of m.feedbacks) {
+      if (!f || typeof f.name !== 'string' || !f.name.trim() || f.name.length > 60) return 'feedback name must be 1-60 chars';
+      if (typeof f.message !== 'string' || !f.message.trim() || f.message.length > 400) return 'feedback message must be 1-400 chars';
+    }
+  }
   if (m.settings !== undefined) {
     const s = m.settings;
     if (!s || typeof s !== 'object') return 'settings must be an object';
