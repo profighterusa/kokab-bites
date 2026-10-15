@@ -310,6 +310,7 @@ export function createApp() {
       const { data, error } = await db.from('orders').select('payload').eq('id', id).maybeSingle();
       if (error || !data) return err(c, 404, 'Order not found.');
       const payload = data.payload || {};
+      if (body.status !== undefined && !ORDER_STATUSES.includes(body.status)) return err(c, 400, 'Invalid status.');
       if (ORDER_STATUSES.includes(body.status)) payload.status = body.status;
       payload.adminNote = cleanString(body.adminNote, 500);
       const { error: upErr } = await db.from('orders').update({ payload, status: payload.status || 'New' }).eq('id', id);
