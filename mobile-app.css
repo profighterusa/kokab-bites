@@ -29,8 +29,15 @@
 @media (max-width: 760px) {
   /* Hide desktop header nav, show compact app header */
   header .navlinks, header .nav-actions .btn { display: none !important; }
-  /* CRITICAL FIX: hide entire desktop nav row, keep only .app-header */
-  header .nav { display: none !important; }
+  /* Hide duplicated brand/logo + theme/cart/order (in app-header), keep lang + hamburger + navlinks */
+  header .nav .brand { display: none !important; }
+  header .nav-actions .theme-toggle,
+  header .nav-actions #cartOpen,
+  header .nav-actions .btn,
+  header .nav-actions #favoritesJump { display: none !important; }
+  /* Slim utility bar: lang + hamburger only */
+  header .nav { padding: 6px 14px !important; min-height: 0 !important; }
+  header .nav-actions { gap: 8px !important; }
   header { position: sticky; top: 0; z-index: 90; }
 
   .app-header {
@@ -155,11 +162,16 @@
     background: var(--kb-line, rgba(132,103,44,.35)); margin: 0 auto 12px;
   }
 
-  /* MAJOR FIX: compact hero on mobile */
-  .hero { min-height: auto !important; padding: 24px 0 !important; }
-  .hero-content { padding: 20px 16px !important; }
-  .hero h1 { font-size: 2.2rem !important; }
-  .hero-stage { display: none !important; }
+  /* Compact hero on mobile (keep slideshow, smaller) */
+  .hero { min-height: auto !important; padding: 20px 0 !important; }
+  .hero-content { padding: 16px !important; }
+  .hero h1 { font-size: 2.1rem !important; line-height: 1.15 !important; }
+  .hero-copy { font-size: .85rem !important; margin: 10px 0 !important; }
+  .hero-buttons { gap: 8px !important; margin-top: 12px !important; }
+  .hero-buttons .btn { padding: 11px 16px !important; font-size: .82rem !important; }
+  .hero-stage { margin-top: 14px !important; }
+  .hero-slideshow { height: 200px !important; border-radius: 18px !important; }
+  .hero-meta { display: none !important; }
 
   /* ============ SECTION SPACING ============ */
   .section { padding: 34px 0 !important; }
