@@ -23,16 +23,27 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="index.css?v=5">
+<link rel="stylesheet" href="mobile-app.css?v=1">
 </head>
 <body>
 <div class="announcement"><div class="container"><span>✦ KOKAB BITES, GUJRANWALA</span><span>•</span><span id="openBadge" class="open-badge">●</span><span>•</span><span>Special Combo: 2 Shami Burgers + 2 Special Shawarmas + 1L Next Cola — Rs. 900</span></div></div>
-<header><div class="container nav">
+<header>
+<div class="app-header">
+  <div class="brand">
+    <img src="logo-kokab-bites.png" alt="Kokab Bites" onerror="this.style.display='none'">
+    <div><div class="brand-name">Kokab Bites</div><div class="brand-sub" data-i18n="app_tagline">Good Food. Better Mood.</div></div>
+  </div>
+  <button type="button" class="app-icon-btn" id="appThemeBtn" aria-label="Toggle theme"><span>☾</span></button>
+  <button type="button" class="app-icon-btn" id="appCartBtn" aria-label="Open cart"><span>🛒</span><span class="badge" id="appCartBadge" hidden>0</span></button>
+</div><div class="container nav">
 <a class="brand" href="#home" aria-label="KOKAB BITES home"><img class="brand-logo" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp?v=2" alt="KOKAB BITES — Taste Good Mood Always"></a>
 <nav class="navlinks" id="navlinks"><a href="#home" data-i18n="nav_home">Home</a><a href="#categories" data-i18n="nav_explore">Explore</a><a href="#menu" data-i18n="nav_menu">Menu</a><a href="#deal" data-i18n="nav_deal">Special Deal</a><a href="#visit" data-i18n="nav_visit">Find Us</a></nav>
 <div class="nav-actions"><button class="icon-btn theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch theme">☾</button><button class="icon-btn lang-btn" id="langToggle" aria-label="Switch language / زبان بدلیں" title="اردو / English">اردو</button><button class="icon-btn" id="favoritesJump" aria-label="Show favourites">♡</button><button class="icon-btn" id="cartOpen" aria-label="Open cart">🛍<span class="cart-badge" id="cartCount">0</span></button><a class="btn" href="#menu" data-i18n="order_now">Order now ↗</a><button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu">☰</button></div>
 </div></header>
 <main>
-<div class="site-banner" id="siteBanner" hidden><span id="siteBannerText"></span><button id="siteBannerClose" aria-label="Dismiss announcement">✕</button></div><section class="hero" id="home"><div class="container hero-grid"><div class="hero-content"><div class="eyebrow" data-i18n="hero_eyebrow">Your neighbourhood food spot</div><h1>Crave it.<br><em>Bite into</em><br>happiness.</h1><p class="hero-copy">Burgers with big personality, pizza worth sharing, and shawarma made for those “just one more bite” moments.</p><div class="hero-buttons"><a class="btn" href="#menu" data-i18n-html="hero_menu">Explore the menu <span>↗</span></a><button class="btn btn-dark" onclick="openWhatsAppGeneral()" data-i18n-html="hero_chat">Chat to order <span>↗</span></button></div><div class="hero-meta"><span><i>✦</i><b>Made fresh</b>, every order</span><span><i>✦</i>Big flavour, local love</span></div></div><div class="hero-stage"><div class="hero-slideshow" id="heroSlideshow"><div class="slides" id="heroSlides"></div><button class="slide-arrow prev" id="slidePrev" aria-label="Previous slide">‹</button><button class="slide-arrow next" id="slideNext" aria-label="Next slide">›</button><div class="slide-dots" id="slideDots"></div></div></div></div><div class="hero-stamp">GOOD FOOD<strong>BETTER</strong>MOOD ALWAYS</div></section>
+<div class="site-banner" id="siteBanner" hidden><span id="siteBannerText"></span><button id="siteBannerClose" aria-label="Dismiss announcement">✕</button></div><div class="app-greeting"><h2>Good evening 👋</h2><p data-i18n="app_greet_sub">What are you craving today?</p></div>
+<div class="app-search"><input type="search" id="appSearchInput" placeholder="Search burgers, pizza, deals..." aria-label="Search menu"></div>
+<section class="hero" id="home"><div class="container hero-grid"><div class="hero-content"><div class="eyebrow" data-i18n="hero_eyebrow">Your neighbourhood food spot</div><h1>Crave it.<br><em>Bite into</em><br>happiness.</h1><p class="hero-copy">Burgers with big personality, pizza worth sharing, and shawarma made for those “just one more bite” moments.</p><div class="hero-buttons"><a class="btn" href="#menu" data-i18n-html="hero_menu">Explore the menu <span>↗</span></a><button class="btn btn-dark" onclick="openWhatsAppGeneral()" data-i18n-html="hero_chat">Chat to order <span>↗</span></button></div><div class="hero-meta"><span><i>✦</i><b>Made fresh</b>, every order</span><span><i>✦</i>Big flavour, local love</span></div></div><div class="hero-stage"><div class="hero-slideshow" id="heroSlideshow"><div class="slides" id="heroSlides"></div><button class="slide-arrow prev" id="slidePrev" aria-label="Previous slide">‹</button><button class="slide-arrow next" id="slideNext" aria-label="Next slide">›</button><div class="slide-dots" id="slideDots"></div></div></div></div><div class="hero-stamp">GOOD FOOD<strong>BETTER</strong>MOOD ALWAYS</div></section>
 <section class="section deals-showcase" id="deal"><div class="container">
 <div class="big-deal" id="bigDeal" hidden><div class="big-deal-glow"></div><div class="big-deal-inner">
 <div class="big-deal-copy"><span class="big-deal-kicker"><i>🔥</i><span data-i18n="bigdeal_kicker">Big deal of the moment</span><em id="bigDealBadge"></em></span>
@@ -103,7 +114,13 @@
 <section class="section visit" id="visit"><div class="container"><div class="section-head"><div><div class="section-kicker" data-i18n="visit_kicker">Come say hello</div><h2 data-i18n="visit_h2">Your next bite is nearby.</h2></div><p>Visit us in Gujranwala or send your order directly to WhatsApp to confirm availability and delivery.</p></div><div class="visit-grid"><div class="visit-card"><h3>Find KOKAB BITES</h3><div class="visit-row"><i>⌖</i><div><b>Our location</b>Hafizabad Road, Near Fazal Masjid, Sadiq Road, Gujranwala</div></div><div class="visit-row"><i>☏</i><div><b>Call / WhatsApp</b>0318 4345994</div></div><div class="visit-row"><i>↗</i><div><b>Ordering</b>Choose menu items and send your order on WhatsApp for confirmation.</div></div><a class="btn" href="https://www.google.com/maps/search/?api=1&query=Hafizabad+Road+Near+Fazal+Masjid+Sadiq+Road+Gujranwala" target="_blank" rel="noopener">Open map directions ↗</a></div><div class="map-placeholder"><div class="pin">📍</div><h3>KOKAB BITES</h3><p>Hafizabad Road, Near Fazal Masjid, Sadiq Road, Gujranwala</p><a href="https://wa.me/923184345994" target="_blank" rel="noopener" class="btn btn-dark">Message the shop ↗</a></div></div></div></section>
 </main>
 <footer><div class="container"><div class="footer-top"><div><a class="brand" href="#home" aria-label="KOKAB BITES home"><img class="brand-logo" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp?v=2" alt="KOKAB BITES — Taste Good Mood Always"></a><p class="footer-about">Good Food. Better Mood. Always. Your local spot for satisfying burgers, pizza, shawarma and more in Gujranwala.</p></div><div class="footer-col"><b data-i18n="foot_explore">Explore</b><a href="#menu" data-i18n="foot_menu">Menu</a><a href="#deal" data-i18n="foot_deal">Special deal</a><a href="#build-deal" data-i18n="foot_build">Build a deal</a><a href="#categories" data-i18n="foot_cat">Categories</a></div><div class="footer-col"><b data-i18n="foot_visit">Visit</b><a href="#visit" data-i18n="foot_contact">Location & contact</a><a href="https://wa.me/923184345994" target="_blank" rel="noopener" data-i18n="foot_wa">WhatsApp us</a><a href="#home" data-i18n="foot_top">Back to top ↑</a></div></div><div class="footer-bottom"><span>© <span id="year"></span> KOKAB BITES. All rights reserved.</span><span>Made for good-food moments.</span></div></div></footer>
-<div class="app-status" id="appStatus" role="status"><span class="status-dot"></span><span id="connectionLabel">Ready to browse</span></div><nav class="mobile-app-nav" aria-label="Quick navigation"><a href="#home"><span>⌂</span><em data-i18n="nav_home" style="font-style:normal">Home</em></a><a href="#menu"><span>▦</span><em data-i18n="nav_menu" style="font-style:normal">Menu</em></a><a href="#deal"><span>✦</span><em data-i18n="nav_deal" style="font-style:normal">Deals</em></a><button type="button" id="mobileTheme"><span>☾</span><em data-i18n="m_theme" style="font-style:normal">Theme</em></button></nav><button class="mobile-cart" id="mobileCart">🛍 <span data-i18n="m_order">Order</span> <span id="mobileCartCount">0</span></button><a class="floating-wa" href="https://wa.me/923184345994" target="_blank" rel="noopener" data-i18n="wa_float">☏ WhatsApp order</a>
+<div class="app-status" id="appStatus" role="status"><span class="status-dot"></span><span id="connectionLabel">Ready to browse</span></div><nav class="mobile-app-nav" aria-label="Quick navigation">
+<a href="#home" data-tab="home"><span>⌂</span><em data-i18n="nav_home" style="font-style:normal">Home</em></a>
+<a href="#menu" data-tab="menu"><span>▦</span><em data-i18n="nav_menu" style="font-style:normal">Menu</em></a>
+<a href="#deal" data-tab="deal"><span>✦</span><em data-i18n="nav_deal" style="font-style:normal">Deals</em></a>
+<button type="button" data-tab="cart" id="tabCartBtn"><span>🛒</span><em data-i18n="nav_cart" style="font-style:normal">Cart</em><span class="tab-badge" id="tabCartBadge" hidden>0</span></button>
+<a href="#track" data-tab="track"><span>📦</span><em data-i18n="nav_track" style="font-style:normal">Track</em></a>
+</nav><button class="mobile-cart" id="mobileCart">🛍 <span data-i18n="m_order">Order</span> <span id="mobileCartCount">0</span></button><a class="floating-wa" href="https://wa.me/923184345994" target="_blank" rel="noopener" data-i18n="wa_float">☏ WhatsApp order</a>
 <div class="overlay" id="overlay"><aside class="drawer" role="dialog" aria-modal="true" aria-label="Your order"><div class="drawer-head"><h2 data-i18n="cart_title">Your order</h2><button class="close" id="closeCart" aria-label="Close cart">✕</button></div><div id="cartContents"></div><div class="cart-summary" id="cartSummary"><div class="cart-summary-row"><span data-i18n="sum_subtotal">Priced items subtotal</span><b id="cartSubtotal">Rs. 0</b></div><div class="cart-summary-row"><span data-i18n="sum_unpriced">Items needing price confirmation</span><b id="unpricedCount">0</b></div>
 <div class="cart-summary-row" id="discountRow" hidden><span>Promo discount <b id="promoCodeLabel"></b></span><b id="cartDiscount">—</b></div><div class="cart-summary-row"><span data-i18n="sum_delivery">Delivery fee</span><b id="cartDelivery">—</b></div><div class="cart-summary-row total"><span data-i18n="sum_total">Estimated total</span><strong id="cartTotal">Rs. 0</strong></div><p class="estimate-note" id="cartEstimateNote">Final total may change if you add unpriced items, delivery charges or receive a custom discount.</p></div><div class="discount-request"><label for="targetBudget" data-i18n="budget_label">Want to request a custom deal price? (optional)</label><input id="targetBudget" type="number" min="0" step="50" placeholder="Your target total, e.g. 1500"><small>We’ll send this as a request only. KOKAB BITES will confirm whether the price is possible.</small></div><div id="promoWrap"><label class="field-label" for="promoCode">Promo code</label><div style="display:flex;gap:8px"><input class="field" id="promoCode" placeholder="Enter code" autocomplete="off" style="flex:1"><button class="btn secondary small" id="promoApply" type="button" style="white-space:nowrap">Apply</button></div><small class="muted" id="promoMsg"></small></div><label class="field-label" for="customerName" data-i18n="f_name">Your name *</label><input class="field" id="customerName" placeholder="Enter your name" autocomplete="name"><label class="field-label" for="customerPhone" data-i18n="f_phone">Contact number</label><input class="field" id="customerPhone" type="tel" placeholder="Your phone number" autocomplete="tel"><div id="zoneWrap"><label class="field-label" for="deliveryZone">Delivery area</label><select class="field" id="deliveryZone"></select></div><label class="field-label" for="customerAddress" data-i18n="f_addr">Delivery address or pickup *</label><textarea class="field" id="customerAddress" rows="2" placeholder="Full address or type Pickup"></textarea><label class="field-label" for="orderNotes" data-i18n="f_notes">Order notes</label><textarea class="field" id="orderNotes" rows="2" placeholder="Pizza size, spice preference, etc."></textarea><p class="checkout-note" data-i18n="checkout_note">No online payment is collected. WhatsApp opens with your order details so the team can confirm availability, delivery charges and estimated time.</p><button class="checkout" id="checkout" data-i18n="checkout_btn">Send order to WhatsApp ↗</button></aside></div><div class="toast" id="toast"></div>
 <script>
@@ -557,5 +574,50 @@ else setTimeout(buildSlides,300);
     <button class="install-later" id="installLater">Not now</button>
   </div>
 </div>
+
+<script>
+/* Mobile app-like experience */
+(function(){
+if(!window.matchMedia('(max-width:760px)').matches) return;
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+/* Tab active states */
+function setActiveTab(){
+  const h=location.hash||'#home';
+  $$('.mobile-app-nav [data-tab]').forEach(el=>{
+    const t=el.dataset.tab;
+    const active=(t==='home'&&h==='#home')||(t==='menu'&&h==='#menu')||(t==='deal'&&h==='#deal')||(t==='track'&&h==='#track');
+    el.classList.toggle('active',active);
+  });
+}
+window.addEventListener('hashchange',setActiveTab); setActiveTab();
+
+/* Cart badge sync */
+function syncBadge(){
+  try{
+    const cart=JSON.parse(localStorage.getItem('kokab-cart')||'[]');
+    const n=cart.reduce((a,i)=>a+(i.qty||1),0);
+    ['#appCartBadge','#tabCartBadge'].forEach(s=>{const b=$(s);if(b){b.textContent=n;b.hidden=!n;}});
+  }catch(e){}
+}
+setInterval(syncBadge,1000); syncBadge();
+window.addEventListener('storage',syncBadge);
+
+/* Header buttons */
+$('#appCartBtn')?.addEventListener('click',()=>{document.querySelector('.overlay')?.classList.add('open');});
+$('#tabCartBtn')?.addEventListener('click',()=>{document.querySelector('.overlay')?.classList.add('open');});
+$('#appThemeBtn')?.addEventListener('click',()=>{
+  const b=document.body; const dark=b.classList.contains('dark-mode');
+  if(typeof setTheme==='function') setTheme(dark?'light':'dark');
+  $('#appThemeBtn span').textContent=dark?'☾':'☀';
+});
+
+/* Greeting based on time */
+const hr=new Date().getHours();
+const greet=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+const gh=document.querySelector('.app-greeting h2');
+if(gh) gh.textContent=greet+' 👋';
+})();
+</script>
 </body>
 </html>
