@@ -21,9 +21,7 @@
   --app-touch: 44px;              /* min touch target */
 }
 
-/* KOKAB BITES — Mobile App-like Experience (≤760px only) */
- (≤760px only)
-   Desktop and admin panel are untouched. All rules scoped to mobile. */
+/* KOKAB BITES — Mobile App-like Experience (max-width 760px only) */
 
 /* ============ MOBILE APP HEADER ============ */
 @media (max-width: 760px) {
