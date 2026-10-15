@@ -251,6 +251,11 @@ export function createApp() {
 
   // ---------- Admin API ----------
 
+  // P3: session check for page refresh (returns 200 if cookie valid, 401 otherwise)
+  app.get('/api/admin/me', async (c) => {
+    return json(c, 200, { ok: true, admin: true });
+  });
+
   app.get('/api/admin/menu', async (c) => {
     try {
       const db = getDb(c);
