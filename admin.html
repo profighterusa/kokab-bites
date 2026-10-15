@@ -173,7 +173,7 @@ function renderPV(){const host=$('#pvBody');if(!host)return;const q=pvSearch.tri
 PV_CATS.forEach(cat=>{const inCat=items.filter(p=>(p.category||'Other')===cat);if(!inCat.length)return;out+='<div class="pv-cat"><div class="pv-cat-head"><h3>'+safe(pvCatLabel(cat))+'</h3><span class="muted">'+inCat.length+' items</span></div>';
 if(cat==='Pizza'){out+=pvSharedGroup('Classic pizza sizes','Shared by all classic pizzas','classicPizza',menu.classicPizza||{},false);out+=pvSharedGroup('Special pizza sizes','Shared by all special pizzas','specialPizza',menu.specialPizza||{},false)}
 if(cat==='Sides'){if(menu.sides?.['Loaded Fries'])out+=pvSharedGroup('Loaded Fries sizes','Shared','sides|Loaded Fries',menu.sides['Loaded Fries'],true);if(menu.sides?.['Wings'])out+=pvSharedGroup('Wings sizes','Shared','sides|Wings',menu.sides['Wings'],true)}
-if(menu.drinks)out+=pvSharedGroup('Drink sizes','Shared by all drinks','drinks',menu.drinks,true)}
+if(menu.drinks)out+=pvSharedGroup('Drink sizes','Shared by all drinks','drinks',menu.drinks,true)
 inCat.forEach(p=>{out+=pvCard(p)});out+='</div>'});
 host.innerHTML=out||'<p class="muted">No matching items.</p>';wirePV()}
 function wirePVRow(row){const b=row.querySelector('[data-pvdel]');if(b)b.onclick=()=>row.remove()}
