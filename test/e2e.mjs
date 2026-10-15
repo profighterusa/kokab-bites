@@ -230,6 +230,12 @@ async function main() {
   }
   check('login rate limited after 5 attempts', r.status === 429, 'got ' + r.status);
 
+  // 14b. P3: /api/admin/me session check
+  r = await j('/api/admin/me', { headers: authH });
+  check('me returns 200 with valid session', r.status === 200 && r.body.ok === true);
+  r = await j('/api/admin/me');
+  check('me returns 401 without session', r.status === 401);
+
   // 15. P3: PUT menu rejects bad shapes
   r = await j('/api/admin/menu', { method: 'PUT', headers: { ...authH, 'Content-Type': 'application/json' }, body: JSON.stringify({ items: { 'X': -50 } }) });
   check('menu rejects negative price', r.status === 400);
