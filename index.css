@@ -745,3 +745,9 @@ body.dark-mode .drawer label{color:#c9bda8!important}
 body.dark-mode .drawer .helper,body.dark-mode .drawer .hint,body.dark-mode .cart-note{color:#a89880!important}
 body.dark-mode .drawer input,body.dark-mode .drawer textarea,body.dark-mode .drawer select{background:#2b251d!important;color:#f0e8d8!important;border-color:rgba(255,255,255,.15)!important}
 body.dark-mode .drawer input::placeholder,body.dark-mode .drawer textarea::placeholder{color:#8a7a64!important}
+
+/* ============ IN-CART HIGHLIGHT ============ */
+.product.in-cart{border:2px solid #E2703A !important;box-shadow:0 8px 28px rgba(226,112,58,.25) !important;position:relative}
+.product.in-cart::after{content:'● In cart';position:absolute;top:10px;left:10px;background:#E2703A;color:#fff;font-size:.62rem;font-weight:800;padding:4px 10px;border-radius:99px;letter-spacing:.03em;z-index:2}
+.product .add-btn.in-cart-btn{background:#E2703A !important;color:#fff !important;border-color:#E2703A !important;font-weight:800}
+body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !important}
