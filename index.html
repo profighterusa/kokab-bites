@@ -309,16 +309,19 @@ $$("[data-jumpcat]").forEach(a=>a.addEventListener("click",()=>{const cat=a.data
 $("#cartOpen").onclick=showCart;$("#mobileCart").onclick=showCart;$("#builderOpenCart").onclick=showCart;$("#closeCart").onclick=hideCart;
 $("#overlay").addEventListener("click",e=>{if(e.target===$("#overlay"))hideCart()});
 $("#favoritesJump").onclick=()=>{location.hash="#menu";$$(".filter").forEach(x=>x.classList.toggle("active",x.dataset.cat==="Favourites"));activeCat="Favourites";applyFilters()};
+let checkoutBusy=false;
 $("#checkout").onclick=async()=>{
+ if(checkoutBusy)return;
  if(!cart.size){notify("Add an item to your order first.");return}
  const name=$("#customerName").value.trim(),address=$("#customerAddress").value.trim(),phone=$("#customerPhone").value.trim(),notes=$("#orderNotes").value.trim(),budget=$("#targetBudget").value.trim();const zone=($("#deliveryZone")&&$("#zoneWrap").style.display!=="none")?$("#deliveryZone").value:"";
  if(!name||!address){notify("Please enter your name and delivery address or pickup.");return}
  if(!isOpenNow()){const _st=storeSettings();notify(isClosedDate(_st)?"We are closed today. Please order another day!":(_st.forceStatus==="closed"?"We are closed right now. Please try again later!":"We\u2019re closed right now. We open at "+fmtHour(_st.openHour)+" \u2014 please order then!"));return;}
  if(phone&&!/^3\d{9}$/.test(phone.replace(/\D/g,"").replace(/^(92|0)/,""))){notify("Please enter a valid Pakistani mobile number, e.g. 03XXXXXXXXX.");return;}
  const waWindow=window.open("about:blank","_blank");
+ const btn=$("#checkout");checkoutBusy=true;btn.disabled=true;const btnTxt=btn.textContent;btn.textContent="Placing order…";
  const t=cartTotals(),rows=t.rows,priced=t.priced,unknown=t.unknown;
  let orderId="";
- try{const saved=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,address,notes,targetBudget:budget?Number(budget):null,estimatedTotal:priced,deliveryFee:t.delFee,deliveryZone:zone,promoCode:t.promoCode,items:rows.map(v=>({name:v.name,option:v.option,qty:v.qty,unitPrice:v.price,lineTotal:v.price===null?null:v.price*v.qty}))})});if(saved.ok){const data=await saved.json();orderId=data.orderId||"";}}catch(e){/* WhatsApp ordering remains available for static previews without the server. */}
+ try{const saved=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,address,notes,targetBudget:budget?Number(budget):null,estimatedTotal:priced,deliveryFee:t.delFee,deliveryZone:zone,promoCode:t.promoCode,items:rows.map(v=>({name:v.name,option:v.option,qty:v.qty,unitPrice:v.price,lineTotal:v.price===null?null:v.price*v.qty}))})});if(saved.ok){const data=await saved.json();orderId=data.orderId||"";}}catch(e){/* WhatsApp ordering remains available for static previews without the server. */}finally{checkoutBusy=false;btn.disabled=false;btn.textContent=btnTxt}
  let lines=["Assalam-o-Alaikum KOKAB BITES! I’d like to place an order and request my best possible combo price.",...(orderId?[`Website order reference: ${orderId}`]:[]),"",`Name: ${name}`];
  if(phone)lines.push(`Contact: ${phone}`);
  lines.push("","ORDER DETAILS:",...rows.map(v=>`• ${v.name}${v.option?' ('+v.option+')':''} × ${v.qty} — ${v.price===null?'price to confirm':money(v.price*v.qty)}${v.detail?' ['+v.detail+']':''}`),"",`Priced items subtotal: ${money(priced)}`);
