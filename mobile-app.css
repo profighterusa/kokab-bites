@@ -1,4 +1,28 @@
-/* KOKAB BITES — Mobile App-like Experience (≤760px only)
+/* ============ DESIGN TOKENS ============ */
+:root {
+  --app-primary: #E2703A;          /* warm orange */
+  --app-primary-dark: #C25A2E;
+  --app-bg-light: #FFF9F2;        /* warm white */
+  --app-card-light: #FFFFFF;
+  --app-text-light: #2C2418;      /* dark charcoal */
+  --app-muted-light: #8A7A64;
+  --app-line-light: rgba(132,103,44,.16);
+  --app-bg-dark: #12100D;         /* deep charcoal */
+  --app-card-dark: #1E1A15;
+  --app-text-dark: #F5EDE0;
+  --app-muted-dark: #A89880;
+  --app-line-dark: rgba(255,255,255,.10);
+  --app-radius-sm: 12px;
+  --app-radius-md: 18px;
+  --app-radius-lg: 24px;
+  --app-shadow: 0 8px 24px rgba(35,28,15,.10);
+  --app-shadow-dark: 0 8px 24px rgba(0,0,0,.35);
+  --app-ease: cubic-bezier(.2,.75,.25,1);
+  --app-touch: 44px;              /* min touch target */
+}
+
+/* KOKAB BITES — Mobile App-like Experience (≤760px only) */
+ (≤760px only)
    Desktop and admin panel are untouched. All rules scoped to mobile. */
 
 /* ============ MOBILE APP HEADER ============ */
@@ -144,4 +168,22 @@
 /* Desktop: never show app header or tab bar */
 @media (min-width: 761px) {
   .app-header, .mobile-app-nav, .app-greeting, .app-search, .app-cats { display: none !important; }
+}
+
+/* ============ ACCESSIBILITY ============ */
+@media (max-width: 760px) {
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+  /* Touch targets */
+  .app-cat, .mobile-app-nav a, .mobile-app-nav button { min-height: var(--app-touch); }
+  .add-btn { min-height: 44px; }
+  /* Visible focus */
+  .app-icon-btn:focus-visible, .mobile-app-nav a:focus-visible, .mobile-app-nav button:focus-visible,
+  .app-cat:focus-visible, .add-btn:focus-visible {
+    outline: 2px solid var(--app-primary); outline-offset: 2px;
+  }
+  /* Pressed states */
+  .app-icon-btn:active, .add-btn:active { transform: scale(.96); transition: transform .1s var(--app-ease); }
 }
