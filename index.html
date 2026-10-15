@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="index.css?v=7">
+<link rel="stylesheet" href="index.css?v=8">
 <link rel="stylesheet" href="mobile-app.css?v=5">
 </head>
 <body>
@@ -191,7 +191,14 @@ function renderFeedbacks(){
   const avatar=f.photo?`<img src="${esc(f.photo)}" alt="${esc(f.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(esc(f.name||'K').charAt(0).toUpperCase());
   return `<article class="review"><div class="stars">${stars(f.rating)}</div><blockquote>“${esc(f.message)}”</blockquote><div class="reviewer"><div class="avatar" style="${f.photo?'padding:0;overflow:hidden':''}">${avatar}</div><div><b>${esc(f.name)}</b><small>${esc(f.tag||'Customer feedback')}</small></div></div></article>`;
  }).join('');
- grid.innerHTML=cards+`<article class="review"><div class="stars">★★★★★</div><blockquote>Good food is best when it brings people together. What should we feature next on the menu?</blockquote><div class="reviewer"><div class="avatar">✦</div><div><b>Your turn</b><small><a href="https://wa.me/${waNum}" target="_blank" rel="noopener" style="color:inherit">Tell us on WhatsApp</a></small></div></div></article>`;
+ const cta=`<article class="review"><div class="stars">★★★★★</div><blockquote>Good food is best when it brings people together. What should we feature next on the menu?</blockquote><div class="reviewer"><div class="avatar">✦</div><div><b>Your turn</b><small><a href="https://wa.me/${waNum}" target="_blank" rel="noopener" style="color:inherit">Tell us on WhatsApp</a></small></div></div></article>`;
+ if(fb.length>3){
+  grid.classList.add('review-loop');
+  grid.innerHTML=`<div class="review-track">${cards+cta}${cards+cta}</div>`;
+ }else{
+  grid.classList.remove('review-loop');
+  grid.innerHTML=cards+cta;
+ }
 }
 function renderAdminProducts(){
  const grid=$("#productGrid");if(!grid||!Array.isArray(menuConfig?.customItems))return;
