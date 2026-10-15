@@ -335,7 +335,8 @@ $("#checkout").onclick=async()=>{
  lines.push("Please confirm final total, any available discount, delivery charges, item availability and estimated time. Thank you!");
  const waUrl="https://wa.me/"+waNum()+"?text="+encodeURIComponent(lines.join("\n"));
  if(waWindow){waWindow.location.href=waUrl;}else{window.location.href=waUrl;}
- if(orderId){try{localStorage.setItem("kokab-last-order",orderId);localStorage.removeItem("kokab-promo");const _pi2=document.querySelector("#promoCode");if(_pi2)_pi2.value="";}catch(e){}const _ti=$("#trackId");if(_ti)_ti.value=orderId;notify("Order "+orderId+" sent! Track it in the Track Order section.");}
+ if(!orderId){notify("Order not saved online — sending via WhatsApp only. Save your reference from WhatsApp.");}
+if(orderId){cart.clear();renderCart();try{localStorage.setItem("kokab-last-order",orderId);localStorage.removeItem("kokab-promo");const _pi2=document.querySelector("#promoCode");if(_pi2)_pi2.value="";}catch(e){}const _ti=$("#trackId");if(_ti)_ti.value=orderId;notify("Order "+orderId+" sent! Track it in the Track Order section.");}
 };
 $("#menuToggle").onclick=()=>$("#navlinks").classList.toggle("show");
 $$(".navlinks a").forEach(a=>a.addEventListener("click",()=>$("#navlinks").classList.remove("show")));
