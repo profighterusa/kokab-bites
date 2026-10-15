@@ -167,10 +167,18 @@ async function loadMenuConfig(){
   if(menuConfig.deals)presetDeals=menuConfig.deals;
   refreshMenuPrices();
   renderAdminProducts();
-  renderWebsiteDeals();renderZoneOptions();renderBanner();
+  renderWebsiteDeals();renderZoneOptions();renderBanner();buildCategoryFilters();
   $$('a[href^="https://wa.me/"]').forEach(a=>{a.href="https://wa.me/"+waNum();});
  }catch(e){/* Static preview can still run using bundled fallback prices. */}
  updateOpenBadge();
+}
+function buildCategoryFilters(){
+ const wrap=document.getElementById('filters');if(!wrap)return;
+ const cats=Array.isArray(menuConfig?.categories)&&menuConfig.categories.length?menuConfig.categories.map(c=>c.name||c).filter(Boolean):['Burgers','Pizza','Shawarma & Rolls','Sides','Drinks'];
+ const current=document.querySelector('#filters .filter.active')?.dataset.cat||'All';
+ wrap.innerHTML=`<button class="filter${current==='All'?' active':''}" data-cat="All">All items</button>`+cats.map(c=>`<button class="filter${current===c?' active':''}" data-cat="${c}">${c}</button>`).join('')+`<button class="filter${current==='Favourites'?' active':''}" data-cat="Favourites">♡ Favourites</button>`;
+ wrap.querySelectorAll('.filter').forEach(b=>b.onclick=()=>{wrap.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeCat=b.dataset.cat;applyFilters()});
+ const mc=document.getElementById('appCats');if(mc){mc.innerHTML=cats.map(c=>`<button class="app-cat" data-cat="${c}">${c}</button>`).join('');mc.querySelectorAll('.app-cat').forEach(b=>b.onclick=()=>{document.querySelector(`#filters .filter[data-cat="${CSS.escape(b.dataset.cat)}"]`)?.click();document.getElementById('menu')?.scrollIntoView({behavior:'smooth'})})}
 }
 function renderAdminProducts(){
  const grid=$("#productGrid");if(!grid||!Array.isArray(menuConfig?.customItems))return;
