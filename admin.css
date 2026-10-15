@@ -270,3 +270,10 @@ body.dark-mode .product-status.is-soldout{background:#4a2c1a;color:#F5B841}
   .m-nav button span{font-size:21px;line-height:1}
   .m-nav button.active,.m-nav button:hover{background:#F08A5217;border-color:#F08A5235;color:var(--gold2)}
 }
+
+/* Reztro-reference product card style */
+.rez-name{font-size:16px;font-weight:800;letter-spacing:-.3px;margin:0;line-height:1.3}
+.rez-cat{font-size:12px;font-weight:700;color:var(--gold);margin:3px 0 8px}
+.rez-price-row{display:flex;justify-content:flex-end;margin-bottom:6px}
+.rez-price{font-size:17px;font-weight:900;color:var(--gold)}
+.rez-desc{font-size:12px;color:var(--muted);margin:0 0 10px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
