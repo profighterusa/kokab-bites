@@ -229,7 +229,7 @@ function setupProductOptions(){
    }else if(card.dataset.cat==="Pizza"){
      const special=/creamy|malai boti|kebabish|bbq|doner|cheese-stuffed/i.test(name);
      const list=special?specialPizza:classicPizza;
-     options=`<div class="product-options"><label>Choose pizza size</label><select data-option="pizza" aria-label="Choose ${esc(name)} size">${Object.entries(list).map(([k,v])=>`<option value="${k}">${v.label} — ${money(v.price)}</option>`).join("")}</select></div>`;
+     options=`<div class="product-options"><label>Choose pizza size</label><select data-option="pizza" aria-label="Choose ${esc(name)} size">${Object.entries(list).sort((a,b)=>(a[1].price||0)-(b[1].price||0)).map(([k,v])=>`<option value="${k}">${v.label} — ${money(v.price)}</option>`).join("")}</select></div>`;
    }else if(name==="Loaded Fries"){
      options=`<div class="product-options"><label>Choose size</label><select data-option="fries" aria-label="Choose loaded fries size"><option value="Small">Small — Rs. 350</option><option value="Large">Large — Rs. 500</option></select></div>`;
    }else if(name==="Wings"){
@@ -262,7 +262,7 @@ function promoDiscountFor(subtotal,st){if(!st||!st.p||!(subtotal>0))return 0;con
 function renderCart(){
  try{localStorage.setItem('kokab-cart',JSON.stringify([...cart.entries()]));localStorage.setItem('kokab-favourites',JSON.stringify([...favourites]))}catch(e){}
  const t=cartTotals(),rows=[...cart.entries()],count=t.count,priced=t.priced,unknown=t.unknown;
- $("#cartCount").textContent=count;$("#mobileCartCount").textContent=count;
+ $("#cartCount").textContent=count;$("#mobileCartCount").textContent=count;const ab=$("#appCartBadge"),tb=$("#tabCartBadge");if(ab){ab.textContent=count;ab.hidden=!count}if(tb){tb.textContent=count;tb.hidden=!count}
  $("#cartSubtotal").textContent=money(priced);
  $("#cartDelivery").textContent=priced?(t.delFee?money(t.delFee):"FREE"):"\u2014";
  $("#cartTotal").textContent=money(t.total);const _dr=$("#discountRow");if(_dr){_dr.hidden=!t.discount;if(t.discount){$("#cartDiscount").textContent="−"+money(t.discount);$("#promoCodeLabel").textContent="("+t.promoCode+")"}}const _pm=$("#promoMsg"),_pi=$("#promoCode");if(_pm){if(t.promoError&&_pi&&_pi.value){_pm.textContent=t.promoError;_pm.style.color="var(--red)"}else if(t.discount){_pm.textContent="Code "+t.promoCode+" applied: −"+money(t.discount);_pm.style.color="var(--green)"}else{_pm.textContent="";}}if(_pi&&document.activeElement!==_pi&&!_pi.value){try{const _c=localStorage.getItem("kokab-promo")||"";if(_c)_pi.value=_c}catch(e){}}
