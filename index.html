@@ -22,8 +22,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="index.css?v=6">
-<link rel="stylesheet" href="mobile-app.css?v=4">
+<link rel="stylesheet" href="index.css?v=7">
+<link rel="stylesheet" href="mobile-app.css?v=5">
 </head>
 <body>
 <div class="announcement"><div class="container"><span>✦ KOKAB BITES, GUJRANWALA</span><span>•</span><span id="openBadge" class="open-badge">●</span><span>•</span><span>Special Combo: 2 Shami Burgers + 2 Special Shawarmas + 1L Next Cola — Rs. 900</span></div></div>
@@ -259,10 +259,28 @@ function updateOpenBadge(){const s=storeSettings(),el=$("#openBadge");if(!el)ret
 function cartTotals(){const rows=[...cart.values()];const priced=rows.reduce((a,v)=>a+(v.price===null?0:v.price*v.qty),0);const unknown=rows.reduce((a,v)=>a+(v.price===null?v.qty:0),0);const count=rows.reduce((a,v)=>a+v.qty,0);const s=storeSettings();let delFee=0;const dz=Array.isArray(s.deliveryZones)?s.deliveryZones:[];if(priced>0){if(dz.length){const zn=dz.filter(z=>z.name===((document.querySelector('#deliveryZone')||{}).value||''))[0]||dz[0];delFee=priced>=s.freeDeliveryAbove?0:(Number(zn.fee)||0)}else if(priced<s.freeDeliveryAbove)delFee=s.deliveryFee}const promo=promoState();const discount=promoDiscountFor(priced,promo);return{priced,unknown,delFee,discount,promoCode:discount>0?promo.code:'',promoError:promo.error,total:Math.max(0,priced+delFee-discount),count,rows};}
 function promoState(){let code='';try{code=(localStorage.getItem('kokab-promo')||'').trim().toUpperCase()}catch(e){}if(!code)return{code:'',discount:0,error:''};const promos=Array.isArray(menuConfig&&menuConfig.promos)?menuConfig.promos:[];const p=promos.find(x=>x&&x.active!==false&&String(x.code||'').trim().toUpperCase()===code);if(!p)return{code,error:'Invalid code'};if(p.expiresAt&&Number.isFinite(new Date(p.expiresAt).getTime())&&new Date(p.expiresAt).getTime()<Date.now())return{code,error:'Code expired'};if(Number(p.maxUses)>0&&(Number(p.uses)||0)>=Number(p.maxUses))return{code,error:'Usage limit reached'};return{code,p,error:''}}
 function promoDiscountFor(subtotal,st){if(!st||!st.p||!(subtotal>0))return 0;const min=Math.max(0,Number(st.p.minOrder)||0);if(subtotal<min)return 0;let d=st.p.type==='pct'?Math.round(subtotal*Math.max(0,Number(st.p.value)||0)/100):Math.round(Math.max(0,Number(st.p.value)||0));return Math.max(0,Math.min(d,subtotal))}
+function syncProductHighlights(){
+ const inCart=new Set();for(const[,v]of cart){if(v&&v.name)inCart.add(v.name)}
+ document.querySelectorAll('.product').forEach(p=>{
+  const name=p.dataset.name||p.querySelector('[data-add]')?.dataset.add;
+  const hit=name&&inCart.has(name);
+  p.classList.toggle('in-cart',!!hit);
+  const btn=p.querySelector('.add-btn');
+  if(btn){
+   if(hit){
+    let qty=0;for(const[,v]of cart){if(v&&v.name===name)qty+=v.qty||1}
+    btn.innerHTML='✓ In cart · '+qty;btn.classList.add('in-cart-btn');
+   }else{
+    if(btn.classList.contains('in-cart-btn')){btn.innerHTML='＋ Add to order';btn.classList.remove('in-cart-btn')}
+   }
+  }
+ });
+}
 function renderCart(){
  try{localStorage.setItem('kokab-cart',JSON.stringify([...cart.entries()]));localStorage.setItem('kokab-favourites',JSON.stringify([...favourites]))}catch(e){}
  const t=cartTotals(),rows=[...cart.entries()],count=t.count,priced=t.priced,unknown=t.unknown;
  $("#cartCount").textContent=count;$("#mobileCartCount").textContent=count;const ab=$("#appCartBadge"),tb=$("#tabCartBadge");if(ab){ab.textContent=count;ab.hidden=!count}if(tb){tb.textContent=count;tb.hidden=!count}
+ try{syncProductHighlights()}catch(e){}
  $("#cartSubtotal").textContent=money(priced);
  $("#cartDelivery").textContent=priced?(t.delFee?money(t.delFee):"FREE"):"\u2014";
  $("#cartTotal").textContent=money(t.total);const _dr=$("#discountRow");if(_dr){_dr.hidden=!t.discount;if(t.discount){$("#cartDiscount").textContent="−"+money(t.discount);$("#promoCodeLabel").textContent="("+t.promoCode+")"}}const _pm=$("#promoMsg"),_pi=$("#promoCode");if(_pm){if(t.promoError&&_pi&&_pi.value){_pm.textContent=t.promoError;_pm.style.color="var(--red)"}else if(t.discount){_pm.textContent="Code "+t.promoCode+" applied: −"+money(t.discount);_pm.style.color="var(--green)"}else{_pm.textContent="";}}if(_pi&&document.activeElement!==_pi&&!_pi.value){try{const _c=localStorage.getItem("kokab-promo")||"";if(_c)_pi.value=_c}catch(e){}}
@@ -629,6 +647,8 @@ $$('.app-cat').forEach(chip=>chip.addEventListener('click',()=>{
   const m=document.querySelector('#menu'); if(m) m.scrollIntoView({behavior:'smooth'});
 }));
 
+/* Restore in-cart highlights on load */
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',()=>{try{syncProductHighlights()}catch(e){}})}else{try{syncProductHighlights()}catch(e){}}
 /* Greeting based on time */
 const hr=new Date().getHours();
 const greet=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
