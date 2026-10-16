@@ -798,16 +798,7 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
 .mlb-next{right:12px;top:50%;transform:translateY(-50%)}
 .mlb-cap{position:absolute;bottom:54px;left:0;right:0;text-align:center;color:#fff;font-weight:700;padding:0 20px}
 .mlb-count{position:absolute;bottom:24px;left:0;right:0;text-align:center;color:#ffffffaa;font-size:.85rem}
-/* Follow Us - creative redesign */
-.social{background:radial-gradient(1200px 500px at 20% 0%,#2a1f14 0%,var(--bg) 60%);overflow:visible;padding:70px 0}
-.social-hero{text-align:center;max-width:640px;margin:0 auto 40px;padding:0 16px}
-.social-hero .section-kicker{display:block;margin-bottom:12px}
-.social-hero h2{font-size:clamp(2.2rem,7vw,3.6rem);margin:0 0 12px;color:#F8EEE2;line-height:1.15;overflow:visible;opacity:1!important;transform:none!important}
-.social-hero.motion-reveal{opacity:1!important;transform:none!important}
-.social-hero p{color:#C2A88D!important}
-.social-hero h2 em{font-style:normal;background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.social-hero p{color:var(--muted);font-size:1.02rem;line-height:1.7;margin:0}
-.social-grid{display:grid;grid-template-columns:auto 1fr;gap:36px;align-items:center;justify-content:center;max-width:960px;margin:0 auto}
+
 /* Phone mockup for Facebook */
 .fb-phone{width:300px;background:#111;border-radius:44px;padding:12px;box-shadow:0 30px 80px #0006,inset 0 0 0 2px #333;position:relative}
 .fb-notch{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:110px;height:26px;background:#111;border-radius:0 0 16px 16px;z-index:2}
@@ -836,4 +827,39 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
  .social-cards{width:100%;max-width:400px;margin:0 auto}
  .social-card{padding:16px 18px}
  .sc-icon{width:46px;height:46px}
+}
+
+/* ===== SOCIAL NEW - fresh creative design ===== */
+.social-new{background:#141311;padding:70px 0;overflow:hidden;position:relative}
+.social-new::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse,#E2703A22,transparent);pointer-events:none}
+.sn-head{text-align:center;max-width:600px;margin:0 auto 36px;position:relative;z-index:1}
+.sn-badge{display:inline-block;background:#E2703A22;border:1px solid #E2703A55;color:#F08A52;font-size:.75rem;font-weight:800;letter-spacing:.15em;padding:8px 18px;border-radius:99px;margin-bottom:16px;animation:snFloat 3s ease-in-out infinite}
+@keyframes snFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.sn-head h2{font-size:clamp(2rem,6vw,3.2rem);color:#F8EEE2;margin:0 0 12px;font-weight:900;line-height:1.2}
+.sn-flavor{color:#F08A52}
+.sn-head p{color:#C2A88D;font-size:1rem;margin:0}
+.sn-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:900px;margin:0 auto 36px;position:relative;z-index:1}
+.sn-card{display:flex;align-items:center;gap:14px;padding:22px;border-radius:20px;text-decoration:none;color:#fff;transition:transform .25s,box-shadow .25s;animation:snPop .6s backwards}
+.sn-card:nth-child(2){animation-delay:.1s}
+.sn-card:nth-child(3){animation-delay:.2s}
+@keyframes snPop{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+.sn-card:hover{transform:translateY(-6px) scale(1.03);box-shadow:0 20px 50px #0007}
+.sn-emoji{font-size:2rem;flex-shrink:0;filter:drop-shadow(0 4px 8px #0005)}
+.sn-info{flex:1;display:flex;flex-direction:column}
+.sn-info b{font-size:1.05rem}
+.sn-info small{opacity:.85;font-size:.8rem}
+.sn-go{font-size:1.5rem;font-weight:900;opacity:.7;transition:.2s}
+.sn-card:hover .sn-go{transform:translateX(4px);opacity:1}
+.sn-insta{background:linear-gradient(135deg,#f09433,#dc2743 55%,#bc1888)}
+.sn-tiktok{background:linear-gradient(135deg,#1a1a1a,#000);border:1px solid #25F4EE44}
+.sn-fb{background:linear-gradient(135deg,#1877F2,#0a4cb0)}
+/* Marquee */
+.sn-marquee{overflow:hidden;white-space:nowrap;position:relative;z-index:1;-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+.sn-marquee-inner{display:inline-flex;gap:24px;animation:snScroll 22s linear infinite;color:#C2A88D;font-weight:700;font-size:.95rem;padding:8px 0}
+@keyframes snScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.sn-marquee-inner,.sn-badge,.sn-card{animation:none}}
+@media(max-width:760px){
+ .social-new{padding:50px 0}
+ .sn-cards{grid-template-columns:1fr;max-width:380px}
+ .sn-card{padding:18px}
 }
