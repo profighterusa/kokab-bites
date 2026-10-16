@@ -779,6 +779,11 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
 .moments-inner{display:flex;gap:14px;width:max-content;animation:momentScroll 28s linear infinite;padding:6px 4px 12px}
 .moments-track:hover .moments-inner{animation-play-state:paused}
 @keyframes momentScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.moments-track.reverse{margin-top:14px}
+.moments-track.reverse .moments-inner{animation:momentScrollRev 32s linear infinite}
+.moments-track.reverse:hover .moments-inner{animation-play-state:paused}
+@keyframes momentScrollRev{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+@media (prefers-reduced-motion:reduce){.moments-track.reverse .moments-inner{animation:none}}
 @media (prefers-reduced-motion:reduce){.moments-inner{animation:none}}
 .moment-card{position:relative;flex-shrink:0;width:240px;aspect-ratio:4/5;border:0;padding:0;border-radius:22px;overflow:hidden;cursor:pointer;background:var(--panel);box-shadow:0 14px 38px #0003;transition:transform .25s}
 .moment-card:hover{transform:translateY(-4px)}
