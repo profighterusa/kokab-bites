@@ -799,10 +799,10 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
 .mlb-cap{position:absolute;bottom:54px;left:0;right:0;text-align:center;color:#fff;font-weight:700;padding:0 20px}
 .mlb-count{position:absolute;bottom:24px;left:0;right:0;text-align:center;color:#ffffffaa;font-size:.85rem}
 /* Follow Us - creative redesign */
-.social{background:radial-gradient(1200px 500px at 20% 0%,#2a1f14 0%,var(--bg) 60%);overflow:hidden}
-.social-hero{text-align:center;max-width:640px;margin:0 auto 40px}
+.social{background:radial-gradient(1200px 500px at 20% 0%,#2a1f14 0%,var(--bg) 60%);overflow:visible;padding:70px 0}
+.social-hero{text-align:center;max-width:640px;margin:0 auto 40px;padding:0 16px}
 .social-hero .section-kicker{display:block;margin-bottom:12px}
-.social-hero h2{font-size:clamp(2.4rem,6vw,3.6rem);margin:0 0 12px;color:var(--ink)}
+.social-hero h2{font-size:clamp(2.2rem,7vw,3.6rem);margin:0 0 12px;color:var(--ink);line-height:1.15;overflow:visible}
 .social-hero h2 em{font-style:normal;background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .social-hero p{color:var(--muted);font-size:1.02rem;line-height:1.7;margin:0}
 .social-grid{display:grid;grid-template-columns:auto 1fr;gap:36px;align-items:center;justify-content:center;max-width:960px;margin:0 auto}
@@ -826,8 +826,12 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
 .tiktok-card .sc-icon{color:#25F4EE}
 .fb-card{background:linear-gradient(135deg,#1877F2,#0d5bbf)}
 @media(max-width:860px){
- .social-grid{grid-template-columns:1fr;justify-items:center}
- .fb-phone{width:min(300px,84vw)}
- .fb-screen{height:540px}
- .social-cards{width:100%;max-width:420px}
+ .social{padding:50px 0}
+ .social-hero{margin-bottom:28px}
+ .social-grid{grid-template-columns:1fr;justify-items:center;gap:28px}
+ .fb-phone{width:min(280px,80vw);margin:0 auto}
+ .fb-screen{height:500px}
+ .social-cards{width:100%;max-width:400px;margin:0 auto}
+ .social-card{padding:16px 18px}
+ .sc-icon{width:46px;height:46px}
 }
