@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="index.css?v=15">
+<link rel="stylesheet" href="index.css?v=16">
 <link rel="stylesheet" href="mobile-app.css?v=7">
 </head>
 <body>
@@ -207,15 +207,14 @@ function renderFeedbacks(){
 }
 let momentIdx=0;
 function renderMoments(){
- const track=document.getElementById('momentsTrack');if(!track)return;
+ const wrap=document.getElementById('momentsTrack');if(!wrap)return;
  const moments=(menuConfig?.moments||[]).filter(m=>m.url);
  const sec=document.getElementById('moments');if(sec)sec.style.display=moments.length?'':'none';
- track.innerHTML=moments.map((m,i)=>`<button class="moment-card" data-mi="${i}" aria-label="View photo ${i+1}"><img src="${esc(m.url)}" alt="${esc(m.caption||'Best moment at KOKAB BITES')}" loading="lazy"><span class="moment-cap">${esc(m.caption||'')}</span></button>`).join('');
- const dots=document.getElementById('momentsDots');
- if(dots)dots.innerHTML=moments.map((_,i)=>`<button data-dot="${i}" aria-label="Go to photo ${i+1}" class="${i===0?'active':''}"></button>`).join('');
- track.querySelectorAll('.moment-card').forEach(c=>c.onclick=()=>openLightbox(+c.dataset.mi));
- if(dots)dots.querySelectorAll('[data-dot]').forEach(d=>d.onclick=()=>{track.scrollTo({left:+d.dataset.dot*track.offsetWidth*.85,behavior:'smooth'})});
- track.onscroll=()=>{const i=Math.round(track.scrollLeft/(track.offsetWidth*.85));if(dots)dots.querySelectorAll('[data-dot]').forEach((d,di)=>d.classList.toggle('active',di===i))};
+ const cards=moments.map((m,i)=>`<button class="moment-card" data-mi="${i}" aria-label="View photo ${i+1}"><img src="${esc(m.url)}" alt="${esc(m.caption||'Best moment at KOKAB BITES')}" loading="lazy"><span class="moment-cap">${esc(m.caption||'')}</span></button>`).join('');
+ wrap.classList.add('moments-loop');
+ wrap.innerHTML=`<div class="moments-inner">${cards}${cards}</div>`;
+ wrap.querySelectorAll('.moment-card').forEach(c=>c.onclick=()=>openLightbox(+c.dataset.mi%moments.length));
+ const dots=document.getElementById('momentsDots');if(dots)dots.style.display='none';
 }
 function openLightbox(i){
  const moments=(menuConfig?.moments||[]).filter(m=>m.url);if(!moments.length)return;
