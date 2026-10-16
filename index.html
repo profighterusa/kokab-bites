@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="index.css?v=14">
+<link rel="stylesheet" href="index.css?v=15">
 <link rel="stylesheet" href="mobile-app.css?v=7">
 </head>
 <body>
@@ -112,6 +112,9 @@
     <div class="builder-summary"><div class="section-kicker" data-i18n="build_est">Your live order estimate</div><div class="big-total" id="builderTotal">Rs. 0</div><div class="muted" id="builderCount">No items selected yet.</div><p class="muted">The cart calculates listed menu prices automatically. Any unpriced item, delivery charge or discount must be confirmed by our team.</p><button class="btn" id="builderOpenCart" type="button" data-i18n="build_review">Review order & request price ↗</button></div>
   </div>
 </div></section>
+<section class="section moments" id="moments"><div class="container"><div class="section-head"><div><div class="section-kicker">Unforgettable times</div><h2>Best moments.</h2></div><p>Celebrity visits, happy customers & special occasions at KOKAB BITES.</p></div><div class="moments-track" id="momentsTrack"></div><div class="moments-dots" id="momentsDots"></div></div></section>
+<div class="moment-lightbox hidden" id="momentLightbox"><button class="mlb-close" id="mlbClose">✕</button><button class="mlb-prev" id="mlbPrev">‹</button><img id="mlbImg" alt="Best moment"><button class="mlb-next" id="mlbNext">›</button><div class="mlb-cap" id="mlbCap"></div><div class="mlb-count" id="mlbCount"></div></div>
+
 
 <section class="section"><div class="container story-grid"><div class="story-image"><img loading="lazy" src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1100&q=85" alt="Freshly prepared food on a table"></div><div class="story-copy"><div class="section-kicker">A local favourite in the making</div><h2>Good food is more than a meal.</h2><p>It’s the first bite after a long day. The shared pizza in the middle of the table. The burger you keep thinking about. KOKAB BITES is here for those everyday moments worth making delicious.</p><div class="story-points"><div class="story-point"><span>✓</span> Food made fresh for your order</div><div class="story-point"><span>✓</span> Burgers, pizza, rolls and more</div><div class="story-point"><span>✓</span> Easy ordering straight through WhatsApp</div></div><a class="btn" href="#menu">Find your next favourite ↗</a></div></div></section>
 <section class="section reviews"><div class="container"><div class="section-head"><div><div class="section-kicker">Kind words, happy bites</div><h2>Food worth talking about.</h2></div><p>Have you tried KOKAB BITES? Share your experience and help other local food lovers find their next favourite.</p></div><div class="review-grid" id="reviewGrid"></div></div></section>
@@ -168,7 +171,8 @@ async function loadMenuConfig(){
   if(menuConfig.deals)presetDeals=menuConfig.deals;
   refreshMenuPrices();
   renderAdminProducts();
-  renderWebsiteDeals();renderZoneOptions();renderBanner();buildCategoryFilters();renderFeedbacks();
+  renderWebsiteDeals();renderZoneOptions();renderBanner();buildCategoryFilters();renderFeedbacks();renderMoments();
+  const mlb=$('#momentLightbox');if(mlb){$('#mlbClose').onclick=closeLightbox;$('#mlbPrev').onclick=e=>{e.stopPropagation();openLightbox(momentIdx-1)};$('#mlbNext').onclick=e=>{e.stopPropagation();openLightbox(momentIdx+1)};mlb.onclick=e=>{if(e.target===mlb)closeLightbox()};document.addEventListener('keydown',e=>{if(mlb.classList.contains('hidden'))return;if(e.key==='Escape')closeLightbox();if(e.key==='ArrowLeft')openLightbox(momentIdx-1);if(e.key==='ArrowRight')openLightbox(momentIdx+1)});let _tx=0;mlb.addEventListener('touchstart',e=>_tx=e.touches[0].clientX,{passive:true});mlb.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-_tx;if(Math.abs(dx)>50)openLightbox(momentIdx+(dx<0?1:-1))},{passive:true});}
   $$('a[href^="https://wa.me/"]').forEach(a=>{a.href="https://wa.me/"+waNum();});
  }catch(e){/* Static preview can still run using bundled fallback prices. */}
  updateOpenBadge();
@@ -201,6 +205,29 @@ function renderFeedbacks(){
   grid.innerHTML=cards+cta;
  }
 }
+let momentIdx=0;
+function renderMoments(){
+ const track=document.getElementById('momentsTrack');if(!track)return;
+ const moments=(menuConfig?.moments||[]).filter(m=>m.url);
+ const sec=document.getElementById('moments');if(sec)sec.style.display=moments.length?'':'none';
+ track.innerHTML=moments.map((m,i)=>`<button class="moment-card" data-mi="${i}" aria-label="View photo ${i+1}"><img src="${esc(m.url)}" alt="${esc(m.caption||'Best moment at KOKAB BITES')}" loading="lazy"><span class="moment-cap">${esc(m.caption||'')}</span></button>`).join('');
+ const dots=document.getElementById('momentsDots');
+ if(dots)dots.innerHTML=moments.map((_,i)=>`<button data-dot="${i}" aria-label="Go to photo ${i+1}" class="${i===0?'active':''}"></button>`).join('');
+ track.querySelectorAll('.moment-card').forEach(c=>c.onclick=()=>openLightbox(+c.dataset.mi));
+ if(dots)dots.querySelectorAll('[data-dot]').forEach(d=>d.onclick=()=>{track.scrollTo({left:+d.dataset.dot*track.offsetWidth*.85,behavior:'smooth'})});
+ track.onscroll=()=>{const i=Math.round(track.scrollLeft/(track.offsetWidth*.85));if(dots)dots.querySelectorAll('[data-dot]').forEach((d,di)=>d.classList.toggle('active',di===i))};
+}
+function openLightbox(i){
+ const moments=(menuConfig?.moments||[]).filter(m=>m.url);if(!moments.length)return;
+ momentIdx=(i+moments.length)%moments.length;
+ const m=moments[momentIdx];
+ document.getElementById('mlbImg').src=m.url;
+ document.getElementById('mlbCap').textContent=m.caption||'';
+ document.getElementById('mlbCount').textContent=(momentIdx+1)+' / '+moments.length;
+ document.getElementById('momentLightbox').classList.remove('hidden');
+ document.body.style.overflow='hidden';
+}
+function closeLightbox(){document.getElementById('momentLightbox').classList.add('hidden');document.body.style.overflow='';}
 function renderAdminProducts(){
  const grid=$("#productGrid");if(!grid||!Array.isArray(menuConfig?.customItems))return;
  grid.querySelectorAll("[data-admin-item]").forEach(el=>el.remove());
