@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="index.css?v=17">
+<link rel="stylesheet" href="index.css?v=18">
 <link rel="stylesheet" href="mobile-app.css?v=7">
 </head>
 <body>
@@ -112,7 +112,7 @@
     <div class="builder-summary"><div class="section-kicker" data-i18n="build_est">Your live order estimate</div><div class="big-total" id="builderTotal">Rs. 0</div><div class="muted" id="builderCount">No items selected yet.</div><p class="muted">The cart calculates listed menu prices automatically. Any unpriced item, delivery charge or discount must be confirmed by our team.</p><button class="btn" id="builderOpenCart" type="button" data-i18n="build_review">Review order & request price ↗</button></div>
   </div>
 </div></section>
-<section class="section moments" id="moments"><div class="container"><div class="section-head"><div><div class="section-kicker">Unforgettable times</div><h2>Best moments.</h2></div><p>Celebrity visits, happy customers & special occasions at KOKAB BITES.</p></div><div class="moments-track" id="momentsTrack"></div><div class="moments-dots" id="momentsDots"></div></div></section>
+<section class="section moments" id="moments"><div class="container"><div class="section-head"><div><div class="section-kicker">Unforgettable times</div><h2>Best moments.</h2></div><p>Celebrity visits, happy customers & special occasions at KOKAB BITES.</p></div><div class="moments-track" id="momentsTrack"></div><div class="moments-track reverse" id="momentsTrack2"></div><div class="moments-dots" id="momentsDots"></div></div></section>
 <div class="moment-lightbox hidden" id="momentLightbox"><button class="mlb-close" id="mlbClose">✕</button><button class="mlb-prev" id="mlbPrev">‹</button><img id="mlbImg" alt="Best moment"><button class="mlb-next" id="mlbNext">›</button><div class="mlb-cap" id="mlbCap"></div><div class="mlb-count" id="mlbCount"></div></div>
 
 
@@ -214,6 +214,13 @@ function renderMoments(){
  wrap.classList.add('moments-loop');
  wrap.innerHTML=`<div class="moments-inner">${cards}${cards}</div>`;
  wrap.querySelectorAll('.moment-card').forEach(c=>c.onclick=()=>openLightbox(+c.dataset.mi%moments.length));
+ const wrap2=document.getElementById('momentsTrack2');
+ if(wrap2&&moments.length>1){
+  const cards2=[...moments].reverse().map((m,i)=>`<button class="moment-card" data-mi="${moments.length-1-i}" aria-label="View photo"><img src="${esc(m.url)}" alt="${esc(m.caption||'Best moment')}" loading="lazy"><span class="moment-cap">${esc(m.caption||'')}</span></button>`).join('');
+  wrap2.classList.add('moments-loop');
+  wrap2.innerHTML=`<div class="moments-inner">${cards2}${cards2}</div>`;
+  wrap2.querySelectorAll('.moment-card').forEach(c=>c.onclick=()=>openLightbox(+c.dataset.mi%moments.length));
+ } else if(wrap2){wrap2.style.display='none'}
  const dots=document.getElementById('momentsDots');if(dots)dots.style.display='none';
 }
 function openLightbox(i){
