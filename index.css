@@ -782,3 +782,9 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
 .social-cta h3{margin:0 0 10px;font-size:1.3rem;color:var(--ink)}
 .social-cta p{color:var(--muted);margin:0 0 20px;line-height:1.7}
 @media(max-width:900px){.social-grid{grid-template-columns:1fr}.social-cta{position:static}.fb-wrap{height:480px}}
+
+.social-btns{display:grid;gap:12px}
+.social-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;font-weight:800}
+.social-btn.insta{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border:0}
+.social-btn.tiktok{background:#111;color:#fff;border:0}
+.social-btn.tiktok:hover{background:#222}
