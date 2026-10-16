@@ -771,3 +771,12 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
 .map-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .map-cta{position:absolute;left:16px;bottom:16px;box-shadow:0 8px 24px #0005}
 @media(max-width:680px){.map-wrap{min-height:260px}}
+
+/* Follow Us / Facebook section */
+.social{background:#141311}.social-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:start}
+.fb-wrap{border-radius:20px;overflow:hidden;background:#fff;box-shadow:0 14px 38px #0004;min-height:400px}
+.fb-wrap iframe{width:100%;height:600px;border:0;display:block}
+.social-cta{padding:28px;background:var(--panel);border:1px solid var(--line);border-radius:20px;position:sticky;top:100px}
+.social-cta h3{margin:0 0 10px;font-size:1.3rem}
+.social-cta p{color:var(--muted);margin:0 0 20px;line-height:1.7}
+@media(max-width:900px){.social-grid{grid-template-columns:1fr}.social-cta{position:static}.fb-wrap iframe{height:500px}}
