@@ -788,3 +788,31 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
 .social-btn.insta{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border:0}
 .social-btn.tiktok{background:#111;color:#fff;border:0}
 .social-btn.tiktok:hover{background:#222}
+
+/* Best Moments - mobile-first creative gallery */
+.moments{background:linear-gradient(180deg,var(--bg),var(--panel))}
+.moments-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:6px 4px 18px;scrollbar-width:none}
+.moments-track::-webkit-scrollbar{display:none}
+.moment-card{position:relative;flex:0 0 78%;max-width:340px;scroll-snap-align:center;border:0;padding:0;border-radius:22px;overflow:hidden;cursor:pointer;background:var(--panel);box-shadow:0 14px 38px #0003;transition:transform .25s}
+.moment-card:active{transform:scale(.97)}
+.moment-card img{width:100%;height:300px;object-fit:cover;display:block}
+.moment-card .moment-cap{position:absolute;left:0;right:0;bottom:0;padding:30px 16px 14px;font-size:.85rem;font-weight:700;color:#fff;background:linear-gradient(0deg,#000c,transparent);text-align:left}
+.moments-dots{display:flex;gap:8px;justify-content:center;padding:4px}
+.moments-dots button{width:8px;height:8px;border-radius:50%;border:0;background:var(--line);cursor:pointer;padding:0;transition:.2s}
+.moments-dots button.active{background:var(--gold);transform:scale(1.3)}
+/* Lightbox */
+.moment-lightbox{position:fixed;inset:0;z-index:200;background:#000e;display:grid;place-items:center;touch-action:pan-y}
+.moment-lightbox.hidden{display:none}
+.moment-lightbox img{max-width:94vw;max-height:82vh;border-radius:14px;box-shadow:0 20px 80px #000}
+.mlb-close,.mlb-prev,.mlb-next{position:absolute;background:#ffffff22;color:#fff;border:0;border-radius:50%;width:44px;height:44px;font-size:22px;cursor:pointer;backdrop-filter:blur(8px)}
+.mlb-close{top:16px;right:16px}
+.mlb-prev{left:12px;top:50%;transform:translateY(-50%)}
+.mlb-next{right:12px;top:50%;transform:translateY(-50%)}
+.mlb-cap{position:absolute;bottom:54px;left:0;right:0;text-align:center;color:#fff;font-weight:700;padding:0 20px}
+.mlb-count{position:absolute;bottom:24px;left:0;right:0;text-align:center;color:#ffffffaa;font-size:.85rem}
+@media(min-width:900px){
+ .moments-track{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));overflow:visible}
+ .moment-card{flex:none;max-width:none}
+ .moment-card:hover{transform:translateY(-6px)}
+ .moments-dots{display:none}
+}
