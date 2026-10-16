@@ -387,7 +387,7 @@ function renderBanner(){const s=storeSettings(),b=document.querySelector('#siteB
 document.querySelector('#deliveryZone')?.addEventListener('change',()=>{try{renderCart()}catch(e){}});
 document.querySelector('#promoApply')?.addEventListener('click',()=>{const v=(document.querySelector('#promoCode').value||'').trim().toUpperCase();try{if(v)localStorage.setItem('kokab-promo',v);else localStorage.removeItem('kokab-promo')}catch(e){}renderCart();const t=cartTotals();notify(t.promoError||(t.discount?('Promo applied: −'+money(t.discount)):'No promo applied'))});
 document.querySelector('#siteBannerClose')?.addEventListener('click',()=>{try{sessionStorage.setItem('kokab-banner-hide','1')}catch(e){}document.querySelector('#siteBanner').hidden=true});
-loadMenuConfig().finally(()=>{setupProductOptions();renderCart();updateOpenBadge();renderBanner();setInterval(updateOpenBadge,5*60*1000);});
+loadMenuConfig().finally(()=>{setupProductOptions();renderCart();updateOpenBadge();renderBanner();renderMoments();setInterval(updateOpenBadge,5*60*1000);});
 
 (function(){
  const body=document.body,toggle=document.getElementById('themeToggle'),mobile=document.getElementById('mobileTheme'),status=document.getElementById('appStatus'),label=document.getElementById('connectionLabel');
