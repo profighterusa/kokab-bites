@@ -772,22 +772,6 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
 .map-cta{position:absolute;left:16px;bottom:16px;box-shadow:0 8px 24px #0005}
 @media(max-width:680px){.map-wrap{min-height:260px}}
 
-/* Follow Us / Facebook section */
-.social{background:var(--bg)}.social-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:start}
-.social .section-head h2{color:var(--ink)}
-.social .section-head p{color:var(--muted)}
-.fb-wrap{border-radius:20px;overflow:hidden;background:#fff;box-shadow:0 14px 38px #0004;height:520px;max-height:70vh;width:500px;max-width:100%;margin:0 auto}
-.fb-wrap iframe{width:100%;height:100%;border:0;display:block}
-.social-cta{padding:28px;background:var(--panel);border:1px solid var(--line);border-radius:20px;position:sticky;top:100px}
-.social-cta h3{margin:0 0 10px;font-size:1.3rem;color:var(--ink)}
-.social-cta p{color:var(--muted);margin:0 0 20px;line-height:1.7}
-@media(max-width:900px){.social-grid{grid-template-columns:1fr}.social-cta{position:static}.fb-wrap{height:480px}}
-
-.social-btns{display:grid;gap:12px}
-.social-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;font-weight:800}
-.social-btn.insta{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border:0}
-.social-btn.tiktok{background:#111;color:#fff;border:0}
-.social-btn.tiktok:hover{background:#222}
 
 /* Best Moments - infinite loop, 4:5 cards */
 .moments{background:linear-gradient(180deg,var(--bg),var(--panel))}
@@ -811,4 +795,36 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
 .mlb-next{right:12px;top:50%;transform:translateY(-50%)}
 .mlb-cap{position:absolute;bottom:54px;left:0;right:0;text-align:center;color:#fff;font-weight:700;padding:0 20px}
 .mlb-count{position:absolute;bottom:24px;left:0;right:0;text-align:center;color:#ffffffaa;font-size:.85rem}
-
+/* Follow Us - creative redesign */
+.social{background:radial-gradient(1200px 500px at 20% 0%,#2a1f14 0%,var(--bg) 60%);overflow:hidden}
+.social-hero{text-align:center;max-width:640px;margin:0 auto 40px}
+.social-hero .section-kicker{display:block;margin-bottom:12px}
+.social-hero h2{font-size:clamp(2.4rem,6vw,3.6rem);margin:0 0 12px;color:var(--ink)}
+.social-hero h2 em{font-style:normal;background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.social-hero p{color:var(--muted);font-size:1.02rem;line-height:1.7;margin:0}
+.social-grid{display:grid;grid-template-columns:auto 1fr;gap:36px;align-items:center;justify-content:center;max-width:960px;margin:0 auto}
+/* Phone mockup for Facebook */
+.fb-phone{width:300px;background:#111;border-radius:44px;padding:12px;box-shadow:0 30px 80px #0006,inset 0 0 0 2px #333;position:relative}
+.fb-notch{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:110px;height:26px;background:#111;border-radius:0 0 16px 16px;z-index:2}
+.fb-screen{border-radius:34px;overflow:hidden;background:#fff;height:600px}
+.fb-screen iframe{width:100%;height:100%;border:0;display:block}
+/* Social cards */
+.social-cards{display:grid;gap:16px;max-width:420px}
+.social-card{display:flex;align-items:center;gap:16px;padding:20px 22px;border-radius:22px;text-decoration:none;color:#fff;transition:transform .25s,box-shadow .25s;box-shadow:0 14px 34px #0003}
+.social-card:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 20px 44px #0005}
+.social-card:active{transform:scale(.98)}
+.sc-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:#ffffff2e;flex-shrink:0}
+.sc-text{flex:1;display:flex;flex-direction:column;gap:2px}
+.sc-text b{font-size:1.1rem}
+.sc-text small{opacity:.85;font-size:.82rem}
+.sc-arrow{font-size:1.4rem;opacity:.8}
+.insta-card{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
+.tiktok-card{background:#111;border:1px solid #333;box-shadow:0 14px 34px #0005,inset 0 0 20px #25f4ee11}
+.tiktok-card .sc-icon{color:#25F4EE}
+.fb-card{background:linear-gradient(135deg,#1877F2,#0d5bbf)}
+@media(max-width:860px){
+ .social-grid{grid-template-columns:1fr;justify-items:center}
+ .fb-phone{width:min(300px,84vw)}
+ .fb-screen{height:540px}
+ .social-cards{width:100%;max-width:420px}
+}
