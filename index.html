@@ -672,6 +672,7 @@ if(gh) gh.textContent=greet+' 👋';
 
 <script>
 /* Best Moments gallery */
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function renderMoments(){
  const wrap=document.getElementById('momentsTrack');if(!wrap)return;
  const moments=(menuConfig?.moments||[]).filter(m=>m.url);
