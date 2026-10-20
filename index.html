@@ -25,7 +25,36 @@
 <link rel="stylesheet" href="index.css?v=9">
 <link rel="stylesheet" href="mobile-app.css?v=6">
 </head>
-<body>
+<body><script>
+/* Best Moments gallery */
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderMoments(){
+ const wrap=document.getElementById('momentsTrack');if(!wrap)return;
+ const moments=(menuConfig?.moments||[]).filter(m=>m.url);
+ const sec=document.getElementById('moments');if(sec)sec.style.display=moments.length?'':'none';
+ const cards=moments.map((m,i)=>`<button class="moment-card" data-mi="${i}"><img src="${esc(m.url)}" alt="${esc(m.caption||'Best moment')}" loading="lazy"><span class="moment-cap">${esc(m.caption||'')}</span></button>`).join('');
+ wrap.innerHTML=`<div class="moments-inner">${cards}${cards}</div>`;
+ wrap.querySelectorAll('.moment-card').forEach(c=>c.onclick=()=>openLightbox(+c.dataset.mi%moments.length));
+ const wrap2=document.getElementById('momentsTrack2');
+ if(wrap2&&moments.length>1){
+  const cards2=[...moments].reverse().map((m,i)=>`<button class="moment-card" data-mi="${moments.length-1-i}"><img src="${esc(m.url)}" alt="${esc(m.caption||'')}" loading="lazy"><span class="moment-cap">${esc(m.caption||'')}</span></button>`).join('');
+  wrap2.innerHTML=`<div class="moments-inner">${cards2}${cards2}</div>`;
+  wrap2.querySelectorAll('.moment-card').forEach(c=>c.onclick=()=>openLightbox(+c.dataset.mi%moments.length));
+ }
+}
+function openLightbox(i){
+ const moments=(menuConfig?.moments||[]).filter(m=>m.url);if(!moments.length)return;
+ let idx=i;
+ const lb=document.createElement('div');lb.className='lightbox';lb.innerHTML=`<button class="lb-close">✕</button><button class="lb-prev">‹</button><img src="${esc(moments[idx].url)}"><button class="lb-next">›</button><div class="lb-cap">${esc(moments[idx].caption||'')}</div>`;
+ const upd=()=>{lb.querySelector('img').src=moments[idx].url;lb.querySelector('.lb-cap').textContent=moments[idx].caption||''};
+ lb.querySelector('.lb-close').onclick=()=>lb.remove();
+ lb.querySelector('.lb-prev').onclick=e=>{e.stopPropagation();idx=(idx-1+moments.length)%moments.length;upd()};
+ lb.querySelector('.lb-next').onclick=e=>{e.stopPropagation();idx=(idx+1)%moments.length;upd()};
+ lb.onclick=e=>{if(e.target===lb)lb.remove()};
+ document.addEventListener('keydown',function h(e){if(e.key==='Escape'){lb.remove();document.removeEventListener('keydown',h)}});
+ document.body.appendChild(lb);
+}
+</script>
 <div class="announcement"><div class="container"><span>✦ KOKAB BITES, GUJRANWALA</span><span>•</span><span id="openBadge" class="open-badge">●</span><span>•</span><span>Special Combo: 2 Shami Burgers + 2 Special Shawarmas + 1L Next Cola — Rs. 900</span></div></div>
 <header>
 <div class="app-header">
@@ -148,7 +177,6 @@ const cart=new Map(), favourites=new Set();
 try{const savedCart=JSON.parse(localStorage.getItem('kokab-cart')||'[]');if(Array.isArray(savedCart))savedCart.forEach(([k,v])=>{if(typeof k==='string'&&v&&typeof v.name==='string'&&Number.isInteger(v.qty)&&v.qty>0)cart.set(k,v)});const savedFavs=JSON.parse(localStorage.getItem('kokab-favourites')||'[]');if(Array.isArray(savedFavs))savedFavs.filter(v=>typeof v==='string').forEach(v=>favourites.add(v));}catch(e){}
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const money=n=>"Rs. "+Number(n||0).toLocaleString("en-PK");
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function notify(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>e.classList.remove("show"),2300)}
 let menuConfig=null;
 let classicPizza={Small:{label:'7” Small',price:290},Medium:{label:'10” Medium',price:390},Large:{label:'13” Large',price:790},XL:{label:'16” XL',price:1200}};
@@ -670,35 +698,6 @@ if(gh) gh.textContent=greet+' 👋';
 })();
 </script>
 
-<script>
-/* Best Moments gallery */
-function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function renderMoments(){
- const wrap=document.getElementById('momentsTrack');if(!wrap)return;
- const moments=(menuConfig?.moments||[]).filter(m=>m.url);
- const sec=document.getElementById('moments');if(sec)sec.style.display=moments.length?'':'none';
- const cards=moments.map((m,i)=>`<button class="moment-card" data-mi="${i}"><img src="${esc(m.url)}" alt="${esc(m.caption||'Best moment')}" loading="lazy"><span class="moment-cap">${esc(m.caption||'')}</span></button>`).join('');
- wrap.innerHTML=`<div class="moments-inner">${cards}${cards}</div>`;
- wrap.querySelectorAll('.moment-card').forEach(c=>c.onclick=()=>openLightbox(+c.dataset.mi%moments.length));
- const wrap2=document.getElementById('momentsTrack2');
- if(wrap2&&moments.length>1){
-  const cards2=[...moments].reverse().map((m,i)=>`<button class="moment-card" data-mi="${moments.length-1-i}"><img src="${esc(m.url)}" alt="${esc(m.caption||'')}" loading="lazy"><span class="moment-cap">${esc(m.caption||'')}</span></button>`).join('');
-  wrap2.innerHTML=`<div class="moments-inner">${cards2}${cards2}</div>`;
-  wrap2.querySelectorAll('.moment-card').forEach(c=>c.onclick=()=>openLightbox(+c.dataset.mi%moments.length));
- }
-}
-function openLightbox(i){
- const moments=(menuConfig?.moments||[]).filter(m=>m.url);if(!moments.length)return;
- let idx=i;
- const lb=document.createElement('div');lb.className='lightbox';lb.innerHTML=`<button class="lb-close">✕</button><button class="lb-prev">‹</button><img src="${esc(moments[idx].url)}"><button class="lb-next">›</button><div class="lb-cap">${esc(moments[idx].caption||'')}</div>`;
- const upd=()=>{lb.querySelector('img').src=moments[idx].url;lb.querySelector('.lb-cap').textContent=moments[idx].caption||''};
- lb.querySelector('.lb-close').onclick=()=>lb.remove();
- lb.querySelector('.lb-prev').onclick=e=>{e.stopPropagation();idx=(idx-1+moments.length)%moments.length;upd()};
- lb.querySelector('.lb-next').onclick=e=>{e.stopPropagation();idx=(idx+1)%moments.length;upd()};
- lb.onclick=e=>{if(e.target===lb)lb.remove()};
- document.addEventListener('keydown',function h(e){if(e.key==='Escape'){lb.remove();document.removeEventListener('keydown',h)}});
- document.body.appendChild(lb);
-}
-</script>
+
 </body>
 </html>
