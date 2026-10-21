@@ -33,7 +33,13 @@
   body.dark-mode header .navlinks.show { background: #141411 !important; }
   /* Show the hamburger at this same 760px breakpoint (index.css only reveals .menu-toggle at 680px,
      which left the 681-760px band with hidden nav links and no visible way to open them). */
-  header .nav-actions .menu-toggle { display: grid !important; }
+  .app-header .menu-toggle {
+    position: static !important; flex: 0 0 auto; display: grid !important; place-items: center;
+    width: 42px; height: 42px; border-radius: 50% !important;
+    background: rgba(255,255,255,.55) !important; border: 1px solid rgba(146,110,20,.28) !important; color: #4A3A10 !important;
+    box-shadow: 0 4px 12px rgba(146,96,10,.12); font-size: 1.05rem;
+  }
+  body.dark-mode .app-header .menu-toggle { background: rgba(255,255,255,.08) !important; border-color: rgba(255,255,255,.16) !important; color: #F5EDE0 !important; }
   /* Hide duplicated brand/logo + theme/cart/order (in app-header), keep lang + hamburger + navlinks */
   header .nav .brand { display: none !important; }
   header .nav-actions .theme-toggle,
@@ -277,4 +283,152 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
   .product .product-bottom:not(:has(.price-list)) { flex-direction: column !important; align-items: stretch !important; gap: 5px; }
   .product .product-bottom .price { font-size: .9rem; }
   .product .add-btn { width: 100% !important; text-align: center; padding: 7px 8px; font-size: .76rem; border-radius: 10px; }
+}
+
+/* SwitchFood-style elements: hidden on desktop, enabled in the mobile block below */
+.sf-h2, .sf-popular { display: none; }
+
+@keyframes sfFlash { 0%,100% { box-shadow: 0 0 0 0 rgba(226,112,58,0); } 30% { box-shadow: 0 0 0 4px rgba(226,112,58,.75); } }
+.sf-flash { animation: sfFlash .55s ease 3; border-radius: 22px; }
+
+/* ============ SWITCHFOOD REDESIGN v3 (mobile) ============ */
+@media (max-width: 760px) {
+  /* Warm gradient wash over the top of the page (header → banner) */
+  body { background: #FFFBF3; position: relative; }
+  body::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 640px; z-index: -1; pointer-events: none;
+    background: linear-gradient(180deg, #F6C768 0%, #F9DC96 42%, #FDEFC6 72%, rgba(253,239,198,0) 100%);
+  }
+  body.dark-mode { background: #12100D; }
+  body.dark-mode::before { background: linear-gradient(180deg, #2B2115 0%, #1D1811 55%, rgba(29,24,17,0) 100%); }
+
+  /* Announcement becomes a slim line on the gradient */
+  .announcement { background: transparent !important; color: #6B5518; font-size: .68rem; padding: 7px 0 1px; box-shadow: none !important; }
+  .announcement span:not(.open-badge) { color: #6B5518 !important; }
+  .announcement .container { justify-content: center; gap: 6px; flex-wrap: nowrap; white-space: nowrap; overflow: hidden; }
+  .announcement span:nth-child(4), .announcement span:nth-child(5) { display: none; }
+  body.dark-mode .announcement { color: #C9B896; }
+  body.dark-mode .announcement span:not(.open-badge) { color: #C9B896 !important; }
+
+  /* Header: gradient bar, centred brand, hamburger floating at left */
+  html:not([data-theme="dark"]) body:not(.dark-mode) header { background: linear-gradient(180deg, #F6C768, #F8D47E) !important; border-bottom: 0 !important; border-radius: 0 !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  body.dark-mode header { background: #241C10 !important; }
+  .app-header { position: relative; background: transparent !important; border-bottom: 0 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; padding: 10px 12px 4px; gap: 8px; min-height: 62px; }
+  .app-header .brand { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  .app-header .brand img { height: 40px; }
+  .app-header .brand > div { display: block !important; text-align: left; }
+  .app-header .brand-name { font-size: 1.06rem; font-weight: 900; color: #33270E; line-height: 1.05; }
+  .app-header .brand-sub { display: none !important; }
+  body.dark-mode .app-header .brand-name { color: #F5EDE0; }
+  #appThemeBtn { order: 3; margin-left: auto; }
+  #appCartBtn { order: 4; }
+  .app-icon-btn { background: rgba(255,255,255,.55) !important; border: 1px solid rgba(146,110,20,.28) !important; color: #4A3A10 !important; border-radius: 50% !important; box-shadow: 0 4px 12px rgba(146,96,10,.12); }
+  body.dark-mode .app-icon-btn { background: rgba(255,255,255,.08) !important; border-color: rgba(255,255,255,.16) !important; color: #F5EDE0 !important; }
+  header .nav { height: 0 !important; min-height: 0 !important; padding: 0 !important; }
+  header .nav-actions .menu-toggle {
+    position: absolute; top: 44px; left: 12px; z-index: 96;
+    width: 42px; height: 42px; border-radius: 50% !important;
+    background: rgba(255,255,255,.55) !important; border: 1px solid rgba(146,110,20,.28) !important; color: #4A3A10 !important;
+    box-shadow: 0 4px 12px rgba(146,96,10,.12); font-size: 1.05rem;
+  }
+
+  /* Greeting: one centred line (the reference's sub-header slot) */
+  .app-greeting { padding: 8px 14px 0; text-align: center; }
+  .app-greeting h2 { font-size: .88rem; font-weight: 700; color: #5C4A1E; margin: 0; }
+  .app-greeting p { display: none; }
+  body.dark-mode .app-greeting h2 { color: #C9B896; }
+
+  /* Search: big white pill */
+  .app-search { margin: 12px 14px 2px; }
+  .app-search input {
+    height: 52px; border-radius: 999px !important; background: #fff !important;
+    border: 1px solid #F3E5C3 !important; box-shadow: 0 12px 26px rgba(166,118,20,.16);
+    font-size: .95rem; color: #33270E; padding-left: 46px;
+  }
+  body.dark-mode .app-search input { background: #221D16 !important; border-color: #38312A !important; color: #F5EDE0; box-shadow: 0 12px 26px rgba(0,0,0,.35); }
+  .app-search::before { color: #B08D3E; left: 17px; }
+
+  /* Hero becomes the promo banner card */
+  .hero { margin: 14px 14px 0 !important; padding: 0 !important; min-height: 0 !important; background: transparent !important; border-radius: 26px !important; }
+  .hero .container { width: 100% !important; padding: 0 !important; }
+  .hero-grid { display: block !important; }
+  .hero-content, .hero-stamp { display: none !important; }
+  .hero-stage { margin: 0 !important; }
+  .hero-slideshow { height: 188px; border-radius: 26px; overflow: hidden; box-shadow: 0 16px 34px rgba(146,96,10,.22); position: relative; }
+  .hero-slideshow .slides, .hero-slideshow .slide { height: 100%; }
+  .hero-slideshow img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-slideshow .slide-caption { border-radius: 0 16px 0 0; }
+
+  /* Section headings, SwitchFood style */
+  .sf-h2 { display: block; font-size: 1.16rem; font-weight: 800; color: #2C2110; margin: 20px 14px 10px; letter-spacing: -.01em; font-family: Inter, system-ui, sans-serif; }
+  body.dark-mode .sf-h2 { color: #F5EDE0; }
+  .section-head h2 { font-family: Inter, system-ui, sans-serif !important; font-size: 1.28rem !important; font-weight: 800 !important; color: #2C2110; letter-spacing: -.01em; }
+  body.dark-mode .section-head h2 { color: #F5EDE0; }
+  .section-kicker { color: #C75B24 !important; font-size: .66rem !important; letter-spacing: .14em !important; }
+  .section { padding: 34px 0 !important; }
+  section { scroll-margin-top: 84px; }
+
+  /* Category pills (icon + label in a row) */
+  .app-cats { padding: 2px 14px 10px; gap: 9px; }
+  .app-cat {
+    flex-direction: row !important; align-items: center; gap: 7px; width: auto !important;
+    padding: 9px 15px 9px 12px; background: #fff; border: 1.5px solid #F1E5CB; border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(146,96,10,.06);
+  }
+  .app-cat .app-cat-img { width: auto !important; height: auto !important; border: 0 !important; background: none !important; font-size: 1.05rem; border-radius: 0; }
+  .app-cat span:last-child { font-size: .84rem; font-weight: 700; color: #2C2110; }
+  .app-cat.active { border-color: #E2703A; background: #FFF3E6; box-shadow: 0 6px 16px rgba(226,112,58,.18); }
+  .app-cat.active span:last-child { color: #C75B24; }
+  body.dark-mode .app-cat { background: #1E1A15; border-color: #38312A; }
+  body.dark-mode .app-cat span:last-child { color: #F5EDE0; }
+  body.dark-mode .app-cat.active { border-color: #E2703A; background: #2A1D13; }
+
+  /* Most Popular rail */
+  .sf-popular { display: block; }
+  .sf-pop-head { display: flex; align-items: center; justify-content: space-between; }
+  .sf-pop-head .sf-h2 { margin-bottom: 10px; }
+  .sf-seeall { font-weight: 800; color: #C75B24; font-size: .85rem; text-decoration: none; margin-right: 14px; }
+  .sf-pop-rail { display: flex; gap: 13px; overflow-x: auto; padding: 2px 14px 16px; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .sf-pop-rail::-webkit-scrollbar { display: none; }
+  .sf-pop-card { flex: 0 0 232px; scroll-snap-align: start; background: #fff; border-radius: 24px; overflow: hidden; box-shadow: 0 14px 30px rgba(146,96,10,.13); border: 1px solid #F7EDD8; display: flex; flex-direction: column; }
+  .sf-pop-card > img { width: 100%; height: 138px; object-fit: cover; display: block; }
+  .sf-pop-body { padding: 11px 13px 13px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .sf-pop-name { font-size: .95rem; font-weight: 800; color: #2C2110; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sf-pop-sub { font-size: .74rem; color: #9A8A6C; margin: 0; }
+  .sf-pop-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 9px; }
+  .sf-pop-price { font-weight: 900; color: #2C2110; font-size: .92rem; }
+  .sf-pop-add { border: 0; background: #E2703A; color: #fff; font-weight: 800; font-size: .78rem; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+  .sf-pop-add:active { transform: scale(.96); }
+  body.dark-mode .sf-pop-card { background: #1E1A15; border-color: #2E2822; box-shadow: 0 14px 30px rgba(0,0,0,.4); }
+  body.dark-mode .sf-pop-name, body.dark-mode .sf-pop-price { color: #F5EDE0; }
+  @media (max-width: 380px) { .sf-pop-card { flex-basis: 214px; } }
+
+  /* Menu cards in the same language */
+  .product { border-radius: 22px !important; border: 1px solid #F6ECDA !important; box-shadow: 0 10px 24px rgba(146,96,10,.09) !important; background: #fff !important; }
+  body.dark-mode .product { background: #1E1A15 !important; border-color: #2E2822 !important; box-shadow: 0 10px 24px rgba(0,0,0,.35) !important; }
+  .product .add-btn { border-radius: 999px !important; }
+
+  /* Deals / benefits / categories / moments / reviews / visit cards */
+  .big-deal { border-radius: 26px !important; }
+  .benefits-grid { gap: 10px !important; }
+  .benefit { background: #fff; border: 1px solid #F6ECDA; border-radius: 18px; box-shadow: 0 8px 20px rgba(146,96,10,.07); padding: 14px 12px !important; }
+  body.dark-mode .benefit { background: #1E1A15; border-color: #2E2822; }
+  .category { background: #fff !important; border: 1px solid #F6ECDA !important; border-radius: 20px !important; box-shadow: 0 8px 20px rgba(146,96,10,.07) !important; }
+  body.dark-mode .category { background: #1E1A15 !important; border-color: #2E2822 !important; }
+  .moment-card { border-radius: 20px !important; }
+  .builder-panel { border-radius: 24px !important; }
+  .visit-card { border-radius: 22px !important; }
+  .drawer { border-radius: 26px 26px 0 0 !important; }
+
+  /* Bottom tab bar: reference orange for the active tab */
+  .mobile-app-nav { border-radius: 24px !important; }
+  .mobile-app-nav a.active, .mobile-app-nav button.active { background: #FFE9DA !important; color: #C75B24 !important; }
+  body.dark-mode .mobile-app-nav a.active, body.dark-mode .mobile-app-nav button.active { background: rgba(226,112,58,.18) !important; color: #F0854C !important; }
+}
+
+/* Phones: stack price above a full-width Add button (the row layout overflows narrow cards) */
+@media (max-width: 430px) {
+  .product .product-bottom:not(:has(.price-list)) { flex-direction: column !important; align-items: stretch !important; gap: 6px; }
+  .product .product-bottom .price { font-size: .92rem; }
+  .product .add-btn { width: 100% !important; text-align: center; padding: 8px; font-size: .78rem; border-radius: 10px !important; }
 }
