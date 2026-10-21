@@ -22,8 +22,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="index.css?v=9">
-<link rel="stylesheet" href="mobile-app.css?v=6">
+<link rel="stylesheet" href="index.css?v=10">
+<link rel="stylesheet" href="mobile-app.css?v=7">
 </head>
 <body><script>
 /* Best Moments gallery */
@@ -373,7 +373,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-add]");if(
 let activeCat="All";
 function applyFilters(){const query=$("#search").value.trim().toLowerCase();let visible=0;$$(".product").forEach(p=>{const cat=p.dataset.cat,name=p.dataset.name.toLowerCase(),desc=p.dataset.desc.toLowerCase();const matchCat=activeCat==="All"||cat===activeCat||(activeCat==="Favourites"&&favourites.has(p.dataset.name));const displayName=(p.dataset.displayName||p.querySelector('.product-title-row h3')?.textContent||p.dataset.name).toLowerCase();const matchQuery=!query||name.includes(query)||displayName.includes(query)||desc.includes(query);const enabled=menuConfig?.itemMeta?.[p.dataset.name]?.active!==false;p.style.display=enabled&&matchCat&&matchQuery?"flex":"none";if(enabled&&matchCat&&matchQuery)visible++});let empty=$("#noResults");if(!visible){if(!empty){empty=document.createElement("div");empty.id="noResults";empty.className="empty-state";$("#productGrid").appendChild(empty)}empty.textContent=activeCat==="Favourites"?"No saved favourites yet. Tap a heart on a menu item.":"No items match your search. Try another keyword."}else if(empty)empty.remove()}
 $$(".filter").forEach(b=>b.addEventListener("click",()=>{$$(".filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");activeCat=b.dataset.cat;applyFilters()}));
-$("#search").addEventListener("input",applyFilters);
+$("#search").addEventListener("input",()=>{if($("#search").value.trim()&&activeCat!=="All"){activeCat="All";$$(".filter").forEach(x=>x.classList.toggle("active",x.dataset.cat==="All"))}applyFilters()});
 $$("[data-jumpcat]").forEach(a=>a.addEventListener("click",()=>{const cat=a.dataset.jumpcat;$$(".filter").forEach(x=>x.classList.toggle("active",x.dataset.cat===cat));activeCat=cat;applyFilters()}));
 $("#cartOpen").onclick=showCart;$("#mobileCart").onclick=showCart;$("#builderOpenCart").onclick=showCart;$("#closeCart").onclick=hideCart;
 $("#overlay").addEventListener("click",e=>{if(e.target===$("#overlay"))hideCart()});
