@@ -320,6 +320,50 @@ export function createApp() {
     }
   });
 
+  // Full orders report (CSV): EVERY order on record (no 200 cap) — the backup an admin
+  // downloads before deleting old orders.
+  app.get('/api/admin/orders/report', async (c) => {
+    try {
+      const db = getDb(c);
+      const rows = [];
+      const PAGE = 1000;
+      for (let from = 0; ; from += PAGE) {
+        const { data, error } = await db.from('orders').select('payload,status,created_at').order('created_at', { ascending: true }).range(from, from + PAGE - 1);
+        if (error) throw error;
+        rows.push(...(data || []));
+        if (!data || data.length < PAGE) break;
+      }
+      const cell = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+      const head = ['Order ID', 'Date', 'Status', 'Customer', 'Phone', 'Address', 'Items', 'Subtotal', 'Delivery Fee', 'Promo Code', 'Promo Discount', 'Deal Request (target budget)', 'Total (server)', 'Notes'];
+      const lines = [head.map(cell).join(',')];
+      for (const r of rows) {
+        const p = r.payload || {};
+        const items = (p.items || []).map((i) => `${i.qty}x ${i.name}${i.option ? ' [' + i.option + ']' : ''} Rs.${i.serverLineTotal ?? i.lineTotal ?? ''}`).join('; ');
+        lines.push([p.id || '', p.createdAt || r.created_at || '', r.status || p.status || 'New', p.name || '', p.phone || '', p.address || '', items, p.clientTotal ?? '', p.deliveryFee ?? '', p.promoCode || '', p.promoDiscount ?? '', p.targetBudget ?? '', p.serverTotal ?? p.estimatedTotal ?? '', p.adminNote || p.notes || ''].map(cell).join(','));
+      }
+      const fname = 'kokab-bites-orders-report-' + new Date().toISOString().slice(0, 10) + '.csv';
+      c.header('Content-Type', 'text/csv; charset=utf-8');
+      c.header('Content-Disposition', `attachment; filename="${fname}"`);
+      return c.body('\ufeff' + lines.join('\r\n'));
+    } catch (e) {
+      return err(c, 500, e.message);
+    }
+  });
+
+  // Permanently delete orders older than 30 days. The age filter is enforced here on the
+  // server — orders from the last 30 days can never be deleted through this route.
+  app.delete('/api/admin/orders/old', async (c) => {
+    try {
+      const db = getDb(c);
+      const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      const { count, error } = await db.from('orders').delete({ count: 'exact' }).lt('created_at', cutoff);
+      if (error) throw error;
+      return json(c, 200, { ok: true, deleted: count || 0, cutoff });
+    } catch (e) {
+      return err(c, 500, e.message);
+    }
+  });
+
   app.patch('/api/admin/orders/:id', async (c) => {
     let body;
     try {
