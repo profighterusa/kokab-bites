@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="index.css?v=10">
-<link rel="stylesheet" href="mobile-app.css?v=12">
+<link rel="stylesheet" href="mobile-app.css?v=13">
 </head>
 <body><script>
 /* Best Moments gallery */
@@ -704,6 +704,19 @@ if(gh) gh.textContent=greet+' 👋';
 </script>
 
 
+<div class="qv-backdrop" id="qvBackdrop" hidden></div>
+<div class="qv-sheet" id="qvSheet" hidden role="dialog" aria-modal="true" aria-label="Product options">
+  <div class="qv-media"><img id="qvImg" alt=""><button type="button" class="qv-close" id="qvClose" aria-label="Close">✕</button></div>
+  <div class="qv-body">
+    <h3 id="qvName"></h3>
+    <p class="qv-desc" id="qvDesc"></p>
+    <div class="qv-vars" id="qvVars" hidden><span class="qv-vars-label" id="qvVarsLabel">Choose option</span><div class="qv-pills" id="qvPills"></div></div>
+    <div class="qv-foot">
+      <div class="qv-qty"><button type="button" id="qvMinus" aria-label="One less">−</button><b id="qvQtyNum">1</b><button type="button" id="qvPlus" aria-label="One more">+</button></div>
+      <button type="button" class="qv-add" id="qvAdd">Add to cart</button>
+    </div>
+  </div>
+</div>
 <script>
 (function(){
   var mt=document.getElementById('menuToggle'); var ah=document.querySelector('.app-header');
@@ -738,12 +751,156 @@ if(gh) gh.textContent=greet+' 👋';
     var sel='#productGrid .product[data-name="'+(window.CSS&&CSS.escape?CSS.escape(name):name)+'"]';
     var real=document.querySelector(sel);
     if(!real) return;
-    if(real.querySelector('select')){ real.scrollIntoView({behavior:'smooth',block:'center'}); real.classList.add('sf-flash'); setTimeout(function(){real.classList.remove('sf-flash')},1700); return; }
+    if(real.querySelector('select')){ if(typeof window.openProductQuickView==='function'){ window.openProductQuickView(real); return; } real.scrollIntoView({behavior:'smooth',block:'center'}); real.classList.add('sf-flash'); setTimeout(function(){real.classList.remove('sf-flash')},1700); return; }
     if(typeof addItem==='function') addItem(name,real);
   });
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',buildPop); else buildPop();
   var grid=document.getElementById('productGrid');
   if(grid&&window.MutationObserver){ var t; var ob=new MutationObserver(function(){ clearTimeout(t); t=setTimeout(buildPop,350); }); ob.observe(grid,{childList:true}); setTimeout(function(){ ob.disconnect(); },6000); }
+})();
+</script>
+<script>
+(function(){
+  var mq = window.matchMedia('(max-width: 760px)');
+  function fmt(n){ return (typeof money==='function') ? money(n) : ('Rs. ' + Number(n).toLocaleString('en-US')); }
+  function unitPrice(card){
+    var sel = card.querySelector('select[data-option]');
+    if(sel && typeof getProductOption==='function'){ try{ return getProductOption(card).price; }catch(e){} }
+    var name = card.dataset.name;
+    try{ if(typeof simplePrices!=='undefined' && Object.prototype.hasOwnProperty.call(simplePrices,name)) return simplePrices[name]; }catch(e){}
+    var t = card.querySelector('.product-bottom .price:not(.pcard-price)');
+    if(t){ var m = t.textContent.replace(/,/g,'').match(/(\d+)/); if(m) return Number(m[1]); }
+    return null;
+  }
+  function ensureCardPrice(card){
+    var bottom = card.querySelector('.product-bottom'); if(!bottom) return;
+    var label = bottom.querySelector('.pcard-price');
+    if(!label){
+      label = document.createElement('span'); label.className = 'pcard-price';
+      bottom.insertBefore(label, bottom.firstChild);
+    }
+    var p = unitPrice(card);
+    label.textContent = (p === null) ? 'Price to confirm' : fmt(p);
+  }
+  function defaultVarFor(name){
+    try{
+      var list = (typeof menuConfig!=='undefined' && menuConfig && menuConfig.customItems) || [];
+      for(var i=0;i<list.length;i++){ if(list[i].name===name && list[i].defaultVariation) return list[i].defaultVariation; }
+      var meta = (typeof menuConfig!=='undefined' && menuConfig && menuConfig.itemMeta) || {};
+      if(meta[name] && meta[name].defaultVariation) return meta[name].defaultVariation;
+    }catch(e){}
+    return '';
+  }
+  function applyDefault(card){
+    var sel = card.querySelector('select[data-option="variation"]');
+    if(!sel || sel.dataset.qvDef) return; sel.dataset.qvDef = '1';
+    var dv = defaultVarFor(card.dataset.name); if(!dv) return;
+    for(var i=0;i<sel.options.length;i++){
+      var o = sel.options[i], lbl = o.dataset.label || (o.textContent||'').split(' \u2014 ')[0];
+      if(lbl === dv){ if(sel.selectedIndex !== i){ sel.selectedIndex = i; sel.dispatchEvent(new Event('change',{bubbles:true})); } break; }
+    }
+  }
+  function process(card){ if(!card || !card.querySelector) return; applyDefault(card); ensureCardPrice(card);
+    if(mq.matches){ var fav = card.querySelector('.product-image .favorite'), pb = card.querySelector('.product-body');
+      if(fav && pb) pb.appendChild(fav); } }
+  function processAll(){ document.querySelectorAll('#productGrid .product').forEach(process); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', processAll); else processAll();
+  var grid = document.getElementById('productGrid'), pending = null;
+  if(grid && window.MutationObserver){
+    var ob = new MutationObserver(function(){ clearTimeout(pending); pending = setTimeout(processAll, 300); });
+    ob.observe(grid, {childList:true, subtree:true});
+  }
+  setTimeout(processAll, 2500); setTimeout(processAll, 5000);
+  if(mq.addEventListener) mq.addEventListener('change', processAll);
+  document.addEventListener('change', function(e){
+    if(e.target && e.target.matches && e.target.matches('#productGrid select[data-option]')){
+      var c = e.target.closest('.product'); if(c) ensureCardPrice(c);
+    }
+  });
+
+  /* ---------- Quick view ---------- */
+  var sheet = document.getElementById('qvSheet'), backdrop = document.getElementById('qvBackdrop');
+  var imgEl = document.getElementById('qvImg'), nameEl = document.getElementById('qvName'), descEl = document.getElementById('qvDesc');
+  var varsWrap = document.getElementById('qvVars'), varsLabel = document.getElementById('qvVarsLabel'), pillsEl = document.getElementById('qvPills');
+  var qtyEl = document.getElementById('qvQtyNum'), addBtn = document.getElementById('qvAdd');
+  var cur = null; /* {card, options:[{value,label,price}]|null, chosen:int, qty:int, soldOut:bool} */
+  function readOptions(card){
+    var sel = card.querySelector('select[data-option]');
+    if(!sel || typeof getProductOption!=='function') return null;
+    var orig = sel.selectedIndex, out = [];
+    for(var i=0;i<sel.options.length;i++){
+      sel.selectedIndex = i;
+      var g = {option:'', price:null};
+      try{ g = getProductOption(card); }catch(e){}
+      out.push({value: sel.options[i].value, label: g.option || (sel.options[i].textContent||'').split(' \u2014 ')[0], price: g.price});
+    }
+    sel.selectedIndex = orig;
+    return out;
+  }
+  function renderQV(){
+    if(!cur) return;
+    pillsEl.innerHTML = '';
+    if(cur.options){
+      varsWrap.hidden = false;
+      cur.options.forEach(function(o, i){
+        var b = document.createElement('button'); b.type = 'button';
+        b.className = 'qv-pill' + (i === cur.chosen ? ' sel' : '');
+        b.innerHTML = '';
+        var l = document.createElement('span'); l.textContent = o.label; b.appendChild(l);
+        var p = document.createElement('span'); p.className = 'qv-pill-price';
+        p.textContent = (o.price === null) ? 'To confirm' : fmt(o.price); b.appendChild(p);
+        b.addEventListener('click', function(){ cur.chosen = i; renderQV(); });
+        pillsEl.appendChild(b);
+      });
+    } else varsWrap.hidden = true;
+    qtyEl.textContent = cur.qty;
+    var unit = cur.options ? cur.options[cur.chosen].price : unitPrice(cur.card);
+    if(cur.soldOut){ addBtn.disabled = true; addBtn.textContent = 'Sold out'; }
+    else if(unit === null){ addBtn.disabled = false; addBtn.textContent = 'Add to cart \u00b7 price on WhatsApp'; }
+    else { addBtn.disabled = false; addBtn.textContent = 'Add to cart \u00b7 ' + fmt(unit * cur.qty); }
+  }
+  function openQV(card){
+    var sel = card.querySelector('select[data-option]');
+    cur = { card: card, options: readOptions(card), chosen: sel ? sel.selectedIndex : 0, qty: 1,
+            soldOut: card.classList.contains('sold-out') || (card.querySelector('[data-add]')||{}).disabled === true };
+    var img = card.querySelector('.product-image img');
+    imgEl.src = img ? (img.getAttribute('src')||'') : ''; imgEl.alt = card.dataset.name || '';
+    nameEl.textContent = (card.querySelector('h3')||{}).textContent || card.dataset.name || '';
+    var d = card.querySelector('.product-desc');
+    descEl.textContent = d ? d.textContent : (card.dataset.desc || '');
+    descEl.hidden = !descEl.textContent;
+    var lbl = card.querySelector('.product-options label');
+    varsLabel.textContent = lbl ? lbl.textContent : 'Choose option';
+    renderQV();
+    backdrop.hidden = false; sheet.hidden = false;
+    requestAnimationFrame(function(){ backdrop.classList.add('open'); sheet.classList.add('open'); });
+    document.body.style.overflow = 'hidden';
+  }
+  function closeQV(){
+    backdrop.classList.remove('open'); sheet.classList.remove('open');
+    backdrop.hidden = true; sheet.hidden = true;
+    document.body.style.overflow = ''; cur = null;
+  }
+  window.openProductQuickView = openQV;
+  document.getElementById('qvClose').addEventListener('click', closeQV);
+  backdrop.addEventListener('click', closeQV);
+  document.getElementById('qvMinus').addEventListener('click', function(){ if(cur && cur.qty > 1){ cur.qty--; renderQV(); } });
+  document.getElementById('qvPlus').addEventListener('click', function(){ if(cur && cur.qty < 30){ cur.qty++; renderQV(); } });
+  addBtn.addEventListener('click', function(){
+    if(!cur || cur.soldOut) return;
+    var card = cur.card, name = card.dataset.name;
+    var sel = card.querySelector('select[data-option]');
+    if(sel && cur.options){ sel.value = cur.options[cur.chosen].value; sel.dispatchEvent(new Event('change',{bubbles:true})); }
+    if(typeof addItem === 'function'){ for(var i=0;i<cur.qty;i++) addItem(name, card); }
+    closeQV();
+  });
+  document.addEventListener('click', function(e){
+    if(!mq.matches) return;
+    var card = e.target.closest ? e.target.closest('#productGrid .product') : null;
+    if(!card) return;
+    if(e.target.closest('[data-fav], select, [data-add], a')) return;
+    openQV(card);
+  });
 })();
 </script>
 </body>
