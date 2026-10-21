@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="index.css?v=10">
-<link rel="stylesheet" href="mobile-app.css?v=11">
+<link rel="stylesheet" href="mobile-app.css?v=12">
 </head>
 <body><script>
 /* Best Moments gallery */
@@ -72,6 +72,9 @@ function openLightbox(i){
 <main>
 <div class="site-banner" id="siteBanner" hidden><span id="siteBannerText"></span><button id="siteBannerClose" aria-label="Dismiss announcement">✕</button></div><div class="app-greeting"><h2>Good evening 👋</h2><p data-i18n="app_greet_sub">What are you craving today?</p></div>
 <div class="app-search"><input type="search" id="appSearchInput" placeholder="Search burgers, pizza, deals..." aria-label="Search menu"></div>
+<section class="hero" id="home"><div class="container hero-grid"><div class="hero-content"><div class="eyebrow" data-i18n="hero_eyebrow">Your neighbourhood food spot</div><h1>Crave it.<br><em>Bite into</em><br>happiness.</h1><p class="hero-copy">Burgers with big personality, pizza worth sharing, and shawarma made for those “just one more bite” moments.</p><div class="hero-buttons"><a class="btn" href="#menu" data-i18n-html="hero_menu">Explore the menu <span>↗</span></a><button class="btn btn-dark" onclick="openWhatsAppGeneral()" data-i18n-html="hero_chat">Chat to order <span>↗</span></button></div><div class="hero-meta"><span><i>✦</i><b>Made fresh</b>, every order</span><span><i>✦</i>Big flavour, local love</span></div></div><div class="hero-stage"><div class="hero-slideshow" id="heroSlideshow"><div class="slides" id="heroSlides"></div><button class="slide-arrow prev" id="slidePrev" aria-label="Previous slide">‹</button><button class="slide-arrow next" id="slideNext" aria-label="Next slide">›</button><div class="slide-dots" id="slideDots"></div></div></div></div><div class="hero-stamp">GOOD FOOD<strong>BETTER</strong>MOOD ALWAYS</div></section>
+
+<h2 class="sf-h2">Explore Categories</h2>
 <div class="app-cats" id="appCats" role="tablist" aria-label="Categories">
   <button class="app-cat active" data-cat="All"><span class="app-cat-img">🍽️</span><span>All</span></button>
   <button class="app-cat" data-cat="Burgers"><span class="app-cat-img">🍔</span><span>Burgers</span></button>
@@ -80,7 +83,9 @@ function openLightbox(i){
   <button class="app-cat" data-cat="Sides"><span class="app-cat-img">🍟</span><span>Sides</span></button>
   <button class="app-cat" data-cat="Drinks"><span class="app-cat-img">🥤</span><span>Drinks</span></button>
 </div>
-<section class="hero" id="home"><div class="container hero-grid"><div class="hero-content"><div class="eyebrow" data-i18n="hero_eyebrow">Your neighbourhood food spot</div><h1>Crave it.<br><em>Bite into</em><br>happiness.</h1><p class="hero-copy">Burgers with big personality, pizza worth sharing, and shawarma made for those “just one more bite” moments.</p><div class="hero-buttons"><a class="btn" href="#menu" data-i18n-html="hero_menu">Explore the menu <span>↗</span></a><button class="btn btn-dark" onclick="openWhatsAppGeneral()" data-i18n-html="hero_chat">Chat to order <span>↗</span></button></div><div class="hero-meta"><span><i>✦</i><b>Made fresh</b>, every order</span><span><i>✦</i>Big flavour, local love</span></div></div><div class="hero-stage"><div class="hero-slideshow" id="heroSlideshow"><div class="slides" id="heroSlides"></div><button class="slide-arrow prev" id="slidePrev" aria-label="Previous slide">‹</button><button class="slide-arrow next" id="slideNext" aria-label="Next slide">›</button><div class="slide-dots" id="slideDots"></div></div></div></div><div class="hero-stamp">GOOD FOOD<strong>BETTER</strong>MOOD ALWAYS</div></section>
+<section class="sf-popular" id="sfPopular"><div class="sf-pop-head"><h2 class="sf-h2 sf-h2-inline">Most Popular</h2><a href="#menu" class="sf-seeall">See all ›</a></div><div class="sf-pop-rail" id="sfPopRail"></div></section>
+
+
 <section class="section deals-showcase" id="deal"><div class="container">
 <div class="big-deal" id="bigDeal" hidden><div class="big-deal-glow"></div><div class="big-deal-inner">
 <div class="big-deal-copy"><span class="big-deal-kicker"><i>🔥</i><span data-i18n="bigdeal_kicker">Big deal of the moment</span><em id="bigDealBadge"></em></span>
@@ -699,5 +704,47 @@ if(gh) gh.textContent=greet+' 👋';
 </script>
 
 
+<script>
+(function(){
+  var mt=document.getElementById('menuToggle'); var ah=document.querySelector('.app-header');
+  if(mt&&ah&&mt.parentElement!==ah) ah.insertBefore(mt, ah.firstChild);
+  function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function buildPop(){
+    var rail=document.getElementById('sfPopRail'); if(!rail) return;
+    var items=[];
+    document.querySelectorAll('#productGrid .product').forEach(function(c){
+      var img=c.querySelector('.product-image img');
+      var src=img?(img.getAttribute('src')||''):'';
+      var price=c.querySelector('.price');
+      if(!c.dataset.name||!src) return;
+      items.push({name:c.dataset.name,cat:c.dataset.cat||'',img:src,price:price?price.textContent.trim():''});
+    });
+    items=items.slice(0,8);
+    var sec=document.getElementById('sfPopular');
+    if(items.length<3){ if(sec) sec.style.display='none'; return; }
+    if(sec) sec.style.display='';
+    var prep=30; try{ if(window.menuConfig&&menuConfig.settings&&menuConfig.settings.prepMinutes) prep=menuConfig.settings.prepMinutes; }catch(e){}
+    rail.innerHTML=items.map(function(it){
+      return '<article class="sf-pop-card"><img loading="lazy" src="'+esc(it.img)+'" alt="">'
+        +'<div class="sf-pop-body"><h3 class="sf-pop-name">'+esc(it.name)+'</h3>'
+        +'<p class="sf-pop-sub">'+esc(it.cat)+' · ⏱ '+prep+' min</p>'
+        +'<div class="sf-pop-row"><span class="sf-pop-price">'+esc(it.price)+'</span>'
+        +'<button type="button" class="sf-pop-add" data-pop-add="'+esc(it.name)+'">＋ Add</button></div></div></article>';
+    }).join('');
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-pop-add]'); if(!b) return;
+    var name=b.getAttribute('data-pop-add');
+    var sel='#productGrid .product[data-name="'+(window.CSS&&CSS.escape?CSS.escape(name):name)+'"]';
+    var real=document.querySelector(sel);
+    if(!real) return;
+    if(real.querySelector('select')){ real.scrollIntoView({behavior:'smooth',block:'center'}); real.classList.add('sf-flash'); setTimeout(function(){real.classList.remove('sf-flash')},1700); return; }
+    if(typeof addItem==='function') addItem(name,real);
+  });
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',buildPop); else buildPop();
+  var grid=document.getElementById('productGrid');
+  if(grid&&window.MutationObserver){ var t; var ob=new MutationObserver(function(){ clearTimeout(t); t=setTimeout(buildPop,350); }); ob.observe(grid,{childList:true}); setTimeout(function(){ ob.disconnect(); },6000); }
+})();
+</script>
 </body>
 </html>
