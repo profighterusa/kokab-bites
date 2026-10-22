@@ -514,3 +514,22 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
   .qv-add:active { transform: scale(.98); }
   .qv-add:disabled { background: #B9AC93; box-shadow: none; }
 }
+
+/* ============ PRODUCT CARD THEME v5 — warm cream + soft peach circle (mobile) ============ */
+@media (max-width: 760px) {
+  #productGrid .product {
+    background: linear-gradient(165deg, #FFFEFA 0%, #FBF3E2 100%) !important;
+    border-color: #F1E5CB !important;
+    overflow: hidden;
+  }
+  #productGrid .product::before {
+    content: ""; position: absolute; right: -52px; bottom: -64px; width: 158px; height: 158px;
+    border-radius: 50%; background: #F8E9CF; z-index: 0; pointer-events: none;
+  }
+  #productGrid .product .product-image, #productGrid .product .product-body { position: relative; z-index: 1; }
+  body.dark-mode #productGrid .product { background: #1E1A15 !important; border-color: #2E2822 !important; }
+  body.dark-mode #productGrid .product::before { background: rgba(232, 178, 92, .07); }
+  .sf-pop-card { background: linear-gradient(165deg, #FFFEFA 0%, #FBF3E2 100%); }
+  body.dark-mode .sf-pop-card { background: #1E1A15; }
+}
+/* v14 theme build */
