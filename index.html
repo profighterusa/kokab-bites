@@ -21,6 +21,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","name":"KOKAB BITES","servesCuisine":["Burgers","Pizza","Shawarma","Fast Food"],"telephone":"+92 318 4345994","address":{"@type":"PostalAddress","streetAddress":"Hafizabad Road, Near Fazal Masjid, Sadiq Road","addressLocality":"Gujranwala","addressCountry":"PK"},"priceRange":"Rs. 50 - Rs. 2700"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://iytalsxwxqssttsxrmjz.supabase.co" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="index.css?v=10">
 <link rel="stylesheet" href="mobile-app.css?v=14"><!-- card theme v5 -->
@@ -429,6 +430,7 @@ loadMenuConfig().finally(()=>{setupProductOptions();renderCart();updateOpenBadge
  const connection=()=>{const online=navigator.onLine;label.textContent=online?'Ready to browse':'Offline mode · saved menu available';status.classList.toggle('offline',!online);status.classList.add('visible');clearTimeout(window.kokabStatusTimer);if(online)window.kokabStatusTimer=setTimeout(()=>status.classList.remove('visible'),2300)};window.addEventListener('online',connection);window.addEventListener('offline',connection);
  // Advanced PWA install popup
  (function(){
+ function initInstall(){
  const overlay=document.getElementById('installOverlay'),btn=document.getElementById('installNow'),
  close=document.getElementById('installClose'),later=document.getElementById('installLater'),
  iosHelp=document.getElementById('installIosHelp');
@@ -444,8 +446,8 @@ loadMenuConfig().finally(()=>{setupProductOptions();renderCart();updateOpenBadge
  const maybeShow=()=>{
    if(isInstalled())return;
    if(Date.now()<dismissedUntil())return;
-   if(isIOS()){iosHelp.hidden=false;btn.textContent='Got it';btn.onclick=()=>{hidePopup();rememberDismiss(7)};showPopup();return}
-   if(promptEvent){btn.onclick=async()=>{try{promptEvent.prompt();const c=await promptEvent.userChoice;promptEvent=null;if(c&&c.outcome==='accepted'){rememberDismiss(3650)}else{rememberDismiss(7)}}catch(e){}hidePopup()};showPopup()}
+   if(isIOS()){if(iosHelp)iosHelp.hidden=false;if(btn){btn.textContent='Got it';btn.onclick=()=>{hidePopup();rememberDismiss(7)}}showPopup();return}
+   if(promptEvent){if(btn)btn.onclick=async()=>{try{promptEvent.prompt();const c=await promptEvent.userChoice;promptEvent=null;if(c&&c.outcome==='accepted'){rememberDismiss(3650)}else{rememberDismiss(7)}}catch(e){}hidePopup()};showPopup()}
  };
  close?.addEventListener('click',()=>{hidePopup();rememberDismiss(7)});
  later?.addEventListener('click',()=>{hidePopup();rememberDismiss(7)});
@@ -453,6 +455,8 @@ loadMenuConfig().finally(()=>{setupProductOptions();renderCart();updateOpenBadge
  // Show ~4s after load (lets the hero + menu settle first)
  if(document.readyState==='complete')setTimeout(maybeShow,4000);
  else window.addEventListener('load',()=>setTimeout(maybeShow,4000));
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initInstall);else initInstall();
  })();
  // Android-style active navigation state based on the section in view.
  const mobileLinks=[...document.querySelectorAll('.mobile-app-nav a')];
