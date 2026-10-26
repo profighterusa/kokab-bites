@@ -69,7 +69,7 @@ function openLightbox(i){
 </div><div class="container nav">
 <a class="brand" href="#home" aria-label="KOKAB BITES home"><img class="brand-logo" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp?v=2" alt="KOKAB BITES — Taste Good Mood Always"></a>
 <nav class="navlinks" id="navlinks"><a href="#home" data-i18n="nav_home">Home</a><a href="#categories" data-i18n="nav_explore">Explore</a><a href="#menu" data-i18n="nav_menu">Menu</a><a href="#deal" data-i18n="nav_deal">Special Deal</a><a href="#visit" data-i18n="nav_visit">Find Us</a></nav>
-<div class="nav-actions"><button class="icon-btn theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch theme">☾</button><button class="icon-btn" id="favoritesJump" aria-label="Show favourites">♡</button><button class="icon-btn" id="cartOpen" aria-label="Open cart">🛍<span class="cart-badge" id="cartCount">0</span></button><a class="btn" href="#menu" data-i18n="order_now">Order now ↗</a><button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu">☰</button></div>
+<div class="nav-actions"><button class="icon-btn theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch theme">☾</button><button class="icon-btn" id="favoritesJump" aria-label="Show favourites">♡</button><button class="icon-btn" id="cartOpen" aria-label="Open cart">🛍<span class="cart-badge" id="cartCount">0</span></button><a class="btn" href="#menu" data-i18n="order_now">Order now ↗</a><button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navlinks">☰</button></div>
 </div></header>
 <main>
 <div class="site-banner" id="siteBanner" hidden><span id="siteBannerText"></span><button id="siteBannerClose" aria-label="Dismiss announcement">✕</button></div><div class="app-greeting"><h2>Good evening 👋</h2><p data-i18n="app_greet_sub">What are you craving today?</p></div>
@@ -414,8 +414,8 @@ $("#checkout").onclick=async()=>{
  if(!orderId){notify("Order not saved online — sending via WhatsApp only. Save your reference from WhatsApp.");}
 if(orderId){cart.clear();renderCart();try{localStorage.setItem("kokab-last-order",orderId);localStorage.removeItem("kokab-promo");const _pi2=document.querySelector("#promoCode");if(_pi2)_pi2.value="";}catch(e){}const _ti=$("#trackId");if(_ti)_ti.value=orderId;notify("Order "+orderId+" sent! Track it in the Track Order section.");}
 };
-$("#menuToggle").onclick=()=>$("#navlinks").classList.toggle("show");
-$$(".navlinks a").forEach(a=>a.addEventListener("click",()=>$("#navlinks").classList.remove("show")));
+$("#menuToggle").onclick=()=>{var n=$("#navlinks");var open=n.classList.toggle("show");$("#menuToggle").setAttribute("aria-expanded",open?"true":"false");};
+$$(".navlinks a").forEach(a=>a.addEventListener("click",()=>{$("#navlinks").classList.remove("show");$("#menuToggle").setAttribute("aria-expanded","false");}));
 $("#year").textContent=new Date().getFullYear();
 function renderZoneOptions(){const s=storeSettings(),sel=document.querySelector('#deliveryZone'),wrap=document.querySelector('#zoneWrap');if(!sel||!wrap)return;const zones=Array.isArray(s.deliveryZones)?s.deliveryZones:[];const prev=sel.value;sel.innerHTML=zones.map(z=>'<option value="'+esc(z.name)+'">'+esc(z.name)+' \u2014 '+(Number(z.fee)?money(Number(z.fee)):'FREE')+'</option>').join('');if(zones.length){wrap.style.display='';let found=false;for(const o of sel.options){if(o.value===prev){sel.value=prev;found=true;break}}if(!found)sel.selectedIndex=0}else{wrap.style.display='none'}}
 function renderBanner(){const s=storeSettings(),b=document.querySelector('#siteBanner');if(!b)return;let hide=false;try{hide=sessionStorage.getItem('kokab-banner-hide')==='1'}catch(e){}if(s.announcementOn&&s.announcementText&&!hide){document.querySelector('#siteBannerText').textContent=s.announcementText;b.hidden=false}else b.hidden=true}
