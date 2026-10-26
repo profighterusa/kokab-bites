@@ -16,7 +16,8 @@
 <meta property="og:title" content="KOKAB BITES — Good Food. Better Mood.">
 <meta property="og:description" content="Burgers, pizza, shawarma and more in Gujranwala. Build your order and send it on WhatsApp.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="logo-kokab-bites.png">
+<meta property="og:url" content="https://kokabbites.pages.dev/">
+<meta property="og:image" content="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp?v=2">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","name":"KOKAB BITES","servesCuisine":["Burgers","Pizza","Shawarma","Fast Food"],"telephone":"+92 318 4345994","address":{"@type":"PostalAddress","streetAddress":"Hafizabad Road, Near Fazal Masjid, Sadiq Road","addressLocality":"Gujranwala","addressCountry":"PK"},"priceRange":"Rs. 50 - Rs. 2700"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -377,7 +378,7 @@ function openWhatsAppGeneral(){window.open("https://wa.me/"+waNum()+"?text="+enc
 document.addEventListener("click",e=>{const b=e.target.closest("[data-add]");if(b&&!b.disabled){const card=b.closest(".product");addItem(b.dataset.add,card)}});
 
 let activeCat="All";
-function applyFilters(){const query=$("#search").value.trim().toLowerCase();let visible=0;$$(".product").forEach(p=>{const cat=p.dataset.cat,name=p.dataset.name.toLowerCase(),desc=p.dataset.desc.toLowerCase();const matchCat=activeCat==="All"||cat===activeCat||(activeCat==="Favourites"&&favourites.has(p.dataset.name));const displayName=(p.dataset.displayName||p.querySelector('.product-title-row h3')?.textContent||p.dataset.name).toLowerCase();const matchQuery=!query||name.includes(query)||displayName.includes(query)||desc.includes(query);const enabled=menuConfig?.itemMeta?.[p.dataset.name]?.active!==false;p.style.display=enabled&&matchCat&&matchQuery?"flex":"none";if(enabled&&matchCat&&matchQuery)visible++});let empty=$("#noResults");if(!visible){if(!empty){empty=document.createElement("div");empty.id="noResults";empty.className="empty-state";$("#productGrid").appendChild(empty)}empty.textContent=activeCat==="Favourites"?"No saved favourites yet. Tap a heart on a menu item.":"No items match your search. Try another keyword."}else if(empty)empty.remove()}
+function applyFilters(){const query=$("#search").value.trim().toLowerCase();let visible=0;$$(".product").forEach(p=>{const cat=p.dataset.cat,name=p.dataset.name.toLowerCase(),desc=p.dataset.desc.toLowerCase();const matchCat=activeCat==="All"||cat===activeCat||(activeCat==="Favourites"&&favourites.has(p.dataset.name));const displayName=(p.dataset.displayName||p.querySelector('.product-title-row h3')?.textContent||p.dataset.name).toLowerCase();const matchQuery=!query||name.includes(query)||displayName.includes(query)||desc.includes(query);const enabled=menuConfig?.itemMeta?.[p.dataset.name]?.active!==false;p.style.display=enabled&&matchCat&&matchQuery?"flex":"none";if(enabled&&matchCat&&matchQuery)visible++});let empty=$("#noResults");if(!visible){if(!empty){empty=document.createElement("div");empty.id="noResults";empty.className="empty-state";$("#productGrid").appendChild(empty)}empty.textContent=activeCat==="Favourites"?"No saved favourites yet. Tap a heart on a menu item.":"No items match your search. Try another keyword.";if(query&&!empty.querySelector("button")){const btn=document.createElement("button");btn.type="button";btn.className="clear-search-btn";btn.textContent="Clear search";btn.style.cssText="display:block;margin:12px auto 0;padding:10px 20px;border:0;border-radius:999px;background:#e8590c;color:#fff;font:600 0.95rem inherit;cursor:pointer";btn.addEventListener("click",()=>{const s=$("#search");if(s)s.value="";const a=$("#appSearchInput");if(a)a.value="";applyFilters()});empty.appendChild(btn)}}else if(empty)empty.remove()}
 $$(".filter").forEach(b=>b.addEventListener("click",()=>{$$(".filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");activeCat=b.dataset.cat;applyFilters()}));
 $("#search").addEventListener("input",()=>{if($("#search").value.trim()&&activeCat!=="All"){activeCat="All";$$(".filter").forEach(x=>x.classList.toggle("active",x.dataset.cat==="All"))}applyFilters()});
 $$("[data-jumpcat]").forEach(a=>a.addEventListener("click",()=>{const cat=a.dataset.jumpcat;$$(".filter").forEach(x=>x.classList.toggle("active",x.dataset.cat===cat));activeCat=cat;applyFilters()}));
@@ -696,6 +697,15 @@ $$('.app-cat').forEach(chip=>chip.addEventListener('click',()=>{
   if(fb){fb.click();}
   const m=document.querySelector('#menu'); if(m) m.scrollIntoView({behavior:'smooth'});
 }));
+
+/* Mobile header search -> existing menu search (was unbound: typing did nothing) */
+$('#appSearchInput')?.addEventListener('input',()=>{
+  const ds=$('#search'); if(!ds) return;
+  const v=$('#appSearchInput').value;
+  ds.value=v;
+  if(v.trim()) $$('.app-cat').forEach(c=>c.classList.toggle('active',c.dataset.cat==='All'));
+  ds.dispatchEvent(new Event('input',{bubbles:true}));
+});
 
 /* Restore in-cart highlights on load */
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',()=>{try{syncProductHighlights()}catch(e){}})}else{try{syncProductHighlights()}catch(e){}}
