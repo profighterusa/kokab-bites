@@ -24,8 +24,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://iytalsxwxqssttsxrmjz.supabase.co" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="index.css?v=10">
-<link rel="stylesheet" href="mobile-app.css?v=14"><!-- card theme v5 -->
+<link rel="stylesheet" href="index.css?v=11">
+<link rel="stylesheet" href="mobile-app.css?v=15"><!-- card theme v5 -->
 </head>
 <body><script>
 /* Best Moments gallery */
@@ -47,8 +47,8 @@ function renderMoments(){
 function openLightbox(i){
  const moments=(menuConfig?.moments||[]).filter(m=>m.url);if(!moments.length)return;
  let idx=i;
- const lb=document.createElement('div');lb.className='lightbox';lb.innerHTML=`<button class="lb-close">✕</button><button class="lb-prev">‹</button><img src="${esc(moments[idx].url)}"><button class="lb-next">›</button><div class="lb-cap">${esc(moments[idx].caption||'')}</div>`;
- const upd=()=>{lb.querySelector('img').src=moments[idx].url;lb.querySelector('.lb-cap').textContent=moments[idx].caption||''};
+ const lb=document.createElement('div');lb.className='lightbox';lb.setAttribute('role','dialog');lb.setAttribute('aria-modal','true');lb.setAttribute('aria-label','Photo viewer');lb.innerHTML=`<button class="lb-close" aria-label="Close photo viewer">✕</button><button class="lb-prev" aria-label="Previous photo">‹</button><img src="${esc(moments[idx].url)}" alt="${esc(moments[idx].caption||'Best moment')}"><button class="lb-next" aria-label="Next photo">›</button><div class="lb-cap">${esc(moments[idx].caption||'')}</div>`;
+ const upd=()=>{const im=lb.querySelector('img');im.src=moments[idx].url;im.alt=moments[idx].caption||'Best moment';lb.querySelector('.lb-cap').textContent=moments[idx].caption||''};
  lb.querySelector('.lb-close').onclick=()=>lb.remove();
  lb.querySelector('.lb-prev').onclick=e=>{e.stopPropagation();idx=(idx-1+moments.length)%moments.length;upd()};
  lb.querySelector('.lb-next').onclick=e=>{e.stopPropagation();idx=(idx+1)%moments.length;upd()};

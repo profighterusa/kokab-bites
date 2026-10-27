@@ -901,3 +901,9 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
 .lb-close,.lb-prev,.lb-next{position:absolute;background:#ffffff22;border:0;color:#fff;font-size:2rem;width:50px;height:50px;border-radius:50%;cursor:pointer}
 .lb-close{top:20px;right:20px}.lb-prev{left:20px}.lb-next{right:20px}
 .lb-cap{position:absolute;bottom:30px;color:#fff;font-weight:700}
+
+/* ===== MICRO FIXES (2026-10-26) — small text contrast only, no layout or brand-color changes ===== */
+html[data-theme="light"] body:not(.dark-mode) .section-kicker{color:#B34A1B!important}
+html[data-theme="light"] body:not(.dark-mode) .product .price{color:#B34A1B!important}
+html[data-theme="light"] body:not(.dark-mode) .product .add-btn{color:#B34A1B!important}
+body.dark-mode .product .add-btn{color:#F0905A!important}
