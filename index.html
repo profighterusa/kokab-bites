@@ -576,7 +576,7 @@ async function trackOrder(){
 }
 document.getElementById("trackBtn").addEventListener("click", trackOrder);
 document.getElementById("trackId").addEventListener("keydown", function(e){ if(e.key === "Enter") trackOrder(); });
-try{ var last = localStorage.getItem("kokab-last-order"); if(last) document.getElementById("trackId").value = last; }catch(e){}
+try{ var last = localStorage.getItem("kokab-last-order"); if(last){ document.getElementById("trackId").value = last; trackOrder(); } }catch(e){}
 </script>
 
 
