@@ -706,6 +706,10 @@ $('#appSearchInput')?.addEventListener('input',()=>{
   document.querySelector('.app-search')?.classList.toggle('has-text',!!v.trim());
   if(v.trim()) $$('.app-cat').forEach(c=>c.classList.toggle('active',c.dataset.cat==='All'));
   ds.dispatchEvent(new Event('input',{bubbles:true}));
+  /* Typing in the header search filtered the menu but left the user staring at
+     the hero: bring the filtered results into view, but only when the menu
+     section is currently off-screen, so typing while browsing never yanks the page. */
+  if(v.trim()){const m=document.querySelector('#menu');if(m){const r=m.getBoundingClientRect();if(r.top>innerHeight||r.bottom<0)m.scrollIntoView({behavior:'smooth'});}}
 });
 
 /* Mobile search clear (×) button: clears both search boxes and restores the full list */
