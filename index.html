@@ -364,7 +364,7 @@ function renderCart(){
  $("#builderTotal").textContent=money(priced);
  $("#builderCount").textContent=count?`${count} item${count===1?"":"s"} selected · ${unknown?unknown+" item(s) need price confirmation":"all item prices listed"}`:"No items selected yet.";
  const _s=storeSettings();
- $("#cartEstimateNote").textContent=(unknown?unknown+" item(s) need price confirmation. ":"")+"Total includes delivery"+(t.delFee?"":" (free above "+money(_s.freeDeliveryAbove)+")")+". Final bill is confirmed by the shop on WhatsApp.";
+ $("#cartEstimateNote").textContent=(unknown?unknown+" item(s) need price confirmation. ":"")+"Total includes delivery"+(t.delFee?"":(_s.freeDeliveryAbove>0?" (free above "+money(_s.freeDeliveryAbove)+")":" (FREE)"))+(priced&&_s.freeDeliveryAbove>0&&priced<_s.freeDeliveryAbove?". Add "+money(_s.freeDeliveryAbove-priced)+" more for FREE delivery":"")+". Final bill is confirmed by the shop on WhatsApp.";
  const root=$("#cartContents");
  if(!count){root.innerHTML='<div class="cart-empty"><div class="big">🛍</div><b>Your bag is waiting.</b><p>Add menu items to build a custom deal.</p></div>';return}
  root.innerHTML=rows.map(([key,v])=>`<div class="cart-row"><div><strong>${esc(v.name)}${v.option?' · '+esc(v.option):''}</strong><small>${v.price===null?'Price to be confirmed on WhatsApp':money(v.price)+' each'}${v.detail?'<br>'+esc(v.detail):''}</small><span class="line-price">${v.price===null?'Subtotal pending':money(v.price*v.qty)}</span></div><div class="qty"><button data-dec="${esc(key)}" aria-label="Decrease quantity">−</button><b>${v.qty}</b><button data-inc="${esc(key)}" aria-label="Increase quantity">+</button><button data-remove="${esc(key)}" aria-label="Remove item" title="Remove item">×</button></div></div>`).join("");
