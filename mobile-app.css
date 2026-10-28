@@ -132,6 +132,17 @@
     content: '⌕'; position: absolute; left: 15px; top: 50%;
     transform: translateY(-50%); font-size: 1.3rem; color: var(--muted);
   }
+  /* Clear (×) button inside the mobile search pill; shown only while text is typed */
+  .app-search input::-webkit-search-cancel-button { display: none; }
+  .app-search-clear {
+    display: none; position: absolute; right: 8px; top: 50%;
+    transform: translateY(-50%); width: 44px; height: 44px;
+    align-items: center; justify-content: center;
+    border: 0; border-radius: 50%; background: transparent;
+    font-size: 1.5rem; line-height: 1; color: var(--muted); cursor: pointer;
+  }
+  .app-search.has-text .app-search-clear { display: flex; }
+  .app-search.has-text input { padding-right: 52px; }
 
   /* Horizontal category chips */
   .app-cats {

@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://iytalsxwxqssttsxrmjz.supabase.co" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="index.css?v=11">
-<link rel="stylesheet" href="mobile-app.css?v=15"><!-- card theme v5 -->
+<link rel="stylesheet" href="mobile-app.css?v=16"><!-- card theme v5 -->
 </head>
 <body><script>
 /* Best Moments gallery */
@@ -73,7 +73,7 @@ function openLightbox(i){
 </div></header>
 <main>
 <div class="site-banner" id="siteBanner" hidden><span id="siteBannerText"></span><button id="siteBannerClose" aria-label="Dismiss announcement">✕</button></div><div class="app-greeting"><h2>Good evening 👋</h2><p data-i18n="app_greet_sub">What are you craving today?</p></div>
-<div class="app-search"><input type="search" id="appSearchInput" placeholder="Search burgers, pizza, deals..." aria-label="Search menu"></div>
+<div class="app-search"><input type="search" id="appSearchInput" placeholder="Search burgers, pizza, deals..." aria-label="Search menu"><button type="button" id="appSearchClear" class="app-search-clear" aria-label="Clear search">×</button></div>
 <section class="hero" id="home"><div class="container hero-grid"><div class="hero-content"><div class="eyebrow" data-i18n="hero_eyebrow">Your neighbourhood food spot</div><h1>Crave it.<br><em>Bite into</em><br>happiness.</h1><p class="hero-copy">Burgers with big personality, pizza worth sharing, and shawarma made for those “just one more bite” moments.</p><div class="hero-buttons"><a class="btn" href="#menu" data-i18n-html="hero_menu">Explore the menu <span>↗</span></a><button class="btn btn-dark" onclick="openWhatsAppGeneral()" data-i18n-html="hero_chat">Chat to order <span>↗</span></button></div><div class="hero-meta"><span><i>✦</i><b>Made fresh</b>, every order</span><span><i>✦</i>Big flavour, local love</span></div></div><div class="hero-stage"><div class="hero-slideshow" id="heroSlideshow"><div class="slides" id="heroSlides"></div><button class="slide-arrow prev" id="slidePrev" aria-label="Previous slide">‹</button><button class="slide-arrow next" id="slideNext" aria-label="Next slide">›</button><div class="slide-dots" id="slideDots"></div></div></div></div><div class="hero-stamp">GOOD FOOD<strong>BETTER</strong>MOOD ALWAYS</div></section>
 
 <h2 class="sf-h2">Explore Categories</h2>
@@ -703,8 +703,17 @@ $('#appSearchInput')?.addEventListener('input',()=>{
   const ds=$('#search'); if(!ds) return;
   const v=$('#appSearchInput').value;
   ds.value=v;
+  document.querySelector('.app-search')?.classList.toggle('has-text',!!v.trim());
   if(v.trim()) $$('.app-cat').forEach(c=>c.classList.toggle('active',c.dataset.cat==='All'));
   ds.dispatchEvent(new Event('input',{bubbles:true}));
+});
+
+/* Mobile search clear (×) button: clears both search boxes and restores the full list */
+$('#appSearchClear')?.addEventListener('click',()=>{
+  const a=$('#appSearchInput'); if(a) a.value='';
+  const ds=$('#search'); if(ds){ ds.value=''; ds.dispatchEvent(new Event('input',{bubbles:true})); }
+  document.querySelector('.app-search')?.classList.remove('has-text');
+  if(a) a.focus();
 });
 
 /* Restore in-cart highlights on load */
