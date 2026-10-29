@@ -549,3 +549,22 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
   body.dark-mode .sf-pop-card { background: #1E1A15; }
 }
 /* v14 theme build */
+
+/* ============ BACK-TO-TOP BUTTON (mobile only) ============ */
+@media (max-width: 760px) {
+  .to-top-btn {
+    position: fixed; right: 12px; bottom: calc(158px + env(safe-area-inset-bottom, 0px));
+    z-index: 80; width: 44px; height: 44px; min-width: 44px; min-height: 44px;
+    display: grid; place-items: center; border: 0; border-radius: 50%;
+    background: #E2703A; color: #fff; font-size: 1.25rem; font-weight: 700; line-height: 1;
+    box-shadow: 0 8px 22px rgba(0,0,0,.22); cursor: pointer;
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .25s ease, visibility .25s ease, transform .25s ease;
+  }
+  .to-top-btn.show { opacity: 1; visibility: visible; pointer-events: auto; }
+  .to-top-btn:active { transform: translateY(1px) scale(.98); }
+  body.dark-mode .to-top-btn { background: #E2703A; border: 1px solid rgba(255,255,255,.25); }
+  @media (prefers-reduced-motion: reduce) {
+    .to-top-btn { transition: none; }
+  }
+}
