@@ -911,6 +911,7 @@ if(gh) gh.textContent=greet+' 👋';
   window.openProductQuickView = openQV;
   document.getElementById('qvClose').addEventListener('click', closeQV);
   backdrop.addEventListener('click', closeQV);
+  document.addEventListener('keydown', function(e){ if(e.key !== 'Escape') return; if(!sheet.hidden) closeQV(); else { var ov = document.getElementById('overlay'); if(ov && ov.classList.contains('open') && typeof hideCart === 'function') hideCart(); } });
   document.getElementById('qvMinus').addEventListener('click', function(){ if(cur && cur.qty > 1){ cur.qty--; renderQV(); } });
   document.getElementById('qvPlus').addEventListener('click', function(){ if(cur && cur.qty < 30){ cur.qty++; renderQV(); } });
   addBtn.addEventListener('click', function(){
