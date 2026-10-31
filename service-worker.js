@@ -1,16 +1,16 @@
 /* KOKAB BITES service worker — offline-first app shell + menu cache */
-const VERSION = 'kokab-v1';
+const VERSION = 'kokab-v2';
 const SHELL = [
   './',
   './index.html',
   './index.css',
   './app-ui.css',
   './manifest.webmanifest',
-  './favicon.ico',
-  './apple-touch-icon.png',
-  './icon-192.png',
-  './icon-512.png',
   './404.html'
+  /* NOTE: favicon.ico, apple-touch-icon.png, icon-192.png and icon-512.png
+     are NOT listed here on purpose: they are not shipped in this repo, so
+     including them made cache.addAll reject and the whole install fail.
+     The favicon and touch icon are served from Supabase via index.html. */
 ];
 
 self.addEventListener('install', e => {
