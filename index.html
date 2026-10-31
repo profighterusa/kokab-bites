@@ -77,13 +77,13 @@ function openLightbox(i){
 <section class="hero" id="home"><div class="container hero-grid"><div class="hero-content"><div class="eyebrow" data-i18n="hero_eyebrow">Your neighbourhood food spot</div><h1>Crave it.<br><em>Bite into</em><br>happiness.</h1><p class="hero-copy">Burgers with big personality, pizza worth sharing, and shawarma made for those “just one more bite” moments.</p><div class="hero-buttons"><a class="btn" href="#menu" data-i18n-html="hero_menu">Explore the menu <span>↗</span></a><button class="btn btn-dark" onclick="openWhatsAppGeneral()" data-i18n-html="hero_chat">Chat to order <span>↗</span></button></div><div class="hero-meta"><span><i>✦</i><b>Made fresh</b>, every order</span><span><i>✦</i>Big flavour, local love</span></div></div><div class="hero-stage"><div class="hero-slideshow" id="heroSlideshow"><div class="slides" id="heroSlides"></div><button class="slide-arrow prev" id="slidePrev" aria-label="Previous slide">‹</button><button class="slide-arrow next" id="slideNext" aria-label="Next slide">›</button><div class="slide-dots" id="slideDots"></div></div></div></div><div class="hero-stamp">GOOD FOOD<strong>BETTER</strong>MOOD ALWAYS</div></section>
 
 <h2 class="sf-h2">Explore Categories</h2>
-<div class="app-cats" id="appCats" role="tablist" aria-label="Categories">
-  <button class="app-cat active" data-cat="All"><span class="app-cat-img">🍽️</span><span>All</span></button>
-  <button class="app-cat" data-cat="Burgers"><span class="app-cat-img">🍔</span><span>Burgers</span></button>
-  <button class="app-cat" data-cat="Pizza"><span class="app-cat-img">🍕</span><span>Pizza</span></button>
-  <button class="app-cat" data-cat="Shawarma & Rolls"><span class="app-cat-img">🌯</span><span>Shawarma</span></button>
-  <button class="app-cat" data-cat="Sides"><span class="app-cat-img">🍟</span><span>Sides</span></button>
-  <button class="app-cat" data-cat="Drinks"><span class="app-cat-img">🥤</span><span>Drinks</span></button>
+<div class="app-cats" id="appCats" role="group" aria-label="Categories">
+  <button class="app-cat active" data-cat="All" aria-pressed="true"><span class="app-cat-img">🍽️</span><span>All</span></button>
+  <button class="app-cat" data-cat="Burgers" aria-pressed="false"><span class="app-cat-img">🍔</span><span>Burgers</span></button>
+  <button class="app-cat" data-cat="Pizza" aria-pressed="false"><span class="app-cat-img">🍕</span><span>Pizza</span></button>
+  <button class="app-cat" data-cat="Shawarma & Rolls" aria-pressed="false"><span class="app-cat-img">🌯</span><span>Shawarma</span></button>
+  <button class="app-cat" data-cat="Sides" aria-pressed="false"><span class="app-cat-img">🍟</span><span>Sides</span></button>
+  <button class="app-cat" data-cat="Drinks" aria-pressed="false"><span class="app-cat-img">🥤</span><span>Drinks</span></button>
 </div>
 <section class="sf-popular" id="sfPopular"><div class="sf-pop-head"><h2 class="sf-h2 sf-h2-inline">Most Popular</h2><a href="#menu" class="sf-seeall">See all ›</a></div><div class="sf-pop-rail" id="sfPopRail"></div></section>
 
@@ -222,7 +222,7 @@ function buildCategoryFilters(){
  const current=document.querySelector('#filters .filter.active')?.dataset.cat||'All';
  wrap.innerHTML=`<button class="filter${current==='All'?' active':''}" data-cat="All">All items</button>`+cats.map(c=>`<button class="filter${current===c?' active':''}" data-cat="${c}">${c}</button>`).join('')+`<button class="filter${current==='Favourites'?' active':''}" data-cat="Favourites">♡ Favourites</button>`;
  wrap.querySelectorAll('.filter').forEach(b=>b.onclick=()=>{wrap.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeCat=b.dataset.cat;applyFilters()});
- const mc=document.getElementById('appCats');if(mc){const EMOJI={All:'🍽️',Burgers:'🍔',Pizza:'🍕','Shawarma & Rolls':'🌯',Sides:'🍟',Drinks:'🥤',Desserts:'🍰'};const allCats=['All',...cats];mc.innerHTML=allCats.map(c=>`<button class="app-cat${current===c?' active':''}" data-cat="${c}"><span class="app-cat-img">${EMOJI[c]||'🍽️'}</span><span>${c==='Shawarma & Rolls'?'Shawarma':c}</span></button>`).join('');mc.querySelectorAll('.app-cat').forEach(b=>b.onclick=()=>{mc.querySelectorAll('.app-cat').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelector(`#filters .filter[data-cat="${CSS.escape(b.dataset.cat)}"]`)?.click();document.getElementById('menu')?.scrollIntoView({behavior:'smooth'})})}
+ const mc=document.getElementById('appCats');if(mc){const EMOJI={All:'🍽️',Burgers:'🍔',Pizza:'🍕','Shawarma & Rolls':'🌯',Sides:'🍟',Drinks:'🥤',Desserts:'🍰'};const allCats=['All',...cats];mc.innerHTML=allCats.map(c=>`<button class="app-cat${current===c?' active':''}" data-cat="${c}" aria-pressed="${current===c}"><span class="app-cat-img">${EMOJI[c]||'🍽️'}</span><span>${c==='Shawarma & Rolls'?'Shawarma':c}</span></button>`).join('');mc.querySelectorAll('.app-cat').forEach(b=>b.onclick=()=>{mc.querySelectorAll('.app-cat').forEach(x=>x.classList.remove('active'));b.classList.add('active');mc.querySelectorAll('.app-cat').forEach(x=>x.setAttribute('aria-pressed',x===b));document.querySelector(`#filters .filter[data-cat="${CSS.escape(b.dataset.cat)}"]`)?.click();document.getElementById('menu')?.scrollIntoView({behavior:'smooth'})})}
 }
 function bindFavButtons(root){(root||document).querySelectorAll("[data-fav]").forEach(b=>{if(b.dataset.boundFav)return;b.dataset.boundFav="1";if(favourites.has(b.dataset.fav)){b.classList.add("active");b.textContent="♥"}b.addEventListener("click",()=>{const n=b.dataset.fav;if(favourites.has(n)){favourites.delete(n);b.classList.remove("active");b.textContent="♡";notify("Removed from favourites")}else{favourites.add(n);b.classList.add("active");b.textContent="♥";notify("Saved to favourites")}try{localStorage.setItem("kokab-favourites",JSON.stringify([...favourites]))}catch{};if(document.querySelector(".filter.active")?.dataset.cat==="Favourites")applyFilters()})})}
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',()=>bindFavButtons())}else{bindFavButtons()}
@@ -691,7 +691,7 @@ $('#appThemeBtn')?.addEventListener('click',()=>{
 
 /* Category chips -> existing filters */
 $$('.app-cat').forEach(chip=>chip.addEventListener('click',()=>{
-  $$('.app-cat').forEach(c=>c.classList.remove('active')); chip.classList.add('active');
+  $$('.app-cat').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); $$('.app-cat').forEach(c=>c.setAttribute('aria-pressed',c===chip));
   const cat=chip.dataset.cat;
   const fb=document.querySelector('#filters [data-cat="'+cat+'"]');
   if(fb){fb.click();}
@@ -704,7 +704,7 @@ $('#appSearchInput')?.addEventListener('input',()=>{
   const v=$('#appSearchInput').value;
   ds.value=v;
   document.querySelector('.app-search')?.classList.toggle('has-text',!!v.trim());
-  if(v.trim()) $$('.app-cat').forEach(c=>c.classList.toggle('active',c.dataset.cat==='All'));
+  if(v.trim()) $$('.app-cat').forEach(c=>c.classList.toggle('active',c.dataset.cat==='All')); $$('.app-cat').forEach(c=>c.setAttribute('aria-pressed',c.dataset.cat==='All'));
   ds.dispatchEvent(new Event('input',{bubbles:true}));
   /* Typing in the header search filtered the menu but left the user staring at
      the hero: bring the filtered results into view, but only when the menu
