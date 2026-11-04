@@ -357,6 +357,7 @@ function renderCart(){
  try{localStorage.setItem('kokab-cart',JSON.stringify([...cart.entries()]));localStorage.setItem('kokab-favourites',JSON.stringify([...favourites]))}catch(e){}
  const t=cartTotals(),rows=[...cart.entries()],count=t.count,priced=t.priced,unknown=t.unknown;
  $("#cartCount").textContent=count;$("#mobileCartCount").textContent=count;const ab=$("#appCartBadge"),tb=$("#tabCartBadge");if(ab){ab.textContent=count;ab.hidden=!count}if(tb){tb.textContent=count;tb.hidden=!count}
+ const _cl=count?("Open cart, "+count+" item"+(count===1?"":"s")):"Open cart";const _ab2=$("#appCartBtn");if(_ab2)_ab2.setAttribute("aria-label",_cl);const _co=$("#cartOpen");if(_co)_co.setAttribute("aria-label",_cl);const _tb2=$("#tabCartBtn");if(_tb2)_tb2.setAttribute("aria-label",count?("Cart, "+count+" item"+(count===1?"":"s")):"Cart");
  try{syncProductHighlights()}catch(e){}
  $("#cartSubtotal").textContent=money(priced);
  $("#cartDelivery").textContent=priced?(t.delFee?money(t.delFee):"FREE"):"\u2014";
@@ -676,6 +677,7 @@ function syncBadge(){
     const cart=JSON.parse(localStorage.getItem('kokab-cart')||'[]');
     const n=cart.reduce((a,i)=>a+(i.qty||1),0);
     ['#appCartBadge','#tabCartBadge'].forEach(s=>{const b=$(s);if(b){b.textContent=n;b.hidden=!n;}});
+    const _l=n?("Open cart, "+n+" item"+(n===1?"":"s")):"Open cart";const _a2=$("#appCartBtn");if(_a2)_a2.setAttribute("aria-label",_l);const _c2=$("#cartOpen");if(_c2)_c2.setAttribute("aria-label",_l);const _t2=$("#tabCartBtn");if(_t2)_t2.setAttribute("aria-label",n?("Cart, "+n+" item"+(n===1?"":"s")):"Cart");
   }catch(e){}
 }
 setInterval(syncBadge,1000); syncBadge();
