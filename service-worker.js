@@ -1,5 +1,7 @@
 /* KOKAB BITES service worker — offline-first app shell + menu cache */
-const VERSION = 'kokab-v2';
+ // Bump VERSION whenever the app shell (index.html / css) changes, or
+ // returning visitors keep serving the old cached shell forever.
+const VERSION = 'kokab-v3';
 const SHELL = [
   './',
   './index.html',
@@ -30,6 +32,13 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const { request } = e;
   if (request.method !== 'GET') return;
+
+  // Images: never intercept. Photos are cross-origin (Supabase/Unsplash) and
+  // are never cached by this worker anyway (same-origin guard below), so
+  // letting the browser fetch them natively removes the worker from the
+  // image path entirely.
+  if (request.destination === 'image') return;
+
   const url = new URL(request.url);
 
   // API: network-first, fall back to cache (offline menu)
