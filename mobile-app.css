@@ -568,3 +568,8 @@ body.dark-mode .product.in-cart{box-shadow:0 8px 28px rgba(226,112,58,.35) !impo
     .to-top-btn { transition: none; }
   }
 }
+
+/* ============ SKIP LINK (keyboard / screen-reader users) ============ */
+.skip-link{position:absolute;left:-9999px;top:0;z-index:200;background:#1a1a1a;color:#fff;padding:10px 16px;border-radius:0 0 8px 0;font-weight:700;text-decoration:none}
+.skip-link:focus{left:0;top:0}
+.skip-link:focus-visible{outline:3px solid #E2703A;outline-offset:2px}
