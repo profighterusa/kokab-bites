@@ -29,6 +29,25 @@
 <link rel="stylesheet" href="mobile-app.css?v=18"><!-- card theme v5 -->
 </head>
 <body><a class="skip-link" href="#menu">Skip to menu</a><script>
+/* Photo retry: a photo that fails during the first-load burst (slow or
+   throttled connection) stays broken even though its file is fine, because
+   browsers never retry a failed <img> on their own. This retries each failed
+   photo up to 2 times with a growing delay, after the burst has subsided.
+   It covers every photo on the page (static and JS-built) and skips images
+   with no real URL yet. */
+window.addEventListener('error', function (ev) {
+  const img = ev.target;
+  if (!img || img.tagName !== 'IMG') return;
+  const src = img.getAttribute('src');
+  if (!src || src.indexOf('${') !== -1) return;
+  const n = parseInt(img.getAttribute('data-retry') || '0', 10);
+  if (n >= 2) return;
+  img.setAttribute('data-retry', String(n + 1));
+  setTimeout(function () {
+    if (img.style.display === 'none') img.style.display = '';
+    img.src = src;
+  }, 1200 * (n + 1));
+}, true);
 /* Best Moments gallery */
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function renderMoments(){
