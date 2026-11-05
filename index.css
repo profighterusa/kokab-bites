@@ -114,6 +114,7 @@ section.section{padding:44px 0}
 .add-btn:hover{background:#D63A24}
 .add-btn:disabled{background:#CFC8BC;color:#6F695C;box-shadow:none}
 .card-stepper{display:flex;align-items:center;justify-content:space-between;gap:6px;background:var(--surface-2);border:1.5px solid var(--line);border-radius:12px;padding:3px;min-height:44px}
+.card-stepper[hidden]{display:none}
 .card-stepper button{width:44px;height:44px;min-width:44px;border:0;border-radius:10px;background:var(--surface);color:var(--accent-ink);font-size:1.25rem;font-weight:800;display:grid;place-items:center;box-shadow:0 1px 4px rgba(32,32,32,.1)}
 .card-stepper b{font-size:1rem;min-width:24px;text-align:center}
 .empty-state{grid-column:1/-1;text-align:center;padding:44px 16px;color:var(--muted);border:1.5px dashed var(--line);border-radius:18px}
@@ -226,6 +227,7 @@ footer{background:var(--surface-2);border-top:1px solid var(--line);padding:36px
 .qty b{min-width:22px;text-align:center}
 .cart-summary{background:var(--surface-2);border:1px solid var(--line);border-radius:15px;padding:15px;margin:15px 0}
 .cart-summary-row{display:flex;justify-content:space-between;gap:14px;margin:7px 0;font-size:.88rem}
+.cart-summary-row[hidden]{display:none}
 .cart-summary-row.total{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;font-size:1.05rem;font-weight:800}
 .cart-summary-row.total strong{color:var(--accent-ink);font-size:1.25rem}
 .cart-summary .estimate-note{font-size:.75rem;line-height:1.55;color:var(--muted);margin:9px 0 0}
