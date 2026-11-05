@@ -112,8 +112,12 @@ export function createApp() {
   const app = new Hono();
 
   // Security headers on every API response
+  // (Cloudflare _headers does not apply to Functions responses, so HSTS
+  // and CSP must be set here — Phase D probe found them missing on /api/*.)
   app.use('/api/*', async (c, next) => {
     await next();
+    c.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    c.header('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'");
     c.header('X-Content-Type-Options', 'nosniff');
     c.header('X-Frame-Options', 'DENY');
     c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
