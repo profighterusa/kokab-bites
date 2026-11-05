@@ -3,13 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f6f3ee">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111613">
+<meta name="theme-color" content="#FFF9F2">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1713">
 <meta name="color-scheme" content="light dark">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preload" as="image" href="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/hero-deal-burger.webp">
-<link rel="preload" as="image" href="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/hero-deal-pizza.webp">
-<link rel="stylesheet" href="app-ui.css?v=3">
+<link rel="stylesheet" href="app-ui.css?v=4">
 <link rel="icon" href="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/favicon.ico" sizes="any">
 <link rel="apple-touch-icon" sizes="180x180" href="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/apple-touch-icon.png">
 <title>KOKAB BITES — Good Food. Better Mood.</title>
@@ -24,9 +23,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://iytalsxwxqssttsxrmjz.supabase.co" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Courgette&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="index.css?v=11">
-<link rel="stylesheet" href="mobile-app.css?v=18"><!-- card theme v5 -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="index.css?v=12">
+<link rel="stylesheet" href="mobile-app.css?v=19"><!-- card theme v5 -->
 </head>
 <body><a class="skip-link" href="#menu">Skip to menu</a><script>
 /* Photo retry: a photo that fails during the first-load burst (slow or
@@ -34,35 +33,37 @@
    browsers never retry a failed <img> on their own. This retries each failed
    photo up to 2 times with a growing delay, after the burst has subsided.
    It covers every photo on the page (static and JS-built) and skips images
-   with no real URL yet. */
+   with no real URL yet. If it still fails, the photo is swapped for a
+   neutral initials placeholder so a broken image is never shown. */
 window.addEventListener('error', function (ev) {
   const img = ev.target;
   if (!img || img.tagName !== 'IMG') return;
   const src = img.getAttribute('src');
   if (!src || src.indexOf('${') !== -1) return;
   const n = parseInt(img.getAttribute('data-retry') || '0', 10);
-  if (n >= 2) return;
+  if (n >= 2) { if (img.closest('.product')) kbPhotoPlaceholder(img); else img.style.display='none'; return; }
   img.setAttribute('data-retry', String(n + 1));
   setTimeout(function () {
     if (img.style.display === 'none') img.style.display = '';
     img.src = src;
   }, 1200 * (n + 1));
 }, true);
-/* Best Moments gallery */
+function kbInitials(name){const w=String(name||'').replace(/[^A-Za-z0-9 ]/g,'').split(/\s+/).filter(Boolean);return ((w[0]||'?')[0]+((w[1]||'')[0]||'')).toUpperCase()}
+function kbPhotoPlaceholder(img){
+  if(!img||img.dataset.phDone)return; img.dataset.phDone='1';
+  const card=img.closest('.product'); const name=card?card.dataset.name:(img.alt||'');
+  const holder=document.createElement('div'); holder.className='product-ph'; holder.setAttribute('aria-hidden','true');
+  holder.innerHTML='<span>'+kbInitials(name)+'</span>';
+  if(img.parentNode) img.parentNode.replaceChild(holder, img);
+}
+/* Best Moments gallery: one track, each photo once, horizontal scroll rail. */
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function renderMoments(){
  const wrap=document.getElementById('momentsTrack');if(!wrap)return;
  const moments=(menuConfig?.moments||[]).filter(m=>m.url);
  const sec=document.getElementById('moments');if(sec)sec.style.display=moments.length?'':'none';
- const cards=moments.map((m,i)=>`<button class="moment-card" data-mi="${i}"><img src="${esc(m.url)}" alt="${esc(m.caption||'Best moment')}" loading="lazy"><span class="moment-cap">${esc(m.caption||'')}</span></button>`).join('');
- wrap.innerHTML=`<div class="moments-inner">${cards}${cards}</div>`;
- wrap.querySelectorAll('.moment-card').forEach(c=>c.onclick=()=>openLightbox(+c.dataset.mi%moments.length));
- const wrap2=document.getElementById('momentsTrack2');
- if(wrap2&&moments.length>1){
-  const cards2=[...moments].reverse().map((m,i)=>`<button class="moment-card" data-mi="${moments.length-1-i}"><img src="${esc(m.url)}" alt="${esc(m.caption||'')}" loading="lazy"><span class="moment-cap">${esc(m.caption||'')}</span></button>`).join('');
-  wrap2.innerHTML=`<div class="moments-inner">${cards2}${cards2}</div>`;
-  wrap2.querySelectorAll('.moment-card').forEach(c=>c.onclick=()=>openLightbox(+c.dataset.mi%moments.length));
- }
+ wrap.innerHTML=moments.map((m,i)=>`<button class="moment-card" data-mi="${i}"><img src="${esc(m.url)}" alt="${esc(m.caption||'Best moment')}" loading="lazy"><span class="moment-cap">${esc(m.caption||'')}</span></button>`).join('');
+ wrap.querySelectorAll('.moment-card').forEach(c=>c.onclick=()=>openLightbox(+c.dataset.mi));
 }
 function openLightbox(i){
  const moments=(menuConfig?.moments||[]).filter(m=>m.url);if(!moments.length)return;
@@ -77,116 +78,79 @@ function openLightbox(i){
  document.body.appendChild(lb);
 }
 </script>
-<div class="announcement"><div class="container"><span>✦ KOKAB BITES, GUJRANWALA</span><span>•</span><span id="openBadge" class="open-badge">●</span><span>•</span><span>Special Combo: 2 Shami Burgers + 2 Special Shawarmas + 1L Next Cola — Rs. 900</span></div></div>
+<div class="announcement"><div class="container"><span>KOKAB BITES · GUJRANWALA</span><span id="openBadge" class="open-badge">●</span></div></div>
 <header>
-<div class="app-header">
-  <div class="brand">
-    <img src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp?v=2" alt="Kokab Bites" onerror="this.style.display='none'">
-    <div><div class="brand-name">Kokab Bites</div><div class="brand-sub" data-i18n="app_tagline">Good Food. Better Mood.</div></div>
-  </div>
-  <button type="button" class="app-icon-btn" id="appThemeBtn" aria-label="Toggle theme"><span>☾</span></button>
-  <button type="button" class="app-icon-btn" id="appCartBtn" aria-label="Open cart"><span>🛒</span><span class="badge" id="appCartBadge" hidden>0</span></button>
-</div><div class="container nav">
+<div class="container nav">
 <a class="brand" href="#home" aria-label="KOKAB BITES home"><img class="brand-logo" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp?v=2" alt="KOKAB BITES — Taste Good Mood Always"></a>
-<nav class="navlinks" id="navlinks"><a href="#home" data-i18n="nav_home">Home</a><a href="#categories" data-i18n="nav_explore">Explore</a><a href="#menu" data-i18n="nav_menu">Menu</a><a href="#deal" data-i18n="nav_deal">Special Deal</a><a href="#visit" data-i18n="nav_visit">Find Us</a></nav>
-<div class="nav-actions"><button class="icon-btn theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch theme">☾</button><button class="icon-btn" id="favoritesJump" aria-label="Show favourites">♡</button><button class="icon-btn" id="cartOpen" aria-label="Open cart">🛍<span class="cart-badge" id="cartCount">0</span></button><a class="btn" href="#menu" data-i18n="order_now">Order now ↗</a><button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navlinks">☰</button></div>
+<nav class="navlinks" id="navlinks"><a href="#menu">Menu</a><a href="#deal">Deals</a><a href="#track">Track order</a><a href="#visit">Find Us</a></nav>
+<div class="nav-actions"><button class="icon-btn theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch theme">☾</button><button class="icon-btn" id="favoritesJump" aria-label="Show favourites">♡</button><button class="icon-btn" id="cartOpen" aria-label="Open cart">🛍<span class="cart-badge" id="cartCount">0</span></button><a class="btn" href="#menu">Order now</a><button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navlinks">☰</button></div>
 </div></header>
 <main>
-<div class="site-banner" id="siteBanner" hidden><span id="siteBannerText"></span><button id="siteBannerClose" aria-label="Dismiss announcement">✕</button></div><div class="app-greeting"><h2>Good evening 👋</h2><p data-i18n="app_greet_sub">What are you craving today?</p></div>
-<div class="app-search"><input type="search" id="appSearchInput" placeholder="Search burgers, pizza, deals..." aria-label="Search menu"><button type="button" id="appSearchClear" class="app-search-clear" aria-label="Clear search">×</button></div>
-<section class="hero" id="home"><div class="container hero-grid"><div class="hero-content"><div class="eyebrow" data-i18n="hero_eyebrow">Your neighbourhood food spot</div><h1>Crave it.<br><em>Bite into</em><br>happiness.</h1><p class="hero-copy">Burgers with big personality, pizza worth sharing, and shawarma made for those “just one more bite” moments.</p><div class="hero-buttons"><a class="btn" href="#menu" data-i18n-html="hero_menu">Explore the menu <span>↗</span></a><button class="btn btn-dark" onclick="openWhatsAppGeneral()" data-i18n-html="hero_chat">Chat to order <span>↗</span></button></div><div class="hero-meta"><span><i>✦</i><b>Made fresh</b>, every order</span><span><i>✦</i>Big flavour, local love</span></div></div><div class="hero-stage"><div class="hero-slideshow" id="heroSlideshow"><div class="slides" id="heroSlides"></div><button class="slide-arrow prev" id="slidePrev" aria-label="Previous slide">‹</button><button class="slide-arrow next" id="slideNext" aria-label="Next slide">›</button><div class="slide-dots" id="slideDots"></div></div></div></div><div class="hero-stamp">GOOD FOOD<strong>BETTER</strong>MOOD ALWAYS</div></section>
+<div class="site-banner" id="siteBanner" hidden><span id="siteBannerText"></span><button id="siteBannerClose" aria-label="Dismiss announcement">✕</button></div><section class="hero" id="home"><div class="container hero-grid"><div class="hero-content"><div class="eyebrow">KOKAB BITES · GUJRANWALA</div><h1>Good food, made fresh.</h1><p class="hero-copy">Burgers, pizzas, shawarma and rolls — made when you order, delivered to your door or ready for pickup.</p><div class="hero-buttons"><a class="btn" href="#menu">Order now</a><a class="btn btn-secondary" href="#deal">View deals</a></div><p class="hero-note">No online payment — your order is confirmed on WhatsApp.</p></div><div class="hero-media"><img src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/hero-deal-burger.webp" alt="Signature burger from KOKAB BITES" fetchpriority="high"></div></div></section>
 
-<h2 class="sf-h2">Explore Categories</h2>
-<div class="app-cats" id="appCats" role="group" aria-label="Categories">
-  <button class="app-cat active" data-cat="All" aria-pressed="true"><span class="app-cat-img">🍽️</span><span>All</span></button>
-  <button class="app-cat" data-cat="Burgers" aria-pressed="false"><span class="app-cat-img">🍔</span><span>Burgers</span></button>
-  <button class="app-cat" data-cat="Pizza" aria-pressed="false"><span class="app-cat-img">🍕</span><span>Pizza</span></button>
-  <button class="app-cat" data-cat="Shawarma & Rolls" aria-pressed="false"><span class="app-cat-img">🌯</span><span>Shawarma</span></button>
-  <button class="app-cat" data-cat="Sides" aria-pressed="false"><span class="app-cat-img">🍟</span><span>Sides</span></button>
-  <button class="app-cat" data-cat="Drinks" aria-pressed="false"><span class="app-cat-img">🥤</span><span>Drinks</span></button>
-</div>
+<nav class="cat-nav" aria-label="Menu categories"><div class="container"><div class="filter-list" id="filters"><button class="filter active" data-cat="All" aria-pressed="true">All items</button><button class="filter" data-cat="Burgers" aria-pressed="false">Burgers</button><button class="filter" data-cat="Pizza" aria-pressed="false">Pizza</button><button class="filter" data-cat="Shawarma &amp; Rolls" aria-pressed="false">Shawarma &amp; Rolls</button><button class="filter" data-cat="Sides" aria-pressed="false">Sides</button><button class="filter" data-cat="Drinks" aria-pressed="false">Drinks</button><button class="filter" data-cat="Favourites" aria-pressed="false">Favourites</button></div></div></nav>
 <section class="sf-popular" id="sfPopular"><div class="sf-pop-head"><h2 class="sf-h2 sf-h2-inline">Most Popular</h2><a href="#menu" class="sf-seeall">See all ›</a></div><div class="sf-pop-rail" id="sfPopRail"></div></section>
 
 
+
+<section class="section menu-section" id="menu" tabindex="-1"><div class="container"><div class="section-head"><div><div class="section-kicker" data-i18n="menu_kicker">Made for your appetite</div><h2 data-i18n="menu_h2">The menu, your way.</h2></div><p data-i18n="menu_p">Choose pizza sizes, save favourites, mix items into a custom deal and review the estimated total before sending your order to WhatsApp.</p></div><div class="menu-tools"><div class="searchbox"><span>⌕</span><input id="search" type="search" placeholder="Search the menu…" aria-label="Search menu" data-i18n-ph="search_ph"><button type="button" id="searchClear" class="search-clear" aria-label="Clear search">×</button></div></div>
+<div class="product-grid" id="productGrid">
+<article class="product" data-cat="Burgers" data-name="Shami Burger" data-desc="Classic shami burger"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/shami-burger.webp" alt="Shami Burger"><span class="product-tag">Local favourite</span><button class="favorite" aria-label="Save Shami Burger" data-fav="Shami Burger">♡</button></div><div class="product-body"><h3>Shami Burger</h3><p class="product-desc">A familiar favourite with a satisfying, savoury bite.</p><div class="product-bottom"><span class="price">Rs. 170</span><button class="add-btn" data-add="Shami Burger">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Burgers" data-name="Zinger Cheese Burger" data-desc="Crispy chicken cheese burger"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/zinger-cheese-burger.webp" alt="Zinger Cheese Burger"><span class="product-tag">Crunch favourite</span><button class="favorite" aria-label="Save Zinger Cheese Burger" data-fav="Zinger Cheese Burger">♡</button></div><div class="product-body"><h3>Zinger Cheese Burger</h3><p class="product-desc">Crispy chicken, creamy sauce and a cheesy finish.</p><div class="product-bottom"><span class="price">Rs. 370</span><button class="add-btn" data-add="Zinger Cheese Burger">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Burgers" data-name="Grilled Patty Burger" data-desc="Grilled patty burger"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/grilled-patty-burger-800.webp" alt="Grilled Patty Burger"><button class="favorite" aria-label="Save Grilled Patty Burger" data-fav="Grilled Patty Burger">♡</button></div><div class="product-body"><h3>Grilled Patty Burger</h3><p class="product-desc">A hearty grilled-style burger with fresh toppings.</p><div class="product-bottom"><span class="price">Rs. 300</span><button class="add-btn" data-add="Grilled Patty Burger">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Burgers" data-name="K.B Special Grilled Burger" data-desc="Signature grilled burger"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/kb-special-grilled-burger.webp" alt="K.B Special Grilled Burger"><span class="product-tag">Signature</span><button class="favorite" aria-label="Save K.B Special Grilled Burger" data-fav="K.B Special Grilled Burger">♡</button></div><div class="product-body"><h3>K.B Special Grilled Burger</h3><p class="product-desc">A house-style grilled burger for a bigger bite.</p><div class="product-bottom"><span class="price">Rs. 350</span><button class="add-btn" data-add="K.B Special Grilled Burger">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Pizza" data-name="Fajita Pizza" data-desc="Chicken fajita pizza"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/fajita-pizza.webp" alt="Fajita Pizza"><span class="product-tag">Pizza</span><button class="favorite" aria-label="Save Fajita Pizza" data-fav="Fajita Pizza">♡</button></div><div class="product-body"><h3>Fajita Pizza</h3><p class="product-desc">A flavour-packed pizza for fajita lovers.</p><div class="product-bottom"><span class="price">Rs. 290</span><button class="add-btn" data-add="Fajita Pizza">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Pizza" data-name="Tikka Creamy Pizza" data-desc="Creamy tikka pizza"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/tikka-creamy-pizza.webp" alt="Tikka Creamy Pizza"><button class="favorite" aria-label="Save Tikka Creamy Pizza" data-fav="Tikka Creamy Pizza">♡</button></div><div class="product-body"><h3>Tikka Creamy Pizza</h3><p class="product-desc">Creamy, savoury and made for sharing.</p><div class="product-bottom"><span class="price">Rs. 450</span><button class="add-btn" data-add="Tikka Creamy Pizza">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Pizza" data-name="Malai Boti Pizza" data-desc="Malai boti pizza"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/malai-boti-pizza.webp" alt="Malai Boti Pizza"><button class="favorite" aria-label="Save Malai Boti Pizza" data-fav="Malai Boti Pizza">♡</button></div><div class="product-body"><h3>Malai Boti Pizza</h3><p class="product-desc">A creamy desi-inspired favourite on a pizza base.</p><div class="product-bottom"><span class="price">Rs. 450</span><button class="add-btn" data-add="Malai Boti Pizza">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Pizza" data-name="Kebabish Creamy Pizza" data-desc="Kebabish creamy pizza"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/kebabish-creamy-pizza.webp" alt="Kebabish Creamy Pizza"><button class="favorite" aria-label="Save Kebabish Creamy Pizza" data-fav="Kebabish Creamy Pizza">♡</button></div><div class="product-body"><h3>Kebabish Creamy Pizza</h3><p class="product-desc">Rich, creamy and full of savoury flavour.</p><div class="product-bottom"><span class="price">Rs. 450</span><button class="add-btn" data-add="Kebabish Creamy Pizza">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Pizza" data-name="BBQ Pizza" data-desc="Smoky barbecue pizza"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/bbq-pizza.webp" alt="BBQ Pizza"><button class="favorite" aria-label="Save BBQ Pizza" data-fav="BBQ Pizza">♡</button></div><div class="product-body"><h3>BBQ Pizza</h3><p class="product-desc">Smoky BBQ flavour with a golden cheesy finish.</p><div class="product-bottom"><span class="price">Rs. 450</span><button class="add-btn" data-add="BBQ Pizza">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Pizza" data-name="Special Doner Pizza" data-desc="Doner style pizza"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/special-doner-pizza.webp" alt="Special Doner Pizza"><button class="favorite" aria-label="Save Special Doner Pizza" data-fav="Special Doner Pizza">♡</button></div><div class="product-body"><h3>Special Doner Pizza</h3><p class="product-desc">A bold doner-inspired pizza for serious cravings.</p><div class="product-bottom"><span class="price">Rs. 450</span><button class="add-btn" data-add="Special Doner Pizza">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Shawarma &amp; Rolls" data-name="Special Shawarma" data-desc="Special chicken shawarma"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/special-shawarma.webp" alt="Special Shawarma"><span class="product-tag">Wrap it up</span><button class="favorite" aria-label="Save Special Shawarma" data-fav="Special Shawarma">♡</button></div><div class="product-body"><h3>Special Shawarma</h3><p class="product-desc">Warm flatbread, savoury filling and creamy sauce.</p><div class="product-bottom"><span class="price">Rs. 220</span><button class="add-btn" data-add="Special Shawarma">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Shawarma &amp; Rolls" data-name="Zinger Paratha Roll" data-desc="Crispy zinger paratha roll"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/zinger-paratha-roll.webp" alt="Zinger Paratha Roll"><button class="favorite" aria-label="Save Zinger Paratha Roll" data-fav="Zinger Paratha Roll">♡</button></div><div class="product-body"><h3>Zinger Paratha Roll</h3><p class="product-desc">Crispy chicken wrapped in flaky paratha.</p><div class="product-bottom"><span class="price">Rs. 350</span><button class="add-btn" data-add="Zinger Paratha Roll">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Shawarma &amp; Rolls" data-name="Grilled Chicken Roll" data-desc="Grilled chicken roll"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/grilled-chicken-roll.webp" alt="Grilled Chicken Roll"><button class="favorite" aria-label="Save Grilled Chicken Roll" data-fav="Grilled Chicken Roll">♡</button></div><div class="product-body"><h3>Grilled Chicken Roll</h3><p class="product-desc">Grilled chicken and sauce wrapped for an easy bite.</p><div class="product-bottom"><span class="price">Rs. 370</span><button class="add-btn" data-add="Grilled Chicken Roll">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Sides" data-name="Loaded Fries" data-desc="Loaded fries"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/loaded-fries-800.webp" alt="Loaded Fries"><span class="product-tag">Add a side</span><button class="favorite" aria-label="Save Loaded Fries" data-fav="Loaded Fries">♡</button></div><div class="product-body"><h3>Loaded Fries</h3><p class="product-desc">Golden fries dressed up for a more indulgent snack.</p><div class="product-bottom"><span class="price">Rs. 350</span><button class="add-btn" data-add="Loaded Fries">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Sides" data-name="Crispy Chicken" data-desc="Crispy fried chicken"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/crispy-chicken-800.webp" alt="Crispy Chicken"><button class="favorite" aria-label="Save Crispy Chicken" data-fav="Crispy Chicken">♡</button></div><div class="product-body"><h3>Crispy Chicken</h3><p class="product-desc">A crunchy chicken favourite for sharing or snacking.</p><div class="product-bottom"><span class="price">Price confirmed on WhatsApp</span><button class="add-btn" data-add="Crispy Chicken">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Drinks" data-name="Next Cola 1 Litre" data-desc="Next cola 1 litre"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/cola-1litre-800.webp" alt="Next Cola 1 Litre"><button class="favorite" aria-label="Save Next Cola 1 Litre" data-fav="Next Cola 1 Litre">♡</button></div><div class="product-body"><h3>Next Cola — 1 Litre</h3><p class="product-desc">A chilled drink to complete your meal.</p><div class="product-bottom"><span class="price">Price to confirm</span><button class="add-btn" data-add="Next Cola 1 Litre">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Burgers" data-name="Zinger Burger" data-desc="Crispy zinger chicken burger with fresh toppings."><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/zinger-burger.webp" alt="Zinger Burger"><button class="favorite" aria-label="Save Zinger Burger" data-fav="Zinger Burger">♡</button></div><div class="product-body"><h3>Zinger Burger</h3><p class="product-desc">Crispy zinger chicken burger with fresh toppings.</p><div class="product-bottom"><span class="price">Rs. 300</span><button class="add-btn" data-add="Zinger Burger">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Burgers" data-name="Patty Burger" data-desc="A classic patty burger, simply satisfying."><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/patty-burger.webp" alt="Patty Burger"><button class="favorite" aria-label="Save Patty Burger" data-fav="Patty Burger">♡</button></div><div class="product-body"><h3>Patty Burger</h3><p class="product-desc">A classic patty burger, simply satisfying.</p><div class="product-bottom"><span class="price">Rs. 270</span><button class="add-btn" data-add="Patty Burger">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Burgers" data-name="Grilled Malai Boti Burger" data-desc="Grilled chicken with rich malai-boti flavour."><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/grilled-malai-boti-burger-800.webp" alt="Grilled Malai Boti Burger"><button class="favorite" aria-label="Save Grilled Malai Boti Burger" data-fav="Grilled Malai Boti Burger">♡</button></div><div class="product-body"><h3>Grilled Malai Boti Burger</h3><p class="product-desc">Grilled chicken with rich malai-boti flavour.</p><div class="product-bottom"><span class="price">Rs. 390</span><button class="add-btn" data-add="Grilled Malai Boti Burger">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Burgers" data-name="Double Egg Shami Burger" data-desc="Shami burger with double egg."><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/double-egg-shami-burger-800.webp" alt="Double Egg Shami Burger"><button class="favorite" aria-label="Save Double Egg Shami Burger" data-fav="Double Egg Shami Burger">♡</button></div><div class="product-body"><h3>Double Egg Shami Burger</h3><p class="product-desc">Shami burger with double egg.</p><div class="product-bottom"><span class="price">Rs. 250</span><button class="add-btn" data-add="Double Egg Shami Burger">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Burgers" data-name="Shami" data-desc="Shami patty, available as a single item."><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/shami.webp" alt="Shami"><button class="favorite" aria-label="Save Shami" data-fav="Shami">♡</button></div><div class="product-body"><h3>Shami</h3><p class="product-desc">Shami patty, available as a single item.</p><div class="product-bottom"><span class="price">Rs. 50</span><button class="add-btn" data-add="Shami">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Sides" data-name="Wings" data-desc="Crispy chicken wings for sharing."><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/wings-800.webp" alt="Wings"><button class="favorite" aria-label="Save Wings" data-fav="Wings">♡</button></div><div class="product-body"><h3>Wings</h3><p class="product-desc">Crispy chicken wings for sharing.</p><div class="product-bottom"><span class="price">Rs. 250</span><button class="add-btn" data-add="Wings">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Shawarma &amp; Rolls" data-name="Zinger Shawarma" data-desc="Crispy zinger chicken wrapped with sauce and fresh fillings."><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/zinger-shawarma.webp" alt="Zinger Shawarma"><button class="favorite" aria-label="Save Zinger Shawarma" data-fav="Zinger Shawarma">♡</button></div><div class="product-body"><h3>Zinger Shawarma</h3><p class="product-desc">Crispy zinger chicken wrapped with sauce and fresh fillings.</p><div class="product-bottom"><span class="price">Rs. 300</span><button class="add-btn" data-add="Zinger Shawarma">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Shawarma &amp; Rolls" data-name="Shawarma Platter" data-desc="A generous platter for a bigger appetite."><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/shawarma-platter.webp" alt="Shawarma Platter"><button class="favorite" aria-label="Save Shawarma Platter" data-fav="Shawarma Platter">♡</button></div><div class="product-body"><h3>Shawarma Platter</h3><p class="product-desc">A generous platter for a bigger appetite.</p><div class="product-bottom"><span class="price">Rs. 550</span><button class="add-btn" data-add="Shawarma Platter">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Pizza" data-name="Tikka Pizza" data-desc="Classic chicken tikka pizza."><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/tikka-pizza.webp" alt="Tikka Pizza"><button class="favorite" aria-label="Save Tikka Pizza" data-fav="Tikka Pizza">♡</button></div><div class="product-body"><h3>Tikka Pizza</h3><p class="product-desc">Classic chicken tikka pizza.</p><div class="product-bottom"><span class="price">Rs. 290</span><button class="add-btn" data-add="Tikka Pizza">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Pizza" data-name="Hot Spicy Pizza" data-desc="Classic pizza with a spicy kick."><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/hot-spicy-pizza.webp" alt="Hot Spicy Pizza"><button class="favorite" aria-label="Save Hot Spicy Pizza" data-fav="Hot Spicy Pizza">♡</button></div><div class="product-body"><h3>Hot Spicy Pizza</h3><p class="product-desc">Classic pizza with a spicy kick.</p><div class="product-bottom"><span class="price">Rs. 290</span><button class="add-btn" data-add="Hot Spicy Pizza">＋ Add to order</button></div></div></article>
+<article class="product" data-cat="Pizza" data-name="K.B Special Cheese-Stuffed Pizza" data-desc="Signature special pizza with a cheese-stuffed crust"><div class="product-image"><img loading="lazy" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/menu/kb-special-cheese-stuffed-pizza.webp" alt="K.B Special Cheese-Stuffed Pizza"><span class="product-tag">Signature</span><button class="favorite" aria-label="Save K.B Special Cheese-Stuffed Pizza" data-fav="K.B Special Cheese-Stuffed Pizza">♡</button></div><div class="product-body"><h3>K.B Special Cheese-Stuffed Pizza</h3><p class="product-desc">Our signature special pizza with a cheese-stuffed crust.</p><div class="product-bottom"><span class="price">Rs. 450</span><button class="add-btn" data-add="K.B Special Cheese-Stuffed Pizza">＋ Add to order</button></div></div></article>
+</div></div></section>
+
 <section class="section deals-showcase" id="deal"><div class="container">
-<div class="big-deal" id="bigDeal" hidden><div class="big-deal-glow"></div><div class="big-deal-inner">
-<div class="big-deal-copy"><span class="big-deal-kicker"><i>🔥</i><span data-i18n="bigdeal_kicker">Big deal of the moment</span><em id="bigDealBadge"></em></span>
+<div class="big-deal" id="bigDeal" hidden><div class="big-deal-inner">
+<div class="big-deal-copy"><span class="big-deal-kicker"><span data-i18n="bigdeal_kicker">Big deal of the moment</span><em id="bigDealBadge"></em></span>
 <h2 id="bigDealName"></h2><p id="bigDealDesc"></p><ul class="big-deal-items" id="bigDealItems"></ul>
 <div class="big-deal-buy"><div class="big-deal-prices"><span class="big-deal-price" id="bigDealPrice"></span><s class="big-deal-old" id="bigDealOld" hidden></s><b class="big-deal-save" id="bigDealSave" hidden></b></div>
 <button class="btn btn-light" id="bigDealAdd" data-i18n="bigdeal_add">Add big deal to my order ↗</button></div>
-<div class="big-deal-timer" id="bigDealTimer" hidden><span data-i18n="bigdeal_ends">⏳ Offer ends in</span><b id="bigDealClock">--:--:--</b></div></div>
+<div class="big-deal-timer" id="bigDealTimer" hidden><span data-i18n="bigdeal_ends">Offer ends in</span><b id="bigDealClock">--:--:--</b></div></div>
 <div class="big-deal-media"><img id="bigDealImg" alt="Big deal" fetchpriority="high"><span class="big-deal-off" id="bigDealOff" hidden></span><span class="best-deal-sticker"><i>★</i><b>Best<br>Deal</b></span></div>
 </div></div>
 <div class="section-head deals-head"><div><div class="section-kicker" data-i18n="deals_kicker">Deals worth grabbing</div><h2 data-i18n="deals_h2">More ways to feast.</h2></div><p data-i18n="deals_p">Combo deals, bundle prices and limited offers — made for sharing.</p></div>
 <div class="deals-rail" id="dealsRail" aria-label="All combo deals"></div>
 </div></section>
-
-<div class="benefits"><div class="container benefits-grid"><div class="benefit"><span class="benefit-icon">✳</span><div><b>Freshly prepared</b><small>Made when you order</small></div></div><div class="benefit"><span class="benefit-icon">⌁</span><div><b>Flavour first</b><small>Built for real cravings</small></div></div><div class="benefit"><span class="benefit-icon">♡</span><div><b>Made to share</b><small>Good food, good company</small></div></div><div class="benefit"><span class="benefit-icon">⌖</span><div><b>Local to Gujranwala</b><small>Find us on Sadiq Road</small></div></div></div></div>
-<section class="section categories" id="categories"><div class="container"><div class="section-head"><div><div class="section-kicker" data-i18n="cat_kicker">What are you craving?</div><h2 data-i18n="cat_h2">Find your kind of delicious.</h2></div><p data-i18n="cat_p">Pick a category and discover your next favourite. Your order goes straight to our WhatsApp for confirmation.</p></div><div class="category-grid"><a class="category" href="#menu" data-jumpcat="Burgers"><span class="category-emoji">🍔</span><span><strong>Burgers</strong><br><small>Stacked with flavour ↗</small></span></a><a class="category" href="#menu" data-jumpcat="Pizza"><span class="category-emoji">🍕</span><span><strong>Pizza</strong><br><small>Slice into happiness ↗</small></span></a><a class="category" href="#menu" data-jumpcat="Shawarma & Rolls"><span class="category-emoji">🌯</span><span><strong>Shawarma & Rolls</strong><br><small>Wrapped and ready ↗</small></span></a><a class="category" href="#menu" data-jumpcat="Sides"><span class="category-emoji">🍟</span><span><strong>Sides</strong><br><small>The perfect extra ↗</small></span></a><a class="category" href="#menu" data-jumpcat="Drinks"><span class="category-emoji">🥤</span><span><strong>Drinks</strong><br><small>Make it a combo ↗</small></span></a></div></div></section>
-<section class="section menu-section" id="menu" tabindex="-1"><div class="container"><div class="section-head"><div><div class="section-kicker" data-i18n="menu_kicker">Made for your appetite</div><h2 data-i18n="menu_h2">The menu, your way.</h2></div><p data-i18n="menu_p">Choose pizza sizes, save favourites, mix items into a custom deal and review the estimated total before sending your order to WhatsApp.</p></div><div class="menu-tools"><div class="filter-list" id="filters"><button class="filter active" data-cat="All" data-i18n="filter_all">All items</button><button class="filter" data-cat="Burgers" data-i18n="filter_burgers">Burgers</button><button class="filter" data-cat="Pizza" data-i18n="filter_pizza">Pizza</button><button class="filter" data-cat="Shawarma & Rolls" data-i18n="filter_shawarma">Shawarma & Rolls</button><button class="filter" data-cat="Sides" data-i18n="filter_sides">Sides</button><button class="filter" data-cat="Drinks" data-i18n="filter_drinks">Drinks</button><button class="filter" data-cat="Favourites" data-i18n="filter_fav">♡ Favourites</button></div><label class="searchbox"><span>⌕</span><input id="search" type="search" placeholder="Search the menu…" aria-label="Search menu" data-i18n-ph="search_ph"></label></div>
-<div class="product-grid" id="productGrid">
-<article class="product" data-cat="Burgers" data-name="Shami Burger" data-desc="Classic shami burger"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=750&q=82" alt="Juicy burger with fresh toppings"><span class="product-tag">Local favourite</span><button class="favorite" aria-label="Save Shami Burger" data-fav="Shami Burger">♡</button></div><div class="product-body"><div class="product-title-row"><h3>Shami Burger</h3></div><p class="product-desc">A familiar favourite with a satisfying, savoury bite.</p><div class="product-bottom"><span class="price">Rs. 170</span><button class="add-btn" data-add="Shami Burger">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Burgers" data-name="Zinger Cheese Burger" data-desc="Crispy chicken cheese burger"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=750&q=82" alt="Crispy chicken burger"><span class="product-tag">Crunch favourite</span><button class="favorite" aria-label="Save Zinger Cheese Burger" data-fav="Zinger Cheese Burger">♡</button></div><div class="product-body"><h3>Zinger Cheese Burger</h3><p class="product-desc">Crispy chicken, creamy sauce and a cheesy finish.</p><div class="product-bottom"><span class="price">Rs. 370</span><button class="add-btn" data-add="Zinger Cheese Burger">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Burgers" data-name="Grilled Patty Burger" data-desc="Grilled patty burger"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=750&q=82" alt="Grilled burger on a bun"><button class="favorite" aria-label="Save Grilled Patty Burger" data-fav="Grilled Patty Burger">♡</button></div><div class="product-body"><h3>Grilled Patty Burger</h3><p class="product-desc">A hearty grilled-style burger with fresh toppings.</p><div class="product-bottom"><span class="price">Rs. 300</span><button class="add-btn" data-add="Grilled Patty Burger">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Burgers" data-name="K.B Special Grilled Burger" data-desc="Signature grilled burger"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=750&q=82" alt="Signature burger" onerror="this.src='https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=750&q=82'"><span class="product-tag">Signature</span><button class="favorite" aria-label="Save K.B Special Grilled Burger" data-fav="K.B Special Grilled Burger">♡</button></div><div class="product-body"><h3>K.B Special Grilled Burger</h3><p class="product-desc">A house-style grilled burger for a bigger bite.</p><div class="product-bottom"><span class="price">Rs. 350</span><button class="add-btn" data-add="K.B Special Grilled Burger">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Pizza" data-name="Fajita Pizza" data-desc="Chicken fajita pizza"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=750&q=82" alt="Freshly baked pizza"><span class="product-tag">Pizza</span><button class="favorite" aria-label="Save Fajita Pizza" data-fav="Fajita Pizza">♡</button></div><div class="product-body"><h3>Fajita Pizza</h3><p class="product-desc">A flavour-packed pizza for fajita lovers.</p><div class="product-bottom"><div class="price-list"><span>7” Small<b>Rs. 290</b></span><span>10” Medium<b>Rs. 390</b></span><span>13” Large<b>Rs. 790</b></span><span>16” XL<b>Rs. 1,200</b></span></div><button class="add-btn" data-add="Fajita Pizza">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Pizza" data-name="Tikka Creamy Pizza" data-desc="Creamy tikka pizza"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=750&q=82" alt="Cheesy pizza with toppings"><button class="favorite" aria-label="Save Tikka Creamy Pizza" data-fav="Tikka Creamy Pizza">♡</button></div><div class="product-body"><h3>Tikka Creamy Pizza</h3><p class="product-desc">Creamy, savoury and made for sharing.</p><div class="product-bottom"><div class="price-list"><span>Small<b>Rs. 450</b></span><span>Medium<b>Rs. 850</b></span><span>Large<b>Rs. 1,250</b></span><span>Family<b>Rs. 1,700</b></span></div><button class="add-btn" data-add="Tikka Creamy Pizza">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Pizza" data-name="Malai Boti Pizza" data-desc="Malai boti pizza"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=750&q=82" alt="Pizza topped with cheese and chicken"><button class="favorite" aria-label="Save Malai Boti Pizza" data-fav="Malai Boti Pizza">♡</button></div><div class="product-body"><h3>Malai Boti Pizza</h3><p class="product-desc">A creamy desi-inspired favourite on a pizza base.</p><div class="product-bottom"><div class="price-list"><span>Small<b>Rs. 450</b></span><span>Medium<b>Rs. 850</b></span><span>Large<b>Rs. 1,250</b></span><span>Family<b>Rs. 1,700</b></span></div><button class="add-btn" data-add="Malai Boti Pizza">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Pizza" data-name="Kebabish Creamy Pizza" data-desc="Kebabish creamy pizza"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=750&q=82" alt="Creamy pizza"><button class="favorite" aria-label="Save Kebabish Creamy Pizza" data-fav="Kebabish Creamy Pizza">♡</button></div><div class="product-body"><h3>Kebabish Creamy Pizza</h3><p class="product-desc">Rich, creamy and full of savoury flavour.</p><div class="product-bottom"><div class="price-list"><span>Small<b>Rs. 450</b></span><span>Medium<b>Rs. 850</b></span><span>Large<b>Rs. 1,250</b></span><span>Family<b>Rs. 1,700</b></span></div><button class="add-btn" data-add="Kebabish Creamy Pizza">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Pizza" data-name="BBQ Pizza" data-desc="Smoky barbecue pizza"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=750&q=82" alt="BBQ style pizza"><button class="favorite" aria-label="Save BBQ Pizza" data-fav="BBQ Pizza">♡</button></div><div class="product-body"><h3>BBQ Pizza</h3><p class="product-desc">Smoky BBQ flavour with a golden cheesy finish.</p><div class="product-bottom"><div class="price-list"><span>Small<b>Rs. 450</b></span><span>Medium<b>Rs. 850</b></span><span>Large<b>Rs. 1,250</b></span><span>Family<b>Rs. 1,700</b></span></div><button class="add-btn" data-add="BBQ Pizza">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Pizza" data-name="Special Doner Pizza" data-desc="Doner style pizza"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=750&q=82" alt="Special pizza"><button class="favorite" aria-label="Save Special Doner Pizza" data-fav="Special Doner Pizza">♡</button></div><div class="product-body"><h3>Special Doner Pizza</h3><p class="product-desc">A bold doner-inspired pizza for serious cravings.</p><div class="product-bottom"><div class="price-list"><span>Small<b>Rs. 450</b></span><span>Medium<b>Rs. 850</b></span><span>Large<b>Rs. 1,250</b></span><span>Family<b>Rs. 1,700</b></span></div><button class="add-btn" data-add="Special Doner Pizza">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Shawarma & Rolls" data-name="Special Shawarma" data-desc="Special chicken shawarma"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=750&q=82" alt="Shawarma wrap"><span class="product-tag">Wrap it up</span><button class="favorite" aria-label="Save Special Shawarma" data-fav="Special Shawarma">♡</button></div><div class="product-body"><h3>Special Shawarma</h3><p class="product-desc">Warm flatbread, savoury filling and creamy sauce.</p><div class="product-bottom"><span class="price">Rs. 220</span><button class="add-btn" data-add="Special Shawarma">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Shawarma & Rolls" data-name="Zinger Paratha Roll" data-desc="Crispy zinger paratha roll"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=750&q=82" alt="Rolled shawarma"><button class="favorite" aria-label="Save Zinger Paratha Roll" data-fav="Zinger Paratha Roll">♡</button></div><div class="product-body"><h3>Zinger Paratha Roll</h3><p class="product-desc">Crispy chicken wrapped in flaky paratha.</p><div class="product-bottom"><span class="price">Rs. 350</span><button class="add-btn" data-add="Zinger Paratha Roll">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Shawarma & Rolls" data-name="Grilled Chicken Roll" data-desc="Grilled chicken roll"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=750&q=82" alt="Chicken roll"><button class="favorite" aria-label="Save Grilled Chicken Roll" data-fav="Grilled Chicken Roll">♡</button></div><div class="product-body"><h3>Grilled Chicken Roll</h3><p class="product-desc">Grilled chicken and sauce wrapped for an easy bite.</p><div class="product-bottom"><span class="price">Rs. 370</span><button class="add-btn" data-add="Grilled Chicken Roll">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Sides" data-name="Loaded Fries" data-desc="Loaded fries"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=750&q=82" alt="Golden french fries"><span class="product-tag">Add a side</span><button class="favorite" aria-label="Save Loaded Fries" data-fav="Loaded Fries">♡</button></div><div class="product-body"><h3>Loaded Fries</h3><p class="product-desc">Golden fries dressed up for a more indulgent snack.</p><div class="product-bottom"><div class="price-list"><span>Small <b>Rs. 350</b></span><span>Large <b>Rs. 500</b></span></div><button class="add-btn" data-add="Loaded Fries">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Sides" data-name="Crispy Chicken" data-desc="Crispy fried chicken"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=750&q=82" alt="Crispy fried chicken"><button class="favorite" aria-label="Save Crispy Chicken" data-fav="Crispy Chicken">♡</button></div><div class="product-body"><h3>Crispy Chicken</h3><p class="product-desc">A crunchy chicken favourite for sharing or snacking.</p><div class="product-bottom"><span class="price">Price confirmed on WhatsApp</span><button class="add-btn" data-add="Crispy Chicken">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Drinks" data-name="Next Cola 1 Litre" data-desc="Next cola 1 litre"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1629203851122-3726ecdf080e?auto=format&fit=crop&w=750&q=82" alt="Cold soft drink"><button class="favorite" aria-label="Save Next Cola 1 Litre" data-fav="Next Cola 1 Litre">♡</button></div><div class="product-body"><h3>Next Cola — 1 Litre</h3><p class="product-desc">A chilled drink to complete your meal.</p><div class="product-bottom"><span class="price">1 Litre — included in selected deals</span><button class="add-btn" data-add="Next Cola 1 Litre">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Burgers" data-name="Zinger Burger" data-desc="Crispy zinger chicken burger with fresh toppings."><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=750&q=82" alt="Zinger Burger"><button class="favorite" aria-label="Save Zinger Burger" data-fav="Zinger Burger">♡</button></div><div class="product-body"><div class="product-title-row"><h3>Zinger Burger</h3></div><p class="product-desc">Crispy zinger chicken burger with fresh toppings.</p><div class="product-bottom"><span class="price">Rs. 300</span><button class="add-btn" data-add="Zinger Burger">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Burgers" data-name="Patty Burger" data-desc="A classic patty burger, simply satisfying."><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=750&q=82" alt="Patty Burger"><button class="favorite" aria-label="Save Patty Burger" data-fav="Patty Burger">♡</button></div><div class="product-body"><div class="product-title-row"><h3>Patty Burger</h3></div><p class="product-desc">A classic patty burger, simply satisfying.</p><div class="product-bottom"><span class="price">Rs. 270</span><button class="add-btn" data-add="Patty Burger">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Burgers" data-name="Grilled Malai Boti Burger" data-desc="Grilled chicken with rich malai-boti flavour."><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=750&q=82" alt="Grilled Malai Boti Burger"><button class="favorite" aria-label="Save Grilled Malai Boti Burger" data-fav="Grilled Malai Boti Burger">♡</button></div><div class="product-body"><div class="product-title-row"><h3>Grilled Malai Boti Burger</h3></div><p class="product-desc">Grilled chicken with rich malai-boti flavour.</p><div class="product-bottom"><span class="price">Rs. 390</span><button class="add-btn" data-add="Grilled Malai Boti Burger">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Burgers" data-name="Double Egg Shami Burger" data-desc="Shami burger with double egg."><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=750&q=82" alt="Double Egg Shami Burger"><button class="favorite" aria-label="Save Double Egg Shami Burger" data-fav="Double Egg Shami Burger">♡</button></div><div class="product-body"><div class="product-title-row"><h3>Double Egg Shami Burger</h3></div><p class="product-desc">Shami burger with double egg.</p><div class="product-bottom"><span class="price">Rs. 250</span><button class="add-btn" data-add="Double Egg Shami Burger">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Burgers" data-name="Shami" data-desc="Shami patty, available as a single item."><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=750&q=82" alt="Shami"><button class="favorite" aria-label="Save Shami" data-fav="Shami">♡</button></div><div class="product-body"><div class="product-title-row"><h3>Shami</h3></div><p class="product-desc">Shami patty, available as a single item.</p><div class="product-bottom"><span class="price">Rs. 50</span><button class="add-btn" data-add="Shami">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Sides" data-name="Wings" data-desc="Crispy chicken wings for sharing."><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1527477396000-e27163b481c2?auto=format&fit=crop&w=750&q=82" alt="Wings"><button class="favorite" aria-label="Save Wings" data-fav="Wings">♡</button></div><div class="product-body"><div class="product-title-row"><h3>Wings</h3></div><p class="product-desc">Crispy chicken wings for sharing.</p><div class="price-list"><span>6 pieces<b>Rs. 250</b></span><span>12 pieces<b>Rs. 490</b></span></div><div class="product-bottom"><span class="price">Choose 6 or 12 pieces</span><button class="add-btn" data-add="Wings">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Shawarma & Rolls" data-name="Zinger Shawarma" data-desc="Crispy zinger chicken wrapped with sauce and fresh fillings."><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=750&q=82" alt="Zinger Shawarma"><button class="favorite" aria-label="Save Zinger Shawarma" data-fav="Zinger Shawarma">♡</button></div><div class="product-body"><div class="product-title-row"><h3>Zinger Shawarma</h3></div><p class="product-desc">Crispy zinger chicken wrapped with sauce and fresh fillings.</p><div class="product-bottom"><span class="price">Rs. 300</span><button class="add-btn" data-add="Zinger Shawarma">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Shawarma & Rolls" data-name="Shawarma Platter" data-desc="A generous platter for a bigger appetite."><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=750&q=82" alt="Shawarma Platter"><button class="favorite" aria-label="Save Shawarma Platter" data-fav="Shawarma Platter">♡</button></div><div class="product-body"><div class="product-title-row"><h3>Shawarma Platter</h3></div><p class="product-desc">A generous platter for a bigger appetite.</p><div class="product-bottom"><span class="price">Rs. 550</span><button class="add-btn" data-add="Shawarma Platter">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Pizza" data-name="Tikka Pizza" data-desc="Classic chicken tikka pizza."><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=750&q=82" alt="Tikka Pizza"><button class="favorite" aria-label="Save Tikka Pizza" data-fav="Tikka Pizza">♡</button></div><div class="product-body"><div class="product-title-row"><h3>Tikka Pizza</h3></div><p class="product-desc">Classic chicken tikka pizza.</p><div class="price-list"><span>7” Small<b>Rs. 290</b></span><span>10” Medium<b>Rs. 390</b></span><span>13” Large<b>Rs. 790</b></span><span>16” XL<b>Rs. 1,200</b></span></div><div class="product-bottom"><span class="price">Choose size in order notes</span><button class="add-btn" data-add="Tikka Pizza">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Pizza" data-name="Hot Spicy Pizza" data-desc="Classic pizza with a spicy kick."><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=750&q=82" alt="Hot Spicy Pizza"><button class="favorite" aria-label="Save Hot Spicy Pizza" data-fav="Hot Spicy Pizza">♡</button></div><div class="product-body"><div class="product-title-row"><h3>Hot Spicy Pizza</h3></div><p class="product-desc">Classic pizza with a spicy kick.</p><div class="price-list"><span>7” Small<b>Rs. 290</b></span><span>10” Medium<b>Rs. 390</b></span><span>13” Large<b>Rs. 790</b></span><span>16” XL<b>Rs. 1,200</b></span></div><div class="product-bottom"><span class="price">Choose size in order notes</span><button class="add-btn" data-add="Hot Spicy Pizza">＋ Add to order</button></div></div></article>
-<article class="product" data-cat="Pizza" data-name="K.B Special Cheese-Stuffed Pizza" data-desc="Signature special pizza with a cheese-stuffed crust"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=750&q=82" alt="Cheese-stuffed crust pizza"><span class="product-tag">Signature</span><button class="favorite" aria-label="Save K.B Special Cheese-Stuffed Pizza" data-fav="K.B Special Cheese-Stuffed Pizza">♡</button></div><div class="product-body"><h3>K.B Special Cheese-Stuffed Pizza</h3><p class="product-desc">Our signature special pizza with a cheese-stuffed crust.</p><div class="product-bottom"><div class="price-list"><span>Small<b>Rs. 450</b></span><span>Medium<b>Rs. 850</b></span><span>Large<b>Rs. 1,250</b></span><span>Family<b>Rs. 1,700</b></span></div><button class="add-btn" data-add="K.B Special Cheese-Stuffed Pizza">＋ Add to order</button></div></div></article>
-</div><p class="menu-note">Pizza sizes and prices are shown above. Choose your pizza size or side portion directly on each menu card. The cart calculates the listed item total before WhatsApp checkout. Product images are illustrative and may not represent the exact served item.</p></div></section>
-
-<section class="section deal-builder" id="build-deal"><div class="container">
-  <div class="section-head"><div><div class="section-kicker" data-i18n="build_kicker">Make it your own</div><h2 data-i18n="build_h2">Build your own deal.</h2></div><p data-i18n="build_p">Mix your favourite burgers, pizzas, drinks and sides. See the item total first, then ask our team on WhatsApp if a better combo price is possible.</p></div>
-  <div class="builder-panel">
-    <div><span class="deal-chip" data-i18n="build_chip">Your combo, your choice</span><h3 data-i18n="build_h3">Pick more. Ask for a better price.</h3><p data-i18n="build_desc">Add any menu items to your cart, choose pizza sizes and quantities, and request a custom deal price. Discounts are confirmed by KOKAB BITES on WhatsApp.</p>
-      <div class="builder-steps">
-        <div class="builder-step"><b data-i18n="step1b">01 · Choose items</b><small data-i18n="step1s">Add burgers, pizza, drinks and sides from the menu.</small></div>
-        <div class="builder-step"><b data-i18n="step2b">02 · Select sizes</b><small data-i18n="step2s">Pick the exact pizza size before adding it.</small></div>
-        <div class="builder-step"><b data-i18n="step3b">03 · Check total</b><small data-i18n="step3s">View your priced subtotal before checkout.</small></div>
-        <div class="builder-step"><b data-i18n="step4b">04 · Request a deal</b><small data-i18n="step4s">Ask our team for a lower combo price.</small></div>
-      </div><a class="btn btn-dark" href="#menu" data-i18n="build_cta">Choose items from menu ↓</a>
-    </div>
-    <div class="builder-summary"><div class="section-kicker" data-i18n="build_est">Your live order estimate</div><div class="big-total" id="builderTotal">Rs. 0</div><div class="muted" id="builderCount">No items selected yet.</div><p class="muted">The cart calculates listed menu prices automatically. Any unpriced item, delivery charge or discount must be confirmed by our team.</p><button class="btn" id="builderOpenCart" type="button" data-i18n="build_review">Review order & request price ↗</button></div>
-  </div>
-</div></section>
 <section class="section moments" id="moments">
 <div class="container">
 <div class="section-head"><div><div class="section-kicker">Our story</div><h2>Best moments.</h2></div><p>Real bites, real smiles — moments from KOKAB BITES.</p></div>
 <div class="moments-track" id="momentsTrack"></div>
-<div class="moments-track reverse" id="momentsTrack2"></div>
-<div class="moments-dots" id="momentsDots"></div>
 </div>
 </section>
 
-<section class="section"><div class="container story-grid"><div class="story-image"><img loading="lazy" src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1100&q=85" alt="Freshly prepared food on a table"></div><div class="story-copy"><div class="section-kicker">A local favourite in the making</div><h2>Good food is more than a meal.</h2><p>It’s the first bite after a long day. The shared pizza in the middle of the table. The burger you keep thinking about. KOKAB BITES is here for those everyday moments worth making delicious.</p><div class="story-points"><div class="story-point"><span>✓</span> Food made fresh for your order</div><div class="story-point"><span>✓</span> Burgers, pizza, rolls and more</div><div class="story-point"><span>✓</span> Easy ordering straight through WhatsApp</div></div><a class="btn" href="#menu">Find your next favourite ↗</a></div></div></section>
-<section class="section reviews"><div class="container"><div class="section-head"><div><div class="section-kicker">Kind words, happy bites</div><h2>Food worth talking about.</h2></div><p>Have you tried KOKAB BITES? Share your experience and help other local food lovers find their next favourite.</p></div><div class="review-grid" id="reviewGrid"></div></div></section>
 <section class="section" id="track"><div class="container"><div class="section-head"><div><div class="section-kicker" data-i18n="track_kicker">Track your order</div><h2 data-i18n="track_h2">Where's my food?</h2></div><p data-i18n="track_p">Enter the order ID from your WhatsApp receipt to see the live status of your order.</p></div>
 <div class="builder-panel"><div><span class="deal-chip" data-i18n="track_chip">Live order status</span><h3 data-i18n="track_h3">Follow your order, step by step.</h3><p data-i18n="track_desc">We update the status as your food is confirmed, prepared and packed. Keep this page open or save your order ID.</p>
 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><input id="trackId" class="field" data-i18n-ph="track_ph" placeholder="Order ID, e.g. KB-XXXXXX-XX" style="flex:1;min-width:200px" aria-label="Order ID" autocomplete="off"><button class="btn" id="trackBtn" type="button" data-i18n="track_btn">Track order</button></div>
 <div id="trackResult" style="margin-top:18px" aria-live="polite"></div></div></div></div></section>
-<section class="section visit" id="visit"><div class="container"><div class="section-head"><div><div class="section-kicker" data-i18n="visit_kicker">Come say hello</div><h2 data-i18n="visit_h2">Your next bite is nearby.</h2></div><p>Visit us in Gujranwala or send your order directly to WhatsApp to confirm availability and delivery.</p></div><div class="visit-grid"><div class="visit-card"><h3>Find KOKAB BITES</h3><div class="visit-row"><i>⌖</i><div><b>Our location</b>Hafizabad Road, Near Fazal Masjid, Sadiq Road, Gujranwala</div></div><div class="visit-row"><i>☏</i><div><b>Call / WhatsApp</b><a href="tel:+923184345994">0318 4345994</a></div></div><div class="visit-row"><i>↗</i><div><b>Ordering</b>Choose menu items and send your order on WhatsApp for confirmation.</div></div><a class="btn" href="https://www.google.com/maps/search/?api=1&query=Hafizabad+Road+Near+Fazal+Masjid+Sadiq+Road+Gujranwala" target="_blank" rel="noopener">Open map directions ↗</a></div><div class="map-wrap"><iframe title="KOKAB BITES location map" src="https://www.google.com/maps/embed?origin=mfe&pb=!1m3!2m1!1s32.1544664,74.1661432!6i17!3m1!1sen!5m1!1sen" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe><a href="https://www.google.com/maps/dir/?api=1&destination=32.1544664,74.1661432" target="_blank" rel="noopener" class="btn btn-dark map-cta">Get directions ↗</a></div></div></div></section>
+<section class="section visit" id="visit"><div class="container"><div class="section-head"><div><div class="section-kicker" data-i18n="visit_kicker">Come say hello</div><h2 data-i18n="visit_h2">Your next bite is nearby.</h2></div><p>Visit us in Gujranwala or send your order directly to WhatsApp to confirm availability and delivery.</p></div><div class="visit-grid"><div class="visit-card"><h3>Find KOKAB BITES</h3><div class="visit-row"><i>⌖</i><div><b>Our location</b>Hafizabad Road, Near Fazal Masjid, Sadiq Road, Gujranwala</div></div><div class="visit-row"><i>◷</i><div><b>Hours</b><span id="visitHours">Open daily 11:00 AM – 11:00 PM</span></div></div><div class="visit-row"><i>☏</i><div><b>Call / WhatsApp</b><a href="tel:+923184345994">0318 4345994</a></div></div><div class="visit-row"><i>↗</i><div><b>Ordering</b>Choose menu items and send your order on WhatsApp for confirmation.</div></div><a class="btn" href="https://www.google.com/maps/search/?api=1&query=Hafizabad+Road+Near+Fazal+Masjid+Sadiq+Road+Gujranwala" target="_blank" rel="noopener">Open map directions ↗</a></div><div class="map-wrap"><iframe title="KOKAB BITES location map" src="https://www.google.com/maps/embed?origin=mfe&pb=!1m3!2m1!1s32.1544664,74.1661432!6i17!3m1!1sen!5m1!1sen" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe><a href="https://www.google.com/maps/dir/?api=1&destination=32.1544664,74.1661432" target="_blank" rel="noopener" class="btn btn-dark map-cta">Get directions ↗</a></div></div></div></section>
 </main>
 
-<footer><div class="container"><div class="footer-top"><div><a class="brand" href="#home" aria-label="KOKAB BITES home"><img class="brand-logo" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp?v=2" alt="KOKAB BITES — Taste Good Mood Always"></a><p class="footer-about">Good Food. Better Mood. Always. Your local spot for satisfying burgers, pizza, shawarma and more in Gujranwala.</p></div><div class="footer-col"><b data-i18n="foot_explore">Explore</b><a href="#menu" data-i18n="foot_menu">Menu</a><a href="#deal" data-i18n="foot_deal">Special deal</a><a href="#build-deal" data-i18n="foot_build">Build a deal</a><a href="#categories" data-i18n="foot_cat">Categories</a></div><div class="footer-col"><b data-i18n="foot_visit">Visit</b><a href="#visit" data-i18n="foot_contact">Location & contact</a><a href="https://wa.me/923184345994" target="_blank" rel="noopener" data-i18n="foot_wa">WhatsApp us</a><a href="#home" data-i18n="foot_top">Back to top ↑</a></div></div><div class="footer-bottom"><span>© <span id="year"></span> KOKAB BITES. All rights reserved.</span><span>Made for good-food moments.</span></div></div></footer>
+<footer><div class="container"><div class="footer-top"><div><a class="brand" href="#home" aria-label="KOKAB BITES home"><img class="brand-logo" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp?v=2" alt="KOKAB BITES — Taste Good Mood Always"></a><p class="footer-about">Good Food. Better Mood. Always. Your local spot for satisfying burgers, pizza, shawarma and more in Gujranwala.</p></div><div class="footer-col"><b data-i18n="foot_explore">Explore</b><a href="#menu" data-i18n="foot_menu">Menu</a><a href="#deal" data-i18n="foot_deal">Special deal</a><a href="#track">Track order</a></div><div class="footer-col"><b data-i18n="foot_visit">Visit</b><a href="#visit" data-i18n="foot_contact">Location & contact</a><a href="https://wa.me/923184345994" target="_blank" rel="noopener" data-i18n="foot_wa">WhatsApp us</a><a href="#home" data-i18n="foot_top">Back to top ↑</a></div></div><div class="footer-bottom"><span>© <span id="year"></span> KOKAB BITES. All rights reserved.</span><span>Made for good-food moments.</span></div></div></footer>
 <div class="app-status" id="appStatus" role="status"><span class="status-dot"></span><span id="connectionLabel">Ready to browse</span></div><nav class="mobile-app-nav" aria-label="Quick navigation">
 <a href="#home" data-tab="home"><span>⌂</span><em data-i18n="nav_home" style="font-style:normal">Home</em></a>
 <a href="#menu" data-tab="menu"><span>▦</span><em data-i18n="nav_menu" style="font-style:normal">Menu</em></a>
@@ -195,7 +159,7 @@ function openLightbox(i){
 <a href="#track" data-tab="track"><span>📦</span><em data-i18n="nav_track" style="font-style:normal">Track</em></a>
 </nav><button class="mobile-cart" id="mobileCart">🛍 <span data-i18n="m_order">Order</span> <span id="mobileCartCount">0</span></button><a class="floating-wa" href="https://wa.me/923184345994" target="_blank" rel="noopener" data-i18n="wa_float">☏ WhatsApp order</a><button type="button" class="to-top-btn" id="toTopBtn" aria-label="Back to top">↑</button>
 <div class="overlay" id="overlay"><aside class="drawer" role="dialog" aria-modal="true" aria-label="Your order"><div class="drawer-head"><h2 data-i18n="cart_title">Your order</h2><button class="close" id="closeCart" aria-label="Close cart">✕</button></div><div id="cartContents"></div><div class="cart-summary" id="cartSummary"><div class="cart-summary-row"><span data-i18n="sum_subtotal">Priced items subtotal</span><b id="cartSubtotal">Rs. 0</b></div><div class="cart-summary-row"><span data-i18n="sum_unpriced">Items needing price confirmation</span><b id="unpricedCount">0</b></div>
-<div class="cart-summary-row" id="discountRow" hidden><span>Promo discount <b id="promoCodeLabel"></b></span><b id="cartDiscount">—</b></div><div class="cart-summary-row"><span data-i18n="sum_delivery">Delivery fee</span><b id="cartDelivery">—</b></div><div class="cart-summary-row total"><span data-i18n="sum_total">Estimated total</span><strong id="cartTotal">Rs. 0</strong></div><p class="estimate-note" id="cartEstimateNote">Final total may change if you add unpriced items, delivery charges or receive a custom discount.</p></div><div class="discount-request"><label for="targetBudget" data-i18n="budget_label">Want to request a custom deal price? (optional)</label><input id="targetBudget" type="number" min="0" step="50" placeholder="Your target total, e.g. 1500"><small>We’ll send this as a request only. KOKAB BITES will confirm whether the price is possible.</small></div><div id="promoWrap"><label class="field-label" for="promoCode">Promo code</label><div style="display:flex;gap:8px"><input class="field" id="promoCode" placeholder="Enter code" autocomplete="off" style="flex:1"><button class="btn secondary small" id="promoApply" type="button" style="white-space:nowrap">Apply</button></div><small class="muted" id="promoMsg"></small></div><label class="field-label" for="customerName" data-i18n="f_name">Your name *</label><input class="field" id="customerName" placeholder="Enter your name" autocomplete="name"><label class="field-label" for="customerPhone" data-i18n="f_phone">Contact number</label><input class="field" id="customerPhone" type="tel" placeholder="Your phone number" autocomplete="tel"><div id="zoneWrap"><label class="field-label" for="deliveryZone">Delivery area</label><select class="field" id="deliveryZone"></select></div><label class="field-label" for="customerAddress" data-i18n="f_addr">Delivery address or pickup *</label><textarea class="field" id="customerAddress" rows="2" placeholder="Full address or type Pickup"></textarea><label class="field-label" for="orderNotes" data-i18n="f_notes">Order notes</label><textarea class="field" id="orderNotes" rows="2" placeholder="Pizza size, spice preference, etc."></textarea><p class="checkout-note" data-i18n="checkout_note">No online payment is collected. WhatsApp opens with your order details so the team can confirm availability, delivery charges and estimated time.</p><button class="checkout" id="checkout" data-i18n="checkout_btn">Send order to WhatsApp ↗</button></aside></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="cart-summary-row" id="discountRow" hidden><span>Promo discount <b id="promoCodeLabel"></b></span><b id="cartDiscount">—</b></div><div class="cart-summary-row"><span data-i18n="sum_delivery">Delivery fee</span><b id="cartDelivery">—</b></div><div class="cart-summary-row total"><span data-i18n="sum_total">Estimated total</span><strong id="cartTotal">Rs. 0</strong></div><p class="estimate-note" id="cartEstimateNote">Final total may change if you add unpriced items, delivery charges or receive a custom discount.</p></div><div class="discount-request"><label for="targetBudget" data-i18n="budget_label">Want to request a custom deal price? (optional)</label><input id="targetBudget" type="number" min="0" step="50" placeholder="Your target total, e.g. 1500"><small>We’ll send this as a request only. KOKAB BITES will confirm whether the price is possible.</small></div><div id="promoWrap"><label class="field-label" for="promoCode">Promo code</label><div style="display:flex;gap:8px"><input class="field" id="promoCode" placeholder="Enter code" autocomplete="off" style="flex:1"><button class="btn secondary small" id="promoApply" type="button" style="white-space:nowrap">Apply</button></div><small class="muted" id="promoMsg"></small></div><fieldset class="order-type"><legend>How would you like your order?</legend><label><input type="radio" name="orderType" value="delivery" checked> Delivery</label><label><input type="radio" name="orderType" value="pickup"> Pickup</label></fieldset><label class="field-label" for="customerName" data-i18n="f_name">Your name *</label><input class="field" id="customerName" placeholder="Enter your name" autocomplete="name"><label class="field-label" for="customerPhone" data-i18n="f_phone">Contact number</label><input class="field" id="customerPhone" type="tel" placeholder="Your phone number" autocomplete="tel"><div id="zoneWrap"><label class="field-label" for="deliveryZone">Delivery area</label><select class="field" id="deliveryZone"></select></div><div id="addressWrap"><label class="field-label" for="customerAddress" data-i18n="f_addr">Delivery address *</label><textarea class="field" id="customerAddress" rows="2" placeholder="Full delivery address"></textarea></div><p class="muted" id="pickupNote" hidden>Pickup from: Hafizabad Road, Near Fazal Masjid, Sadiq Road, Gujranwala.</p><label class="field-label" for="orderNotes" data-i18n="f_notes">Order notes</label><textarea class="field" id="orderNotes" rows="2" placeholder="Pizza size, spice preference, etc."></textarea><p class="checkout-note" data-i18n="checkout_note">No online payment is collected. WhatsApp opens with your order details so the team can confirm availability, delivery charges and estimated time.</p><button class="checkout" id="checkout" data-i18n="checkout_btn">Send order to WhatsApp ↗</button></aside></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 let WA_NUMBER="923184345994";
 const waNum=()=>((menuConfig&&menuConfig.settings&&menuConfig.settings.whatsappNumber)||WA_NUMBER);
@@ -206,6 +170,9 @@ const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const money=n=>"Rs. "+Number(n||0).toLocaleString("en-PK");
 function notify(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>e.classList.remove("show"),2300)}
 let menuConfig=null;
+let orderType='delivery';try{orderType=localStorage.getItem('kokab-order-type')==='pickup'?'pickup':'delivery'}catch(e){}
+let promoCheck={code:'',type:'',value:0,discount:0,error:'',note:'',checkedSubtotal:-1,pending:false};
+try{const _pc=JSON.parse(localStorage.getItem('kokab-promo-state')||'null');if(_pc&&typeof _pc==='object')promoCheck=Object.assign(promoCheck,_pc,{pending:false})}catch(e){}
 let classicPizza={Small:{label:'7” Small',price:290},Medium:{label:'10” Medium',price:390},Large:{label:'13” Large',price:790},XL:{label:'16” XL',price:1200}};
 let specialPizza={Small:{label:'Small',price:450},Medium:{label:'Medium',price:850},Large:{label:'Large',price:1250},Family:{label:'Family',price:1700}};
 let simplePrices={
@@ -223,7 +190,7 @@ let presetDeals={
 "Special Offer — 2 Shami Burgers + 2 Special Shawarmas + 1L Next Cola":{price:900,detail:"2 Shami Burgers, 2 Special Shawarmas, 1L Next Cola"}
 };
 async function loadMenuConfig(){
- try{const r=await fetch('/api/menu',{cache:'no-store'});if(!r.ok)return;menuConfig=await r.json();if(window.buildHeroSlides)window.buildHeroSlides();
+ try{const r=await fetch('/api/menu',{cache:'no-store'});if(!r.ok)return;menuConfig=await r.json();
   if(menuConfig.items)simplePrices={...simplePrices,...menuConfig.items};
   if(Array.isArray(menuConfig.customItems))menuConfig.customItems.forEach(p=>{if(p.active!==false)simplePrices[p.name]=p.price??null;});
   if(menuConfig.classicPizza)classicPizza=menuConfig.classicPizza;
@@ -231,7 +198,7 @@ async function loadMenuConfig(){
   if(menuConfig.deals)presetDeals=menuConfig.deals;
   refreshMenuPrices();
   renderAdminProducts();
-  renderWebsiteDeals();renderZoneOptions();renderBanner();buildCategoryFilters();renderFeedbacks();
+  renderWebsiteDeals();renderZoneOptions();renderBanner();buildCategoryFilters();try{if(window.buildPop)buildPop()}catch(e){}
   $$('a[href^="https://wa.me/"]').forEach(a=>{a.href="https://wa.me/"+waNum();});
  }catch(e){/* Static preview can still run using bundled fallback prices. */}
  updateOpenBadge();
@@ -240,30 +207,11 @@ function buildCategoryFilters(){
  const wrap=document.getElementById('filters');if(!wrap)return;
  const cats=Array.isArray(menuConfig?.categories)&&menuConfig.categories.length?menuConfig.categories.map(c=>c.name||c).filter(Boolean):['Burgers','Pizza','Shawarma & Rolls','Sides','Drinks'];
  const current=document.querySelector('#filters .filter.active')?.dataset.cat||'All';
- wrap.innerHTML=`<button class="filter${current==='All'?' active':''}" data-cat="All">All items</button>`+cats.map(c=>`<button class="filter${current===c?' active':''}" data-cat="${c}">${c}</button>`).join('')+`<button class="filter${current==='Favourites'?' active':''}" data-cat="Favourites">♡ Favourites</button>`;
- wrap.querySelectorAll('.filter').forEach(b=>b.onclick=()=>{wrap.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeCat=b.dataset.cat;applyFilters()});
- const mc=document.getElementById('appCats');if(mc){const EMOJI={All:'🍽️',Burgers:'🍔',Pizza:'🍕','Shawarma & Rolls':'🌯',Sides:'🍟',Drinks:'🥤',Desserts:'🍰'};const allCats=['All',...cats];mc.innerHTML=allCats.map(c=>`<button class="app-cat${current===c?' active':''}" data-cat="${c}" aria-pressed="${current===c}"><span class="app-cat-img">${EMOJI[c]||'🍽️'}</span><span>${c==='Shawarma & Rolls'?'Shawarma':c}</span></button>`).join('');mc.querySelectorAll('.app-cat').forEach(b=>b.onclick=()=>{mc.querySelectorAll('.app-cat').forEach(x=>x.classList.remove('active'));b.classList.add('active');mc.querySelectorAll('.app-cat').forEach(x=>x.setAttribute('aria-pressed',x===b));document.querySelector(`#filters .filter[data-cat="${CSS.escape(b.dataset.cat)}"]`)?.click();document.getElementById('menu')?.scrollIntoView({behavior:'smooth'})})}
+ wrap.innerHTML=`<button class="filter${current==='All'?' active':''}" data-cat="All" aria-pressed="${current==='All'}">All items</button>`+cats.map(c=>`<button class="filter${current===c?' active':''}" data-cat="${c}" aria-pressed="${current===c}">${c}</button>`).join('')+`<button class="filter${current==='Favourites'?' active':''}" data-cat="Favourites" aria-pressed="${current==='Favourites'}">Favourites</button>`;
+ wrap.querySelectorAll('.filter').forEach(b=>b.onclick=()=>{wrap.querySelectorAll('.filter').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-pressed','false')});b.classList.add('active');b.setAttribute('aria-pressed','true');activeCat=b.dataset.cat;applyFilters();document.getElementById('menu')?.scrollIntoView({behavior:'smooth'})});
 }
 function bindFavButtons(root){(root||document).querySelectorAll("[data-fav]").forEach(b=>{if(b.dataset.boundFav)return;b.dataset.boundFav="1";if(favourites.has(b.dataset.fav)){b.classList.add("active");b.textContent="♥"}b.addEventListener("click",()=>{const n=b.dataset.fav;if(favourites.has(n)){favourites.delete(n);b.classList.remove("active");b.textContent="♡";notify("Removed from favourites")}else{favourites.add(n);b.classList.add("active");b.textContent="♥";notify("Saved to favourites")}try{localStorage.setItem("kokab-favourites",JSON.stringify([...favourites]))}catch{};if(document.querySelector(".filter.active")?.dataset.cat==="Favourites")applyFilters()})})}
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',()=>bindFavButtons())}else{bindFavButtons()}
-function renderFeedbacks(){
- const grid=document.getElementById('reviewGrid');if(!grid)return;
- const fb=(menuConfig?.feedbacks||[]).filter(f=>f.active!==false);
- const waNum=((menuConfig?.settings?.whatsappNumber)||'923184345994');
- const stars=n=>'★'.repeat(Math.max(1,Math.min(5,Number(n)||5)));
- const cards=fb.map(f=>{
-  const avatar=f.photo?`<img src="${esc(f.photo)}" alt="${esc(f.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(esc(f.name||'K').charAt(0).toUpperCase());
-  return `<article class="review"><div class="stars">${stars(f.rating)}</div><blockquote>“${esc(f.message)}”</blockquote><div class="reviewer"><div class="avatar" style="${f.photo?'padding:0;overflow:hidden':''}">${avatar}</div><div><b>${esc(f.name)}</b><small>${esc(f.tag||'Customer feedback')}</small></div></div></article>`;
- }).join('');
- const cta=`<article class="review"><div class="stars">★★★★★</div><blockquote>Good food is best when it brings people together. What should we feature next on the menu?</blockquote><div class="reviewer"><div class="avatar">✦</div><div><b>Your turn</b><small><a href="https://wa.me/${waNum}" target="_blank" rel="noopener" style="color:inherit">Tell us on WhatsApp</a></small></div></div></article>`;
- if(fb.length>3){
-  grid.classList.add('review-loop');
-  grid.innerHTML=`<div class="review-track">${cards+cta}${cards+cta}</div>`;
- }else{
-  grid.classList.remove('review-loop');
-  grid.innerHTML=cards+cta;
- }
-}
 function renderAdminProducts(){
  const grid=$("#productGrid");if(!grid||!Array.isArray(menuConfig?.customItems))return;
  grid.querySelectorAll("[data-admin-item]").forEach(el=>el.remove());
@@ -271,13 +219,13 @@ function renderAdminProducts(){
   if(grid.querySelector(`.product[data-name="${CSS.escape(p.name)}"]`))return;
   const price=p.price===null||p.price===undefined?"Price confirmed on WhatsApp":money(p.price);
   const card=document.createElement("article");card.className="product"+(p.soldOut===true?" sold-out":"");card.dataset.adminItem="1";card.dataset.cat=p.category||"Other";card.dataset.name=p.name;card.dataset.desc=p.description||"";
-  card.innerHTML=`<div class="product-image"><img loading="lazy" src="${esc(p.image||"")}" alt="${esc(p.name)}" onerror="this.style.opacity='.25'"><span class="product-tag">${esc(p.tag||p.category||"New")}</span><button class="favorite" aria-label="Save ${esc(p.name)}" data-fav="${esc(p.name)}">♡</button></div><div class="product-body"><div class="product-title-row"><h3>${esc(p.name)}</h3></div><p class="product-desc">${esc(p.description||"Freshly made at KOKAB BITES.")}</p><div class="product-bottom"><span class="price">${price}</span><button class="add-btn" data-add="${esc(p.name)}"${p.soldOut===true?" disabled":""}>${p.soldOut===true?"Sold out":"＋ Add to order"}</button></div></div>`;grid.appendChild(card);
+  card.innerHTML=`<div class="product-image">${p.image?`<img loading="lazy" src="${esc(p.image)}" alt="${esc(p.name)}">`:`<div class="product-ph" aria-hidden="true"><span>${kbInitials(p.name)}</span></div>`}<span class="product-tag">${esc(p.tag||p.category||"New")}</span><button class="favorite" aria-label="Save ${esc(p.name)}" data-fav="${esc(p.name)}">♡</button></div><div class="product-body"><h3>${esc(p.name)}</h3><p class="product-desc">${esc(p.description||"Freshly made at KOKAB BITES.")}</p><div class="product-bottom"><span class="price">${price}</span><button class="add-btn" data-add="${esc(p.name)}"${p.soldOut===true?" disabled":""}>${p.soldOut===true?"Sold out":"＋ Add to order"}</button></div></div>`;grid.appendChild(card);
  });
  bindFavButtons(grid);sortProductGrid();
 }
 function sortOfCard(card){const name=card.dataset.name;const custom=menuConfig?.customItems?.find(p=>p.name===name);if(custom&&custom.sortOrder!==undefined&&custom.sortOrder!==null)return Number(custom.sortOrder);const meta=menuConfig?.itemMeta?.[name];if(meta&&meta.sortOrder!==undefined&&meta.sortOrder!==null)return Number(meta.sortOrder);return Number(card.dataset.origIndex||0)}function sortProductGrid(){const grid=document.querySelector('#productGrid');if(!grid)return;const cards=[...grid.querySelectorAll('.product')];cards.forEach((cd,i)=>{if(cd.dataset.origIndex===undefined)cd.dataset.origIndex=i});cards.sort((x,y)=>sortOfCard(x)-sortOfCard(y));cards.forEach(cd=>grid.appendChild(cd));try{syncProductHighlights()}catch(e){}}
 function refreshMenuPrices(){
- $$('.product').forEach(card=>{const name=card.dataset.name;const price=Object.prototype.hasOwnProperty.call(simplePrices,name)?simplePrices[name]:null;const label=card.querySelector('.product-bottom .price');if(label&&price!==null&&name!=='Next Cola 1 Litre')label.textContent=money(price);if(label&&price===null&&(name==='Next Cola 1 Litre'||name==='Crispy Chicken'))label.textContent='Price confirmed on WhatsApp';if(menuConfig?.itemImages&&Object.prototype.hasOwnProperty.call(menuConfig.itemImages,name)){const img=card.querySelector('.product-image img');if(img){if(menuConfig.itemImages[name])img.src=menuConfig.itemImages[name];else{img.removeAttribute('src');img.alt=name+' photo removed'}}}const meta=menuConfig?.itemMeta?.[name];if(meta?.active===false)card.style.display='none';else if(!card.dataset.adminItem)card.style.removeProperty('display');const soldOut=meta?.soldOut===true;card.classList.toggle('sold-out',soldOut);const addBtn=card.querySelector('[data-add]');if(soldOut){if(!card.querySelector('.soldout-tag')){const t=document.createElement('span');t.className='soldout-tag';t.textContent='Sold out';card.querySelector('.product-image')?.appendChild(t)}if(addBtn&&!addBtn.disabled){addBtn.disabled=true;addBtn.dataset.origText=addBtn.textContent;addBtn.textContent='Sold out'}}else{card.querySelector('.soldout-tag')?.remove();if(addBtn&&addBtn.disabled&&addBtn.dataset.origText){addBtn.disabled=false;addBtn.textContent=addBtn.dataset.origText;delete addBtn.dataset.origText}}if(meta?.displayName){const title=card.querySelector('.product-title-row h3');if(title)title.textContent=meta.displayName;card.dataset.displayName=meta.displayName;card.setAttribute('aria-label',meta.displayName)}if(meta?.tag){const tag=card.querySelector('.product-tag');if(tag)tag.textContent=meta.tag}if(meta?.description){const desc=card.querySelector('.product-desc');if(desc)desc.textContent=meta.description}});
+ $$('.product').forEach(card=>{const name=card.dataset.name;const price=Object.prototype.hasOwnProperty.call(simplePrices,name)?simplePrices[name]:null;const label=card.querySelector('.product-bottom .price');if(label&&price!==null&&name!=='Next Cola 1 Litre')label.textContent=money(price);if(label&&price===null&&(name==='Next Cola 1 Litre'||name==='Crispy Chicken'))label.textContent='Price confirmed on WhatsApp';if(menuConfig?.itemImages&&Object.prototype.hasOwnProperty.call(menuConfig.itemImages,name)){const u=menuConfig.itemImages[name];const img=card.querySelector('.product-image img');const ph=card.querySelector('.product-image .product-ph');if(u){if(img)img.src=u;else if(ph){const ni=document.createElement('img');ni.loading='lazy';ni.src=u;ni.alt=name;ph.replaceWith(ni)}}else if(img){kbPhotoPlaceholder(img)}}const meta=menuConfig?.itemMeta?.[name];if(meta?.active===false)card.style.display='none';else if(!card.dataset.adminItem)card.style.removeProperty('display');const soldOut=meta?.soldOut===true;card.classList.toggle('sold-out',soldOut);const addBtn=card.querySelector('[data-add]');if(soldOut){if(!card.querySelector('.soldout-tag')){const t=document.createElement('span');t.className='soldout-tag';t.textContent='Sold out';card.querySelector('.product-image')?.appendChild(t)}if(addBtn&&!addBtn.disabled){addBtn.disabled=true;addBtn.dataset.origText=addBtn.textContent;addBtn.textContent='Sold out'}}else{card.querySelector('.soldout-tag')?.remove();if(addBtn&&addBtn.disabled&&addBtn.dataset.origText){addBtn.disabled=false;addBtn.textContent=addBtn.dataset.origText;delete addBtn.dataset.origText}}if(meta?.displayName){const title=card.querySelector('h3');if(title)title.textContent=meta.displayName;card.dataset.displayName=meta.displayName;card.setAttribute('aria-label',meta.displayName)}if(meta?.tag){const tag=card.querySelector('.product-tag');if(tag)tag.textContent=meta.tag}if(meta?.description){const desc=card.querySelector('.product-desc');if(desc)desc.textContent=meta.description}const _sel=card.querySelector('[data-option]');if(_sel){try{const _pk=getProductOption(card);const _lab=card.querySelector('.product-bottom .price');if(_lab)_lab.textContent=_pk.price===null?'Price to confirm':money(_pk.price)}catch(e){}}});
  
  sortProductGrid();applyFilters();
 }
@@ -285,7 +233,7 @@ function dealPublicDetail(d){if(Array.isArray(d.items)&&d.items.length){return d
 function renderWebsiteDeals(){const now=Date.now();const entries=Object.entries(presetDeals||{}).filter(([,d])=>d.active!==false&&!(d.expiresAt&&new Date(d.expiresAt).getTime()<now)).sort((a,b)=>((a[1].sortOrder??999)-(b[1].sortOrder??999))||a[0].localeCompare(b[0]));const section=$('#deal');if(section)section.hidden=!entries.length;if(!entries.length)return;const big=entries.find(([,d])=>d.bigDeal)||entries[0];renderBigDeal(big[0],big[1]);const rest=entries.filter(([n])=>n!==big[0]);const rail=$('#dealsRail');if(rail)rail.innerHTML=rest.map(([name,d])=>dealRailCard(name,d)).join('')||'<p class="muted">More deals are cooking — check back soon.</p>'}
 let bigDealTimer=null;
 function renderBigDeal(name,d){const el=$('#bigDeal');if(!el)return;el.hidden=false;$('#bigDealName').textContent=name;const desc=$('#bigDealDesc');desc.textContent=d.detail||'';desc.hidden=!d.detail;$('#bigDealItems').innerHTML=esc(dealPublicDetail(d)).split(/,\s*/).map(x=>'<li>\u2713 '+x+'</li>').join('');$('#bigDealPrice').textContent=d.price===null?'Price to confirm':money(d.price);const pct=(d.oldPrice&&d.price!==null&&Number(d.oldPrice)>Number(d.price))?Math.round((1-Number(d.price)/Number(d.oldPrice))*100):0;const old=$('#bigDealOld'),save=$('#bigDealSave'),off=$('#bigDealOff');old.hidden=!d.oldPrice;save.hidden=!pct;off.hidden=!pct;if(d.oldPrice)old.textContent=money(d.oldPrice);if(pct){save.textContent='Save '+pct+'%';off.textContent='-'+pct+'%'}const badge=$('#bigDealBadge');badge.textContent=d.badge||'';badge.hidden=!d.badge;const img=$('#bigDealImg');if(d.image){img.src=d.image;img.alt=name;img.hidden=false}else{img.hidden=true}const btn=$('#bigDealAdd');if(btn)btn.dataset.add=name;const timer=$('#bigDealTimer');if(bigDealTimer){clearInterval(bigDealTimer);bigDealTimer=null}if(d.expiresAt){const end=new Date(d.expiresAt).getTime();const tick=()=>{const ms=end-Date.now();if(ms<=0){timer.hidden=true;if(bigDealTimer)clearInterval(bigDealTimer);return}const h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),ss=Math.floor(ms%60000/1000);$('#bigDealClock').textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');timer.hidden=false};tick();bigDealTimer=setInterval(tick,1000)}else{timer.hidden=true}}
-function dealRailCard(name,d){const pct=(d.oldPrice&&d.price!==null&&Number(d.oldPrice)>Number(d.price))?Math.round((1-Number(d.price)/Number(d.oldPrice))*100):0;const exp=d.expiresAt?new Date(d.expiresAt):null;return `<article class="deal-rail-card"><div class="drc-media">${d.image?`<img loading="lazy" src="${esc(d.image)}" alt="${esc(name)}">`:'<span class="drc-emoji">\u{1F381}</span>'}${d.badge?`<span class="drc-badge">${esc(d.badge)}</span>`:''}${pct?`<span class="drc-off">-${pct}%</span>`:''}</div><div class="drc-body"><h3>${esc(name)}</h3>${d.detail?`<p>${esc(d.detail)}</p>`:''}<ul>${esc(dealPublicDetail(d)).split(/,\s*/).slice(0,4).map(x=>`<li>${x}</li>`).join('')}</ul><div class="drc-buy"><div class="drc-prices"><b>${d.price===null?'Price to confirm':money(d.price)}</b>${d.oldPrice?`<s>${money(d.oldPrice)}</s>`:''}</div><button class="add-btn" data-add="${esc(name)}">${tr("deal_add2")||"\uFF0B Add Deal"}</button></div>${exp?`<div class="drc-ends">\u23F3 Ends ${exp.toLocaleDateString()}</div>`:''}</div></article>`}
+function dealRailCard(name,d){const pct=(d.oldPrice&&d.price!==null&&Number(d.oldPrice)>Number(d.price))?Math.round((1-Number(d.price)/Number(d.oldPrice))*100):0;const exp=d.expiresAt?new Date(d.expiresAt):null;return `<article class="deal-rail-card"><div class="drc-media">${d.image?`<img loading="lazy" src="${esc(d.image)}" alt="${esc(name)}">`:'<span class="drc-ph">Deal</span>'}${d.badge?`<span class="drc-badge">${esc(d.badge)}</span>`:''}${pct?`<span class="drc-off">-${pct}%</span>`:''}</div><div class="drc-body"><h3>${esc(name)}</h3>${d.detail?`<p>${esc(d.detail)}</p>`:''}<ul>${esc(dealPublicDetail(d)).split(/,\s*/).slice(0,4).map(x=>`<li>${x}</li>`).join('')}</ul><div class="drc-buy"><div class="drc-prices"><b>${d.price===null?'Price to confirm':money(d.price)}</b>${d.oldPrice?`<s>${money(d.oldPrice)}</s>`:''}</div><button class="add-btn" data-add="${esc(name)}">${tr("deal_add2")||"\uFF0B Add Deal"}</button></div>${exp?`<div class="drc-ends">\u23F3 Ends ${exp.toLocaleDateString()}</div>`:''}</div></article>`}
 function getProductOption(card){
  const select=card.querySelector("[data-option]");
  if(!select)return {option:"",price:null};
@@ -333,7 +281,7 @@ function setupProductOptions(){
      const p1=dp['1 litre'],p15=dp['1.5 litre'];
      options=`<div class="product-options"><label>Choose drink size</label><select data-option="drink" data-drink-price-1="${p1??''}" data-drink-price-15="${p15??''}" aria-label="Choose drink size"><option value="1 litre">1 litre — ${p1==null?'price to confirm':money(p1)}</option><option value="1.5 litre">1.5 litre — ${p15==null?'price to confirm':money(p15)}</option></select></div>`;
    }
-   if(options){add.insertAdjacentHTML("beforebegin",options);const oldPrices=card.querySelector(".price-list");if(oldPrices)oldPrices.style.display="none";const sel=card.querySelector('[data-option]');if(sel){const update=()=>{const picked=getProductOption(card);const label=card.querySelector('.product-bottom .price');if(label&&(sel.dataset.option==='variation'||sel.dataset.option==='drink'))label.textContent=picked.price===null?'Price to confirm':money(picked.price)};sel.addEventListener('change',update);update();}}
+   if(options){card.querySelector(".product-bottom").insertAdjacentHTML("beforebegin",options);const oldPrices=card.querySelector(".price-list");if(oldPrices)oldPrices.style.display="none";const sel=card.querySelector('[data-option]');if(sel){const update=()=>{const picked=getProductOption(card);const label=card.querySelector('.product-bottom .price');if(label)label.textContent=picked.price===null?'Price to confirm':money(picked.price);try{syncProductHighlights()}catch(e){}};sel.addEventListener('change',update);update();}}
  });
 }
 function addItem(name,card=null){
@@ -351,25 +299,38 @@ function pkDateKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart
 function isClosedDate(s){s=s||storeSettings();return Array.isArray(s.closedDates)&&s.closedDates.indexOf(pkDateKey(new Date()))!==-1}
 function isOpenNow(){const s=storeSettings();if(s.forceStatus==='closed')return false;if(s.forceStatus==='open')return true;if(isClosedDate(s))return false;const h=karachiHour();return s.openHour<=s.closeHour?(h>=s.openHour&&h<s.closeHour):(h>=s.openHour||h<s.closeHour);}
 function fmtHour(h){return (((h+11)%12)+1)+" "+(h>=12?"PM":"AM");}
-function updateOpenBadge(){const s=storeSettings(),el=$("#openBadge");if(!el)return;const open=isOpenNow();el.textContent=open?("\u25cf Open now \u00b7 till "+fmtHour(s.closeHour)):(s.forceStatus==="closed"?"\u25cf Closed by shop":(isClosedDate(s)?"\u25cf Closed today":"\u25cf Closed \u00b7 opens "+fmtHour(s.openHour)));el.classList.toggle("closed",!open);}
-function cartTotals(){const rows=[...cart.values()];const priced=rows.reduce((a,v)=>a+(v.price===null?0:v.price*v.qty),0);const unknown=rows.reduce((a,v)=>a+(v.price===null?v.qty:0),0);const count=rows.reduce((a,v)=>a+v.qty,0);const s=storeSettings();let delFee=0;const dz=Array.isArray(s.deliveryZones)?s.deliveryZones:[];if(priced>0){if(dz.length){const zn=dz.filter(z=>z.name===((document.querySelector('#deliveryZone')||{}).value||''))[0]||dz[0];delFee=priced>=s.freeDeliveryAbove?0:(Number(zn.fee)||0)}else if(priced<s.freeDeliveryAbove)delFee=s.deliveryFee}const promo=promoState();const discount=promoDiscountFor(priced,promo);return{priced,unknown,delFee,discount,promoCode:discount>0?promo.code:'',promoError:promo.error,total:Math.max(0,priced+delFee-discount),count,rows};}
-function promoState(){let code='';try{code=(localStorage.getItem('kokab-promo')||'').trim().toUpperCase()}catch(e){}if(!code)return{code:'',discount:0,error:''};const promos=Array.isArray(menuConfig&&menuConfig.promos)?menuConfig.promos:[];const p=promos.find(x=>x&&x.active!==false&&String(x.code||'').trim().toUpperCase()===code);if(!p)return{code,error:'Invalid code'};if(p.expiresAt&&Number.isFinite(new Date(p.expiresAt).getTime())&&new Date(p.expiresAt).getTime()<Date.now())return{code,error:'Code expired'};if(Number(p.maxUses)>0&&(Number(p.uses)||0)>=Number(p.maxUses))return{code,error:'Usage limit reached'};return{code,p,error:''}}
-function promoDiscountFor(subtotal,st){if(!st||!st.p||!(subtotal>0))return 0;const min=Math.max(0,Number(st.p.minOrder)||0);if(subtotal<min)return 0;let d=st.p.type==='pct'?Math.round(subtotal*Math.max(0,Number(st.p.value)||0)/100):Math.round(Math.max(0,Number(st.p.value)||0));return Math.max(0,Math.min(d,subtotal))}
+function updateOpenBadge(){const s=storeSettings(),el=$("#openBadge");const vh=$("#visitHours");if(vh)vh.textContent='Open daily '+fmtHour(s.openHour)+' – '+fmtHour(s.closeHour);if(!el)return;const open=isOpenNow();el.textContent=open?("\u25cf Open now \u00b7 till "+fmtHour(s.closeHour)):(s.forceStatus==="closed"?"\u25cf Closed by shop":(isClosedDate(s)?"\u25cf Closed today":"\u25cf Closed \u00b7 opens "+fmtHour(s.openHour)));el.classList.toggle("closed",!open);}
+function cartTotals(){const rows=[...cart.values()];const priced=rows.reduce((a,v)=>a+(v.price===null?0:v.price*v.qty),0);const unknown=rows.reduce((a,v)=>a+(v.price===null?v.qty:0),0);const count=rows.reduce((a,v)=>a+v.qty,0);const s=storeSettings();let delFee=0;const dz=Array.isArray(s.deliveryZones)?s.deliveryZones:[];if(priced>0){if(dz.length){const zn=dz.filter(z=>z.name===((document.querySelector('#deliveryZone')||{}).value||''))[0]||dz[0];delFee=priced>=s.freeDeliveryAbove?0:(Number(zn.fee)||0)}else if(priced<s.freeDeliveryAbove)delFee=s.deliveryFee}if(orderType==='pickup')delFee=0;const promo=promoState();const discount=promoDiscountFor(priced,promo);return{priced,unknown,delFee,discount,promoCode:discount>0?promo.code:'',promoError:promo.error,promoNote:promo.note||'',total:Math.max(0,priced+delFee-discount),count,rows};}
+function promoState(){let code='';try{code=(localStorage.getItem('kokab-promo')||'').trim().toUpperCase()}catch(e){}if(!code)return{code:'',discount:0,error:'',note:''};if(promoCheck.code!==code)return{code,error:'',note:'',discount:0};if(promoCheck.error)return{code,error:promoCheck.error,note:'',discount:0};if(promoCheck.note)return{code,error:'',note:promoCheck.note,discount:0};if(!promoCheck.type)return{code,error:'',note:'',discount:0};return{code,p:{type:promoCheck.type,value:promoCheck.value},error:'',note:''}}
+function promoDiscountFor(subtotal,st){if(!st||!st.p||!(subtotal>0))return 0;let d=st.p.type==='pct'?Math.round(subtotal*Math.max(0,Number(st.p.value)||0)/100):Math.round(Math.max(0,Number(st.p.value)||0));return Math.max(0,Math.min(d,subtotal))}
+function savePromoCheck(){try{localStorage.setItem('kokab-promo-state',JSON.stringify({code:promoCheck.code,type:promoCheck.type,value:promoCheck.value,discount:promoCheck.discount,error:promoCheck.error,note:promoCheck.note,checkedSubtotal:promoCheck.checkedSubtotal}))}catch(e){}}
+async function checkPromo(code,subtotal){code=(code||'').trim().toUpperCase();if(!code||!(subtotal>0))return;promoCheck.pending=true;const ctrl=new AbortController();const to=setTimeout(()=>ctrl.abort(),8000);try{const r=await fetch('/api/promo-check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,subtotal}),signal:ctrl.signal});const d=await r.json().catch(()=>null);if(!r.ok||!d)throw new Error('bad response');if(d.valid){promoCheck={code,type:d.type,value:d.value,discount:Number(d.discount)||0,error:'',note:'',checkedSubtotal:subtotal,pending:false}}else{promoCheck={code,type:'',value:0,discount:0,error:d.error||'Invalid code',note:'',checkedSubtotal:subtotal,pending:false}}}catch(e){promoCheck={code,type:'',value:0,discount:0,error:'',note:'Discount will be confirmed on WhatsApp',checkedSubtotal:subtotal,pending:false}}finally{clearTimeout(to);promoCheck.pending=false;savePromoCheck();renderCart()}}
+function cardLineKey(card){
+ const displayName=menuConfig?.itemMeta?.[card.dataset.name]?.displayName||card.dataset.name;
+ let option='';
+ try{if(card.querySelector('[data-option]'))option=getProductOption(card).option||''}catch(e){}
+ return option?`${displayName} (${option})`:displayName;
+}
 function syncProductHighlights(){
- const inCart=new Set();for(const[,v]of cart){if(v&&v.name)inCart.add(v.name)}
+ const inCartNames=new Set();for(const[,v]of cart){if(v&&v.name)inCartNames.add(v.name)}
  document.querySelectorAll('.product').forEach(p=>{
   const name=p.dataset.name||p.querySelector('[data-add]')?.dataset.add;
-  const hit=name&&inCart.has(name);
-  p.classList.toggle('in-cart',!!hit);
-  const btn=p.querySelector('.add-btn');
-  if(btn){
-   if(hit){
-    let qty=0;for(const[,v]of cart){if(v&&v.name===name)qty+=v.qty||1}
-    btn.innerHTML='✓ In cart · '+qty;btn.classList.add('in-cart-btn');
-   }else{
-    if(btn.classList.contains('in-cart-btn')){btn.innerHTML='＋ Add to order';btn.classList.remove('in-cart-btn')}
-   }
+  const displayName=menuConfig?.itemMeta?.[name]?.displayName||name;
+  p.classList.toggle('in-cart',!!(name&&inCartNames.has(displayName)));
+  const btn=p.querySelector('.add-btn');if(!btn)return;
+  let qty=0;
+  try{const line=cart.get(cardLineKey(p));qty=line?line.qty:0}catch(e){}
+  let stepper=p.querySelector('.card-stepper');
+  if(!stepper){
+   stepper=document.createElement('div');stepper.className='card-stepper';stepper.hidden=true;
+   stepper.innerHTML='<button type="button" data-cdec aria-label="One less">−</button><b>1</b><button type="button" data-cinc aria-label="One more">+</button>';
+   btn.insertAdjacentElement('afterend',stepper);
+   stepper.querySelector('[data-cdec]').addEventListener('click',()=>{const k=cardLineKey(p);const v=cart.get(k);if(!v)return;if(v.qty<=1)cart.delete(k);else v.qty--;renderCart()});
+   stepper.querySelector('[data-cinc]').addEventListener('click',()=>{const k=cardLineKey(p);const v=cart.get(k);if(v){if(v.qty<30){v.qty++;renderCart()}}else if(typeof addItem==='function')addItem(p.dataset.name,p)});
   }
+  const num=stepper.querySelector('b');if(num)num.textContent=qty;
+  stepper.hidden=qty<=0;
+  btn.style.display=qty>0?'none':'';
  });
 }
 function renderCart(){
@@ -379,19 +340,19 @@ function renderCart(){
  const _cl=count?("Open cart, "+count+" item"+(count===1?"":"s")):"Open cart";const _ab2=$("#appCartBtn");if(_ab2)_ab2.setAttribute("aria-label",_cl);const _co=$("#cartOpen");if(_co)_co.setAttribute("aria-label",_cl);const _tb2=$("#tabCartBtn");if(_tb2)_tb2.setAttribute("aria-label",count?("Cart, "+count+" item"+(count===1?"":"s")):"Cart");
  try{syncProductHighlights()}catch(e){}
  $("#cartSubtotal").textContent=money(priced);
- $("#cartDelivery").textContent=priced?(t.delFee?money(t.delFee):"FREE"):"\u2014";
- $("#cartTotal").textContent=money(t.total);const _dr=$("#discountRow");if(_dr){_dr.hidden=!t.discount;if(t.discount){$("#cartDiscount").textContent="−"+money(t.discount);$("#promoCodeLabel").textContent="("+t.promoCode+")"}}const _pm=$("#promoMsg"),_pi=$("#promoCode");if(_pm){if(t.promoError&&_pi&&_pi.value){_pm.textContent=t.promoError;_pm.style.color="var(--red)"}else if(t.discount){_pm.textContent="Code "+t.promoCode+" applied: −"+money(t.discount);_pm.style.color="var(--green)"}else{_pm.textContent="";}}if(_pi&&document.activeElement!==_pi&&!_pi.value){try{const _c=localStorage.getItem("kokab-promo")||"";if(_c)_pi.value=_c}catch(e){}}
+ $("#cartDelivery").textContent=orderType==='pickup'?'Pickup — no fee':(priced?(t.delFee?money(t.delFee):"FREE"):"\u2014");
+ $("#cartTotal").textContent=money(t.total);const _dr=$("#discountRow");if(_dr){_dr.hidden=!t.discount;if(t.discount){$("#cartDiscount").textContent="−"+money(t.discount);$("#promoCodeLabel").textContent="("+t.promoCode+")"}}const _pm=$("#promoMsg"),_pi=$("#promoCode");if(_pm){if(t.promoError&&_pi&&_pi.value){_pm.textContent=t.promoError;_pm.style.color="var(--red)"}else if(t.discount){_pm.textContent="Code "+t.promoCode+" applied: −"+money(t.discount);_pm.style.color="var(--green)"}else if(t.promoNote){_pm.textContent=t.promoNote;_pm.style.color="var(--muted)"}else{_pm.textContent="";}}if(_pi&&document.activeElement!==_pi&&!_pi.value){try{const _c=localStorage.getItem("kokab-promo")||"";if(_c)_pi.value=_c}catch(e){}}
  $("#unpricedCount").textContent=unknown;
- $("#builderTotal").textContent=money(priced);
- $("#builderCount").textContent=count?`${count} item${count===1?"":"s"} selected · ${unknown?unknown+" item(s) need price confirmation":"all item prices listed"}`:"No items selected yet.";
+ 
  const _s=storeSettings();
- $("#cartEstimateNote").textContent=(unknown?unknown+" item(s) need price confirmation. ":"")+"Total includes delivery"+(t.delFee?"":(_s.freeDeliveryAbove>0?" (free above "+money(_s.freeDeliveryAbove)+")":" (FREE)"))+(priced&&_s.freeDeliveryAbove>0&&priced<_s.freeDeliveryAbove?". Add "+money(_s.freeDeliveryAbove-priced)+" more for FREE delivery":"")+". Final bill is confirmed by the shop on WhatsApp.";
+ let _note=(unknown?unknown+" item(s) need price confirmation. ":"");if(orderType==="pickup"){_note+="Pickup — no delivery fee."}else{_note+="Total includes delivery"+(t.delFee?"":(_s.freeDeliveryAbove>0?" (free above "+money(_s.freeDeliveryAbove)+")":" (FREE)"))+(priced&&_s.freeDeliveryAbove>0&&priced<_s.freeDeliveryAbove?". Add "+money(_s.freeDeliveryAbove-priced)+" more for FREE delivery":"")}_note+=" Final bill is confirmed by the shop on WhatsApp.";$("#cartEstimateNote").textContent=_note;
  const root=$("#cartContents");
- if(!count){root.innerHTML='<div class="cart-empty"><div class="big">🛍</div><b>Your bag is waiting.</b><p>Add menu items to build a custom deal.</p><button type="button" id="emptyCartBrowse" style="margin-top:14px;padding:11px 22px;border:0;border-radius:999px;background:#e8590c;color:#fff;font:700 0.95rem inherit;cursor:pointer">Browse the menu →</button></div>';const _eb=root.querySelector('#emptyCartBrowse');if(_eb)_eb.onclick=()=>{hideCart();document.getElementById('menu')?.scrollIntoView({behavior:'smooth'})};return}
+ if(!count){root.innerHTML='<div class="cart-empty"><div class="big">🛍</div><b>Your bag is waiting.</b><p>Add menu items to build a custom deal.</p><button type="button" id="emptyCartBrowse" style="margin-top:14px;padding:11px 22px;border:0;border-radius:999px;background:#E74732;color:#fff;font:700 0.95rem inherit;cursor:pointer">Browse the menu →</button></div>';const _eb=root.querySelector('#emptyCartBrowse');if(_eb)_eb.onclick=()=>{hideCart();document.getElementById('menu')?.scrollIntoView({behavior:'smooth'})};return}
  root.innerHTML=rows.map(([key,v])=>`<div class="cart-row"><div><strong>${esc(v.name)}${v.option?' · '+esc(v.option):''}</strong><small>${v.price===null?'Price to be confirmed on WhatsApp':money(v.price)+' each'}${v.detail?'<br>'+esc(v.detail):''}</small><span class="line-price">${v.price===null?'Subtotal pending':money(v.price*v.qty)}</span></div><div class="qty"><button data-dec="${esc(key)}" aria-label="Decrease quantity">−</button><b>${v.qty}</b><button data-inc="${esc(key)}" aria-label="Increase quantity">+</button><button data-remove="${esc(key)}" aria-label="Remove item" title="Remove item">×</button></div></div>`).join("");
  root.querySelectorAll("[data-dec]").forEach(b=>b.onclick=()=>{const k=b.dataset.dec,v=cart.get(k);if(!v)return;if(v.qty<=1)cart.delete(k);else v.qty--;renderCart()});
  root.querySelectorAll("[data-inc]").forEach(b=>b.onclick=()=>{const v=cart.get(b.dataset.inc);if(v){v.qty++;renderCart()}});
  root.querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{cart.delete(b.dataset.remove);renderCart()});
+ const _pc2=promoCheck;if(_pc2&&_pc2.code&&(_pc2.type||_pc2.note)&&!_pc2.pending&&_pc2.checkedSubtotal!==priced&&priced>0){clearTimeout(window._promoRecheck);window._promoRecheck=setTimeout(()=>{checkPromo(_pc2.code,cartTotals().priced)},600)}
 }
 function showCart(){$("#overlay").classList.add("open");document.body.style.overflow="hidden";renderCart()}
 function hideCart(){$("#overlay").classList.remove("open");document.body.style.overflow=""}
@@ -399,35 +360,36 @@ function openWhatsAppGeneral(){window.open("https://wa.me/"+waNum()+"?text="+enc
 document.addEventListener("click",e=>{const b=e.target.closest("[data-add]");if(b&&!b.disabled){const card=b.closest(".product");addItem(b.dataset.add,card)}});
 
 let activeCat="All";
-function applyFilters(){const query=$("#search").value.trim().toLowerCase();let visible=0;$$(".product").forEach(p=>{const cat=p.dataset.cat,name=p.dataset.name.toLowerCase(),desc=p.dataset.desc.toLowerCase();const matchCat=activeCat==="All"||cat===activeCat||(activeCat==="Favourites"&&favourites.has(p.dataset.name));const displayName=(p.dataset.displayName||p.querySelector('.product-title-row h3')?.textContent||p.dataset.name).toLowerCase();const matchQuery=!query||name.includes(query)||displayName.includes(query)||desc.includes(query);const enabled=menuConfig?.itemMeta?.[p.dataset.name]?.active!==false;p.style.display=enabled&&matchCat&&matchQuery?"flex":"none";if(enabled&&matchCat&&matchQuery)visible++});let empty=$("#noResults");if(!visible){if(!empty){empty=document.createElement("div");empty.id="noResults";empty.className="empty-state";$("#productGrid").appendChild(empty)}empty.textContent=activeCat==="Favourites"?"No saved favourites yet. Tap a heart on a menu item.":"No items match your search. Try another keyword.";if(query&&!empty.querySelector("button")){const btn=document.createElement("button");btn.type="button";btn.className="clear-search-btn";btn.textContent="Clear search";btn.style.cssText="display:block;margin:12px auto 0;padding:10px 20px;border:0;border-radius:999px;background:#e8590c;color:#fff;font:600 0.95rem inherit;cursor:pointer";btn.addEventListener("click",()=>{const s=$("#search");if(s)s.value="";const a=$("#appSearchInput");if(a)a.value="";applyFilters()});empty.appendChild(btn)}}else if(empty)empty.remove()}
-$$(".filter").forEach(b=>b.addEventListener("click",()=>{$$(".filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");activeCat=b.dataset.cat;applyFilters()}));
-$("#search").addEventListener("input",()=>{if($("#search").value.trim()&&activeCat!=="All"){activeCat="All";$$(".filter").forEach(x=>x.classList.toggle("active",x.dataset.cat==="All"))}applyFilters()});
+function applyFilters(){const query=$("#search").value.trim().toLowerCase();let visible=0;$$(".product").forEach(p=>{const cat=p.dataset.cat,name=p.dataset.name.toLowerCase(),desc=p.dataset.desc.toLowerCase();const matchCat=activeCat==="All"||cat===activeCat||(activeCat==="Favourites"&&favourites.has(p.dataset.name));const displayName=(p.dataset.displayName||p.querySelector('h3')?.textContent||p.dataset.name).toLowerCase();const matchQuery=!query||name.includes(query)||displayName.includes(query)||desc.includes(query);const enabled=menuConfig?.itemMeta?.[p.dataset.name]?.active!==false;p.style.display=enabled&&matchCat&&matchQuery?"flex":"none";if(enabled&&matchCat&&matchQuery)visible++});let empty=$("#noResults");if(!visible){if(!empty){empty=document.createElement("div");empty.id="noResults";empty.className="empty-state";$("#productGrid").appendChild(empty)}empty.textContent=activeCat==="Favourites"?"No saved favourites yet. Tap a heart on a menu item.":"No items match your search. Try another keyword.";if(query&&!empty.querySelector("button")){const btn=document.createElement("button");btn.type="button";btn.className="clear-search-btn";btn.textContent="Clear search";btn.style.cssText="display:block;margin:12px auto 0;padding:10px 20px;border:0;border-radius:999px;background:#E74732;color:#fff;font:600 0.95rem inherit;cursor:pointer";btn.addEventListener("click",()=>{const s=$("#search");if(s)s.value="";document.querySelector(".searchbox")?.classList.remove("has-text");applyFilters()});empty.appendChild(btn)}}else if(empty)empty.remove()}
+$$(".filter").forEach(b=>b.addEventListener("click",()=>{$$(".filter").forEach(x=>{x.classList.remove("active");x.setAttribute("aria-pressed","false")});b.classList.add("active");b.setAttribute("aria-pressed","true");activeCat=b.dataset.cat;applyFilters();document.getElementById("menu")?.scrollIntoView({behavior:"smooth"})}));
+$("#search").addEventListener("input",()=>{document.querySelector(".searchbox")?.classList.toggle("has-text",!!$("#search").value.trim());if($("#search").value.trim()&&activeCat!=="All"){activeCat="All";$$(".filter").forEach(x=>x.classList.toggle("active",x.dataset.cat==="All"))}applyFilters()});
 $$("[data-jumpcat]").forEach(a=>a.addEventListener("click",()=>{const cat=a.dataset.jumpcat;$$(".filter").forEach(x=>x.classList.toggle("active",x.dataset.cat===cat));activeCat=cat;applyFilters()}));
-$("#cartOpen").onclick=showCart;$("#mobileCart").onclick=showCart;$("#builderOpenCart").onclick=showCart;$("#closeCart").onclick=hideCart;
+$("#cartOpen").onclick=showCart;$("#mobileCart").onclick=showCart;$("#closeCart").onclick=hideCart;
 $("#overlay").addEventListener("click",e=>{if(e.target===$("#overlay"))hideCart()});
 $("#favoritesJump").onclick=()=>{location.hash="#menu";$$(".filter").forEach(x=>x.classList.toggle("active",x.dataset.cat==="Favourites"));activeCat="Favourites";applyFilters()};
 let checkoutBusy=false;
 $("#checkout").onclick=async()=>{
  if(checkoutBusy)return;
  if(!cart.size){notify("Add an item to your order first.");return}
- const name=$("#customerName").value.trim(),address=$("#customerAddress").value.trim(),phone=$("#customerPhone").value.trim(),notes=$("#orderNotes").value.trim(),budget=$("#targetBudget").value.trim();const zone=($("#deliveryZone")&&$("#zoneWrap").style.display!=="none")?$("#deliveryZone").value:"";
- if(!name||!address){notify("Please enter your name and delivery address or pickup.");return}
+ const name=$("#customerName").value.trim(),address=$("#customerAddress").value.trim(),phone=$("#customerPhone").value.trim(),notes=$("#orderNotes").value.trim(),budget=$("#targetBudget").value.trim();const zone=(orderType==="delivery"&&$("#deliveryZone")&&$("#zoneWrap").style.display!=="none")?$("#deliveryZone").value:"";
+ if(!name||(orderType==="delivery"&&!address)){notify(orderType==="delivery"?"Please enter your name and delivery address.":"Please enter your name.");return}
  if(!isOpenNow()){const _st=storeSettings();notify(isClosedDate(_st)?"We are closed today. Please order another day!":(_st.forceStatus==="closed"?"We are closed right now. Please try again later!":"We\u2019re closed right now. We open at "+fmtHour(_st.openHour)+" \u2014 please order then!"));return;}
  if(phone&&!/^3\d{9}$/.test(phone.replace(/\D/g,"").replace(/^(92|0)/,""))){notify("Please enter a valid Pakistani mobile number, e.g. 03XXXXXXXXX.");return;}
  const waWindow=window.open("about:blank","_blank");
  const btn=$("#checkout");checkoutBusy=true;btn.disabled=true;const btnTxt=btn.textContent;btn.textContent="Placing order…";
  const t=cartTotals(),rows=t.rows,priced=t.priced,unknown=t.unknown;
  let orderId="";
- try{const saved=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,address,notes,targetBudget:budget?Number(budget):null,estimatedTotal:priced,deliveryFee:t.delFee,deliveryZone:zone,promoCode:t.promoCode,items:rows.map(v=>({name:v.name,option:v.option,qty:v.qty,unitPrice:v.price,lineTotal:v.price===null?null:v.price*v.qty}))})});if(saved.ok){const data=await saved.json();orderId=data.orderId||"";}}catch(e){/* WhatsApp ordering remains available for static previews without the server. */}finally{checkoutBusy=false;btn.disabled=false;btn.textContent=btnTxt}
+ try{const saved=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,address,notes,orderType,targetBudget:budget?Number(budget):null,estimatedTotal:priced,deliveryFee:t.delFee,deliveryZone:zone,promoCode:t.promoCode,items:rows.map(v=>({name:v.name,option:v.option,qty:v.qty,unitPrice:v.price,lineTotal:v.price===null?null:v.price*v.qty}))})});if(saved.ok){const data=await saved.json();orderId=data.orderId||"";}}catch(e){/* WhatsApp ordering remains available for static previews without the server. */}finally{checkoutBusy=false;btn.disabled=false;btn.textContent=btnTxt}
  let lines=["Assalam-o-Alaikum KOKAB BITES! I’d like to place an order and request my best possible combo price.",...(orderId?[`Website order reference: ${orderId}`]:[]),"",`Name: ${name}`];
  if(phone)lines.push(`Contact: ${phone}`);
+ lines.push(`Order type: ${orderType==="pickup"?"Pickup":"Delivery"}`);
  lines.push("","ORDER DETAILS:",...rows.map(v=>`• ${v.name}${v.option?' ('+v.option+')':''} × ${v.qty} — ${v.price===null?'price to confirm':money(v.price*v.qty)}${v.detail?' ['+v.detail+']':''}`),"",`Priced items subtotal: ${money(priced)}`);
  if(unknown)lines.push(`Items needing price confirmation: ${unknown}`);
- lines.push(`Delivery fee: ${t.delFee?money(t.delFee):"FREE"}`);if(zone)lines.push(`Delivery area: ${zone}`);if(t.promoCode&&t.discount)lines.push(`Promo ${t.promoCode}: −${money(t.discount)}`);
+ lines.push(orderType==="pickup"?"Pickup — no delivery fee":`Delivery fee: ${t.delFee?money(t.delFee):"FREE"}`);if(zone)lines.push(`Delivery area: ${zone}`);if(t.promoCode&&t.discount)lines.push(`Promo ${t.promoCode}: −${money(t.discount)}`);
  lines.push(`Estimated total (items + delivery): ${money(t.total)}`);
  lines.push(`Estimated preparation time: ~${storeSettings().prepMinutes} minutes`);
  if(budget)lines.push(`My requested custom deal total: ${money(Number(budget))} (request only; please confirm if possible)`);
- lines.push(`Delivery / pickup: ${address}`);
+ lines.push(orderType==="pickup"?"Pickup: I will collect from the restaurant.":`Delivery address: ${address}`);
  if(notes)lines.push(`Order notes: ${notes}`);
  lines.push("Please confirm final total, any available discount, delivery charges, item availability and estimated time. Thank you!");
  const waUrl="https://wa.me/"+waNum()+"?text="+encodeURIComponent(lines.join("\n"));
@@ -438,48 +400,21 @@ if(orderId){cart.clear();renderCart();try{localStorage.setItem("kokab-last-order
 $("#menuToggle").onclick=()=>{var n=$("#navlinks");var open=n.classList.toggle("show");$("#menuToggle").setAttribute("aria-expanded",open?"true":"false");};
 $$(".navlinks a").forEach(a=>a.addEventListener("click",()=>{$("#navlinks").classList.remove("show");$("#menuToggle").setAttribute("aria-expanded","false");}));
 $("#year").textContent=new Date().getFullYear();
-function renderZoneOptions(){const s=storeSettings(),sel=document.querySelector('#deliveryZone'),wrap=document.querySelector('#zoneWrap');if(!sel||!wrap)return;const zones=Array.isArray(s.deliveryZones)?s.deliveryZones:[];const prev=sel.value;sel.innerHTML=zones.map(z=>'<option value="'+esc(z.name)+'">'+esc(z.name)+' \u2014 '+(Number(z.fee)?money(Number(z.fee)):'FREE')+'</option>').join('');if(zones.length){wrap.style.display='';let found=false;for(const o of sel.options){if(o.value===prev){sel.value=prev;found=true;break}}if(!found)sel.selectedIndex=0}else{wrap.style.display='none'}}
+function renderZoneOptions(){const s=storeSettings(),sel=document.querySelector('#deliveryZone'),wrap=document.querySelector('#zoneWrap');if(!sel||!wrap)return;const zones=Array.isArray(s.deliveryZones)?s.deliveryZones:[];const prev=sel.value;sel.innerHTML=zones.map(z=>'<option value="'+esc(z.name)+'">'+esc(z.name)+' \u2014 '+(Number(z.fee)?money(Number(z.fee)):'FREE')+'</option>').join('');if(zones.length){wrap.style.display='';let found=false;for(const o of sel.options){if(o.value===prev){sel.value=prev;found=true;break}}if(!found)sel.selectedIndex=0}else{wrap.style.display='none'}if(orderType==='pickup')wrap.style.display='none'}
 function renderBanner(){const s=storeSettings(),b=document.querySelector('#siteBanner');if(!b)return;let hide=false;try{hide=sessionStorage.getItem('kokab-banner-hide')==='1'}catch(e){}if(s.announcementOn&&s.announcementText&&!hide){document.querySelector('#siteBannerText').textContent=s.announcementText;b.hidden=false}else b.hidden=true}
 document.querySelector('#deliveryZone')?.addEventListener('change',()=>{try{renderCart()}catch(e){}});
-document.querySelector('#promoApply')?.addEventListener('click',()=>{const v=(document.querySelector('#promoCode').value||'').trim().toUpperCase();try{if(v)localStorage.setItem('kokab-promo',v);else localStorage.removeItem('kokab-promo')}catch(e){}renderCart();const t=cartTotals();notify(t.promoError||(t.discount?('Promo applied: −'+money(t.discount)):'No promo applied'))});
+function applyOrderType(){const isPickup=orderType==='pickup';document.querySelectorAll('input[name="orderType"]').forEach(r=>{r.checked=r.value===orderType});const aw=document.querySelector('#addressWrap');if(aw)aw.hidden=isPickup;const pn=document.querySelector('#pickupNote');if(pn)pn.hidden=!isPickup;const zw=document.querySelector('#zoneWrap');if(zw)zw.style.display=isPickup?'none':(storeSettings().deliveryZones&&storeSettings().deliveryZones.length?'':'none');renderCart()}
+document.querySelectorAll('input[name="orderType"]').forEach(r=>r.addEventListener('change',()=>{orderType=r.value;try{localStorage.setItem('kokab-order-type',orderType)}catch(e){}applyOrderType()}));
+applyOrderType();
+document.querySelector('#promoApply')?.addEventListener('click',async()=>{const v=(document.querySelector('#promoCode').value||'').trim().toUpperCase();try{if(v)localStorage.setItem('kokab-promo',v);else{localStorage.removeItem('kokab-promo');localStorage.removeItem('kokab-promo-state');promoCheck={code:'',type:'',value:0,discount:0,error:'',note:'',checkedSubtotal:-1,pending:false}}}catch(e){}if(!v){renderCart();notify('Promo code removed');return}renderCart();await checkPromo(v,cartTotals().priced);const t=cartTotals();notify(t.promoError||(t.discount?('Promo applied: −'+money(t.discount)):(t.promoNote||'No promo applied')))});
 document.querySelector('#siteBannerClose')?.addEventListener('click',()=>{try{sessionStorage.setItem('kokab-banner-hide','1')}catch(e){}document.querySelector('#siteBanner').hidden=true});
 loadMenuConfig().finally(()=>{setupProductOptions();renderCart();updateOpenBadge();renderBanner();renderMoments();setInterval(updateOpenBadge,5*60*1000);});
 
 (function(){
  const body=document.body,toggle=document.getElementById('themeToggle'),mobile=document.getElementById('mobileTheme'),status=document.getElementById('appStatus'),label=document.getElementById('connectionLabel');
- const setTheme=mode=>{mode=mode==='dark'?'dark':'light';body.classList.toggle('dark-mode',mode==='dark');body.dataset.theme=mode;document.documentElement.dataset.theme=mode;try{localStorage.setItem('kokab-theme',mode)}catch(e){}const icon=mode==='dark'?'☀':'☾';if(toggle){toggle.textContent=icon;toggle.setAttribute('aria-label',mode==='dark'?'Switch to light mode':'Switch to dark mode')}if(mobile)mobile.querySelector('span').textContent=icon;const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=mode==='dark'?'#202a30':'#f6f3ee'};
+ const setTheme=mode=>{mode=mode==='dark'?'dark':'light';body.classList.toggle('dark-mode',mode==='dark');body.dataset.theme=mode;document.documentElement.dataset.theme=mode;try{localStorage.setItem('kokab-theme',mode)}catch(e){}const icon=mode==='dark'?'☀':'☾';if(toggle){toggle.textContent=icon;toggle.setAttribute('aria-label',mode==='dark'?'Switch to light mode':'Switch to dark mode')}if(mobile)mobile.querySelector('span').textContent=icon;const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=mode==='dark'?'#1B1713':'#FFF9F2'};
  let saved='light';try{saved=localStorage.getItem('kokab-theme')||'light'}catch(e){}setTheme(saved);window.setTheme=setTheme;toggle?.addEventListener('click',()=>setTheme(body.classList.contains('dark-mode')?'light':'dark'));mobile?.addEventListener('click',()=>setTheme(body.classList.contains('dark-mode')?'light':'dark'));
  const connection=()=>{const online=navigator.onLine;label.textContent=online?'Ready to browse':'Offline mode · saved menu available';status.classList.toggle('offline',!online);status.classList.add('visible');clearTimeout(window.kokabStatusTimer);if(online)window.kokabStatusTimer=setTimeout(()=>status.classList.remove('visible'),2300)};window.addEventListener('online',connection);window.addEventListener('offline',connection);
- // Advanced PWA install popup
- (function(){
- function initInstall(){
- const overlay=document.getElementById('installOverlay'),btn=document.getElementById('installNow'),
- close=document.getElementById('installClose'),later=document.getElementById('installLater'),
- iosHelp=document.getElementById('installIosHelp');
- const dismissedUntil=()=>{try{return parseInt(localStorage.getItem('kokab-install-dismissed')||'0',10)}catch(e){return 0}};
- const rememberDismiss=days=>{try{localStorage.setItem('kokab-install-dismissed',String(Date.now()+days*864e5))}catch(e){}};
- const isInstalled=()=>(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
- const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
- let promptEvent=null;
- window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e});
- window.addEventListener('appinstalled',()=>{promptEvent=null;rememberDismiss(3650);hidePopup()});
- const showPopup=()=>{if(!overlay||overlay.dataset.shown)return;overlay.dataset.shown='1';overlay.hidden=false;requestAnimationFrame(()=>overlay.classList.add('show'));document.body.style.overflow='hidden'};
- const hidePopup=()=>{if(!overlay)return;overlay.classList.remove('show');setTimeout(()=>{overlay.hidden=true;document.body.style.overflow=''},280)};
- const maybeShow=()=>{
-   if(isInstalled())return;
-   if(Date.now()<dismissedUntil())return;
-   if(isIOS()){if(iosHelp)iosHelp.hidden=false;if(btn){btn.textContent='Got it';btn.onclick=()=>{hidePopup();rememberDismiss(7)}}showPopup();return}
-   if(promptEvent){if(btn)btn.onclick=async()=>{try{promptEvent.prompt();const c=await promptEvent.userChoice;promptEvent=null;if(c&&c.outcome==='accepted'){rememberDismiss(3650)}else{rememberDismiss(7)}}catch(e){}hidePopup()};showPopup()}
- };
- close?.addEventListener('click',()=>{hidePopup();rememberDismiss(7)});
- later?.addEventListener('click',()=>{hidePopup();rememberDismiss(7)});
- overlay?.addEventListener('click',e=>{if(e.target===overlay){hidePopup();rememberDismiss(7)}});
- // Show ~4s after load (lets the hero + menu settle first)
- if(document.readyState==='complete')setTimeout(maybeShow,4000);
- else window.addEventListener('load',()=>setTimeout(maybeShow,4000));
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initInstall);else initInstall();
- })();
  // Android-style active navigation state based on the section in view.
  const mobileLinks=[...document.querySelectorAll('.mobile-app-nav a')];
  const sectionIds=mobileLinks.map(a=>(a.getAttribute('href')||'').slice(1)).filter(Boolean);
@@ -498,7 +433,7 @@ loadMenuConfig().finally(()=>{setupProductOptions();renderCart();updateOpenBadge
 (()=>{
  const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  if(reduce)return;
- const selectors=['.section-head','.benefit','.category','.product','.deal-rail-card','.big-deal','.builder-panel','.story-copy','.story-image','.review','.visit-card','.footer-top > div'];
+ const selectors=['.section-head','.product','.deal-rail-card','.big-deal','.visit-card','.moment-card','.footer-top > div'];
  const nodes=[...new Set(selectors.flatMap(sel=>Array.from(document.querySelectorAll(sel))))];
  if(!nodes.length||!('IntersectionObserver'in window))return;
  document.body.classList.add('motion-ready');
@@ -506,7 +441,7 @@ loadMenuConfig().finally(()=>{setupProductOptions();renderCart();updateOpenBadge
  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target)}}),{threshold:.12,rootMargin:'0px 0px -35px 0px'});
  nodes.forEach(el=>observer.observe(el));
  // Gentle pointer tilt only on desktop; disabled on touch screens and reduced-motion preferences.
- if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){document.querySelectorAll('.deal-rail-card,.big-deal,.builder-panel').forEach(card=>{card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(900px) rotateX(${(-y*1.4).toFixed(2)}deg) rotateY(${(x*1.4).toFixed(2)}deg) translateY(-2px)`});card.addEventListener('pointerleave',()=>{card.style.transform=''})})}
+ if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){document.querySelectorAll('.deal-rail-card,.big-deal').forEach(card=>{card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(900px) rotateX(${(-y*1.4).toFixed(2)}deg) rotateY(${(x*1.4).toFixed(2)}deg) translateY(-2px)`});card.addEventListener('pointerleave',()=>{card.style.transform=''})})}
 })();
 </script>
 
@@ -601,77 +536,6 @@ try{ var last = localStorage.getItem("kokab-last-order"); if(last){ document.get
 </script>
 
 
-<script>
-(function(){
-const BASE="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads";
-let slides=[],idx=0,timer=null;
-function buildSlides(){
-  const deals=Object.entries(((window.menuConfig||{}).deals)||{}).filter(([n,d])=>d.active).slice(0,2);
-  slides=[];
-  const imgs=["hero-deal-burger.webp","hero-deal-pizza.webp","hero-pizza.webp","hero-burger.webp"];
-  const caps=deals.map(([n,d])=>({tag:"🔥 Deal",title:n,price:"Rs "+d.price,link:"#deal"}));
-  while(caps.length<2)caps.push({tag:"🔥 Deal",title:"Special Combo Deal",price:"",link:"#deal"});
-  caps.push({tag:"🍕 Fresh",title:"Wood-fired Pizzas",price:"",link:"#menu"});
-  caps.push({tag:"🍔 Crispy",title:"Zinger Burgers",price:"",link:"#menu"});
-  const wrap=document.getElementById('heroSlides'),dots=document.getElementById('slideDots');
-  if(!wrap)return;
-  wrap.innerHTML="";dots.innerHTML="";
-  imgs.forEach((f,i)=>{
-    const c=caps[i]||caps[caps.length-1];
-    const el=document.createElement('a');
-    el.className='slide'+(i===0?' active':'');el.href=c.link;
-    el.innerHTML='<img src="'+BASE+'/'+f+'" alt="'+c.title+'" loading="'+(i===0?'eager':'lazy')+'"><span class="slide-caption"><span class="slide-tag">'+c.tag+'</span><b>'+c.title+'</b>'+(c.price?'<span class="slide-price">'+c.price+'</span>':'')+'</span>';
-    wrap.appendChild(el);
-    const d=document.createElement('button');
-    d.className='dot'+(i===0?' active':'');d.setAttribute('aria-label','Go to slide '+(i+1));
-    d.onclick=()=>go(i);dots.appendChild(d);
-  });
-  slides=[...wrap.children];
-  restart();
-}
-function go(i){
-  if(!slides.length)return;
-  slides[idx].classList.remove('active');
-  document.querySelectorAll('#slideDots .dot')[idx].classList.remove('active');
-  idx=(i+slides.length)%slides.length;
-  slides[idx].classList.add('active');
-  document.querySelectorAll('#slideDots .dot')[idx].classList.add('active');
-  restart();
-}
-function restart(){clearInterval(timer);timer=setInterval(()=>go(idx+1),5000);}
-document.getElementById('slidePrev').onclick=e=>{e.preventDefault();go(idx-1);};
-document.getElementById('slideNext').onclick=e=>{e.preventDefault();go(idx+1);};
-const sw=document.getElementById('heroSlideshow');
-sw.addEventListener('mouseenter',()=>clearInterval(timer));
-sw.addEventListener('mouseleave',restart);
-let tx=null;
-sw.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
-sw.addEventListener('touchend',e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)go(idx+(dx<0?1:-1));tx=null;},{passive:true});
-window.buildHeroSlides=buildSlides;
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(buildSlides,300));
-else setTimeout(buildSlides,300);
-})();
-</script>
-
-<!-- KOKAB BITES install popup -->
-<div class="install-overlay" id="installOverlay" hidden>
-  <div class="install-popup" role="dialog" aria-modal="true" aria-labelledby="installTitle">
-    <button class="install-close" id="installClose" aria-label="Close">✕</button>
-    <div class="install-badge"><img src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp?v=2" alt="KOKAB BITES"></div>
-    <h3 id="installTitle">Install KOKAB BITES</h3>
-    <p class="install-sub">Add our app to your device for a faster, smoother ordering experience.</p>
-    <ul class="install-perks">
-      <li><span>⚡</span> One-tap ordering, no browser needed</li>
-      <li><span>📶</span> Menu works even when offline</li>
-      <li><span>🎁</span> First to know about new deals</li>
-    </ul>
-    <div class="install-ios-help" id="installIosHelp" hidden>
-      <p><b>On iPhone:</b> tap <b>Share</b> <span class="ios-icon">⎙</span> then choose <b>"Add to Home Screen"</b></p>
-    </div>
-    <button class="install-btn" id="installNow">Install app</button>
-    <button class="install-later" id="installLater">Not now</button>
-  </div>
-</div>
 
 <script>
 /* Mobile app-like experience */
@@ -690,72 +554,37 @@ function setActiveTab(){
 }
 window.addEventListener('hashchange',setActiveTab); setActiveTab();
 
-/* Cart badge sync */
+/* Cart badge sync (tab bar badge; header badge is updated by renderCart) */
 function syncBadge(){
   try{
     const cart=JSON.parse(localStorage.getItem('kokab-cart')||'[]');
     const n=cart.reduce((a,i)=>a+(i.qty||1),0);
-    ['#appCartBadge','#tabCartBadge'].forEach(s=>{const b=$(s);if(b){b.textContent=n;b.hidden=!n;}});
-    const _l=n?("Open cart, "+n+" item"+(n===1?"":"s")):"Open cart";const _a2=$("#appCartBtn");if(_a2)_a2.setAttribute("aria-label",_l);const _c2=$("#cartOpen");if(_c2)_c2.setAttribute("aria-label",_l);const _t2=$("#tabCartBtn");if(_t2)_t2.setAttribute("aria-label",n?("Cart, "+n+" item"+(n===1?"":"s")):"Cart");
+    const tb=$('#tabCartBadge'); if(tb){tb.textContent=n;tb.hidden=!n;}
+    const _t2=$("#tabCartBtn");if(_t2)_t2.setAttribute("aria-label",n?("Cart, "+n+" item"+(n===1?"":"s")):"Cart");
   }catch(e){}
 }
 setInterval(syncBadge,1000); syncBadge();
 window.addEventListener('storage',syncBadge);
 
-/* Header buttons */
-$('#appCartBtn')?.addEventListener('click',()=>{document.querySelector('.overlay')?.classList.add('open');});
-$('#tabCartBtn')?.addEventListener('click',()=>{document.querySelector('.overlay')?.classList.add('open');});
-$('#appThemeBtn')?.addEventListener('click',()=>{
-  const b=document.body; const dark=b.classList.contains('dark-mode');
-  if(typeof setTheme==='function') setTheme(dark?'light':'dark');
-  $('#appThemeBtn span').textContent=dark?'☾':'☀';
-});
+/* Tab bar cart button */
+$('#tabCartBtn')?.addEventListener('click',()=>{if(typeof showCart==='function')showCart();});
 
-/* Category chips -> existing filters */
-$$('.app-cat').forEach(chip=>chip.addEventListener('click',()=>{
-  $$('.app-cat').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); $$('.app-cat').forEach(c=>c.setAttribute('aria-pressed',c===chip));
-  const cat=chip.dataset.cat;
-  const fb=document.querySelector('#filters [data-cat="'+cat+'"]');
-  if(fb){fb.click();}
-  const m=document.querySelector('#menu'); if(m) m.scrollIntoView({behavior:'smooth'});
-}));
-
-/* Mobile header search -> existing menu search (was unbound: typing did nothing) */
-$('#appSearchInput')?.addEventListener('input',()=>{
-  const ds=$('#search'); if(!ds) return;
-  const v=$('#appSearchInput').value;
-  ds.value=v;
-  document.querySelector('.app-search')?.classList.toggle('has-text',!!v.trim());
-  if(v.trim()) $$('.app-cat').forEach(c=>c.classList.toggle('active',c.dataset.cat==='All')); $$('.app-cat').forEach(c=>c.setAttribute('aria-pressed',c.dataset.cat==='All'));
-  ds.dispatchEvent(new Event('input',{bubbles:true}));
-  /* Typing in the header search filtered the menu but left the user staring at
-     the hero: bring the filtered results into view, but only when the menu
-     section is currently off-screen, so typing while browsing never yanks the page. */
-  if(v.trim()){const m=document.querySelector('#menu');if(m){const r=m.getBoundingClientRect();if(r.top>innerHeight||r.bottom<0)m.scrollIntoView({behavior:'smooth'});}}
-});
-
-/* Mobile search clear (×) button: clears both search boxes and restores the full list */
-$('#appSearchClear')?.addEventListener('click',()=>{
-  const a=$('#appSearchInput'); if(a) a.value='';
+/* Menu search clear (×) button */
+$('#searchClear')?.addEventListener('click',()=>{
   const ds=$('#search'); if(ds){ ds.value=''; ds.dispatchEvent(new Event('input',{bubbles:true})); }
-  document.querySelector('.app-search')?.classList.remove('has-text');
-  if(a) a.focus();
+  document.querySelector('.searchbox')?.classList.remove('has-text');
+  if(ds) ds.focus();
 });
 
 /* Restore in-cart highlights on load */
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',()=>{try{syncProductHighlights()}catch(e){}})}else{try{syncProductHighlights()}catch(e){}}
-/* Greeting based on time */
-const hr=new Date().getHours();
-const greet=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
-const gh=document.querySelector('.app-greeting h2');
-if(gh) gh.textContent=greet+' 👋';
 })();
 </script>
 
 
 <div class="qv-backdrop" id="qvBackdrop" hidden></div>
 <div class="qv-sheet" id="qvSheet" hidden role="dialog" aria-modal="true" aria-label="Product options">
-  <div class="qv-media"><img id="qvImg" alt=""><button type="button" class="qv-close" id="qvClose" aria-label="Close">✕</button></div>
+  <div class="qv-media"><img id="qvImg" alt=""><span class="qv-ph" id="qvPh" hidden></span><button type="button" class="qv-close" id="qvClose" aria-label="Close">✕</button></div>
   <div class="qv-body">
     <h3 id="qvName"></h3>
     <p class="qv-desc" id="qvDesc"></p>
@@ -768,44 +597,52 @@ if(gh) gh.textContent=greet+' 👋';
 </div>
 <script>
 (function(){
-  var mt=document.getElementById('menuToggle'); var ah=document.querySelector('.app-header');
-  if(mt&&ah&&mt.parentElement!==ah) ah.insertBefore(mt, ah.firstChild);
   function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function rankOf(card){
+    try{ if(typeof sortOfCard==='function') return sortOfCard(card); }catch(e){}
+    return Number(card.dataset.origIndex||0);
+  }
+  /* Popular = top 8 by admin sortOrder (itemMeta.sortOrder), never raw DOM order. */
   function buildPop(){
     var rail=document.getElementById('sfPopRail'); if(!rail) return;
-    var items=[];
-    document.querySelectorAll('#productGrid .product').forEach(function(c){
-      var img=c.querySelector('.product-image img');
-      var src=img?(img.getAttribute('src')||''):'';
-      var price=c.querySelector('.price');
-      if(!c.dataset.name||!src) return;
-      items.push({name:c.dataset.name,cat:c.dataset.cat||'',img:src,price:price?price.textContent.trim():''});
+    var cards=[...document.querySelectorAll('#productGrid .product')].filter(function(c){
+      if(!c.dataset.name) return false;
+      try{ if(window.menuConfig&&menuConfig.itemMeta&&menuConfig.itemMeta[c.dataset.name]&&menuConfig.itemMeta[c.dataset.name].active===false) return false; }catch(e){}
+      return true;
     });
-    items=items.slice(0,8);
+    cards.sort(function(a,b){return rankOf(a)-rankOf(b)});
+    var items=cards.slice(0,8);
     var sec=document.getElementById('sfPopular');
     if(items.length<3){ if(sec) sec.style.display='none'; return; }
     if(sec) sec.style.display='';
     var prep=30; try{ if(window.menuConfig&&menuConfig.settings&&menuConfig.settings.prepMinutes) prep=menuConfig.settings.prepMinutes; }catch(e){}
-    rail.innerHTML=items.map(function(it){
-      return '<article class="sf-pop-card"><img loading="lazy" src="'+esc(it.img)+'" alt="">'
-        +'<div class="sf-pop-body"><h3 class="sf-pop-name">'+esc(it.name)+'</h3>'
-        +'<p class="sf-pop-sub">'+esc(it.cat)+' · ⏱ '+prep+' min</p>'
-        +'<div class="sf-pop-row"><span class="sf-pop-price">'+esc(it.price)+'</span>'
-        +'<button type="button" class="sf-pop-add" data-pop-add="'+esc(it.name)+'">＋ Add</button></div></div></article>';
+    rail.innerHTML=items.map(function(c){
+      var name=c.dataset.name, cat=c.dataset.cat||'';
+      var img=c.querySelector('.product-image img');
+      var src=img?(img.getAttribute('src')||''):'';
+      var price='Price to confirm';
+      try{ if(typeof getProductOption==='function'){ var g=getProductOption(c); if(g.price!==null&&g.price!==undefined) price=(typeof money==='function'?money(g.price):('Rs. '+g.price)); } }catch(e){}
+      var media=src?'<img loading="lazy" src="'+esc(src)+'" alt="">':'<span class="sf-pop-ph" aria-hidden="true">'+esc(kbInitials(name))+'</span>';
+      return '<article class="sf-pop-card">'+media
+        +'<div class="sf-pop-body"><h3 class="sf-pop-name">'+esc(c.querySelector('h3')?c.querySelector('h3').textContent:name)+'</h3>'
+        +'<p class="sf-pop-sub">'+esc(cat)+' · '+prep+' min</p>'
+        +'<div class="sf-pop-row"><span class="sf-pop-price">'+esc(price)+'</span>'
+        +'<button type="button" class="sf-pop-add" data-pop-add="'+esc(name)+'">＋ Add</button></div></div></article>';
     }).join('');
   }
+  window.buildPop=buildPop;
   document.addEventListener('click',function(e){
     var b=e.target.closest('[data-pop-add]'); if(!b) return;
     var name=b.getAttribute('data-pop-add');
     var sel='#productGrid .product[data-name="'+(window.CSS&&CSS.escape?CSS.escape(name):name)+'"]';
     var real=document.querySelector(sel);
     if(!real) return;
-    if(real.querySelector('select')){ if(typeof window.openProductQuickView==='function'){ window.openProductQuickView(real); return; } real.scrollIntoView({behavior:'smooth',block:'center'}); real.classList.add('sf-flash'); setTimeout(function(){real.classList.remove('sf-flash')},1700); return; }
+    if(real.querySelector('select')){ if(typeof window.openProductQuickView==='function'&&window.matchMedia('(max-width:760px)').matches){ window.openProductQuickView(real); return; } real.scrollIntoView({behavior:'smooth',block:'center'}); real.classList.add('sf-flash'); setTimeout(function(){real.classList.remove('sf-flash')},1700); return; }
     if(typeof addItem==='function') addItem(name,real);
   });
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',buildPop); else buildPop();
   var grid=document.getElementById('productGrid');
-  if(grid&&window.MutationObserver){ var t; var ob=new MutationObserver(function(){ clearTimeout(t); t=setTimeout(buildPop,350); }); ob.observe(grid,{childList:true}); setTimeout(function(){ ob.disconnect(); },6000); }
+  if(grid&&window.MutationObserver){ var t; var ob=new MutationObserver(function(){ clearTimeout(t); t=setTimeout(buildPop,350); }); ob.observe(grid,{childList:true}); setTimeout(function(){ ob.disconnect(); },9000); }
 })();
 </script>
 <script>
@@ -850,8 +687,7 @@ if(gh) gh.textContent=greet+' 👋';
     }
   }
   function process(card){ if(!card || !card.querySelector) return; applyDefault(card); ensureCardPrice(card);
-    if(mq.matches){ var fav = card.querySelector('.product-image .favorite'), pb = card.querySelector('.product-body');
-      if(fav && pb) pb.appendChild(fav); } }
+ }
   function processAll(){ document.querySelectorAll('#productGrid .product').forEach(process); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', processAll); else processAll();
   var grid = document.getElementById('productGrid'), pending = null;
@@ -913,7 +749,10 @@ if(gh) gh.textContent=greet+' 👋';
     cur = { card: card, options: readOptions(card), chosen: sel ? sel.selectedIndex : 0, qty: 1,
             soldOut: card.classList.contains('sold-out') || (card.querySelector('[data-add]')||{}).disabled === true };
     var img = card.querySelector('.product-image img');
-    imgEl.src = img ? (img.getAttribute('src')||'') : ''; imgEl.alt = card.dataset.name || '';
+    var qvPh=document.getElementById('qvPh');
+    if(img && img.getAttribute('src')){imgEl.src=img.getAttribute('src');imgEl.style.display='';if(qvPh)qvPh.hidden=true;}
+    else{imgEl.style.display='none';if(qvPh){qvPh.hidden=false;qvPh.textContent=kbInitials(card.dataset.name);}}
+    imgEl.alt = card.dataset.name || '';
     nameEl.textContent = (card.querySelector('h3')||{}).textContent || card.dataset.name || '';
     var d = card.querySelector('.product-desc');
     descEl.textContent = d ? d.textContent : (card.dataset.desc || '');
@@ -948,7 +787,7 @@ if(gh) gh.textContent=greet+' 👋';
     if(!mq.matches) return;
     var card = e.target.closest ? e.target.closest('#productGrid .product') : null;
     if(!card) return;
-    if(e.target.closest('[data-fav], select, [data-add], a')) return;
+    if(e.target.closest('[data-fav], select, [data-add], a, .card-stepper')) return;
     openQV(card);
   });
 })();
