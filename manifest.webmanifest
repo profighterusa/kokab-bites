@@ -1,19 +1,19 @@
 {
   "id": "/",
-  "name": "KOKAB BITES \u2014 Food Ordering",
+  "name": "KOKAB BITES — Food Ordering",
   "short_name": "KOKAB BITES",
   "description": "Explore the KOKAB BITES menu in Gujranwala and prepare your order.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#FFF6EC",
-  "theme_color": "#E2703A",
+  "background_color": "#FFF9F2",
+  "theme_color": "#E74732",
   "icons": [
     {
-      "src": "https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png",
+      "src": "https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp?v=2",
+      "sizes": "400x400",
+      "type": "image/webp",
       "purpose": "any"
     }
   ]
