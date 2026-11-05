@@ -224,6 +224,17 @@ async function main() {
   r = await j('/api/track/' + oid2);
   check('free delivery above threshold', r.body.deliveryFee === 0, 'got ' + r.body.deliveryFee);
 
+  // 13b. pickup order -> zero delivery fee, orderType stored (redesign Phase B)
+  const pickupOrder = { items: [{ name: 'Zinger Burger', qty: 1 }], name: 'Pickup Test', phone: '03001234567', address: '', orderType: 'pickup', deliveryFee: 150 };
+  r = await j('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pickupOrder) });
+  check('pickup order accepted', r.status === 201, JSON.stringify(r.body));
+  const oid3 = r.body.orderId;
+  r = await j('/api/track/' + oid3);
+  check('pickup order has zero delivery fee', r.body.deliveryFee === 0, 'got ' + r.body.deliveryFee);
+  r = await j('/api/admin/orders', { headers: authH });
+  const po = (Array.isArray(r.body) ? r.body : []).find((x) => x.id === oid3);
+  check('pickup orderType stored', !!po && po.orderType === 'pickup', 'got ' + (po && po.orderType));
+
   // 14. P2: login rate limit (5 per 5 min)
   for (let i = 0; i < 6; i++) {
     r = await j('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: 'wrong' }) });
