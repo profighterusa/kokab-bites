@@ -205,6 +205,7 @@ async function main() {
   // 12. security headers on API
   r = await j('/api/menu');
   check('security headers', r.headers.get('x-content-type-options') === 'nosniff' && r.headers.get('x-frame-options') === 'DENY');
+  check('HSTS + CSP on API responses', (r.headers.get('strict-transport-security') || '').includes('max-age=31536000') && !!r.headers.get('content-security-policy'), 'hsts=' + r.headers.get('strict-transport-security'));
 
   // 13. P1: delivery fee computed server-side (client value ignored)
   const menu2 = (await j('/api/admin/menu', { headers: authH })).body;
