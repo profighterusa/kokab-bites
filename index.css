@@ -88,6 +88,7 @@ section.section{padding:44px 0}
 .searchbox>span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
 .search-clear{display:none;position:absolute;right:6px;top:50%;transform:translateY(-50%);width:44px;height:44px;align-items:center;justify-content:center;border:0;border-radius:50%;background:transparent;font-size:1.3rem;line-height:1;color:var(--muted)}
 .searchbox.has-text .search-clear{display:flex}
+.searchbox input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;display:none}
 .searchbox.has-text input{padding-right:52px}
 .product-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .product{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;min-width:0;box-shadow:var(--shadow)}
