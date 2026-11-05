@@ -24,6 +24,25 @@ function err(c, status, message) {
   return json(c, status, { error: message });
 }
 
+// M2: every 500 is a generic message; the detail goes to the server log only,
+// never into the response (no Supabase/Postgres/config text leaks to clients).
+function serverError(c, e, where) {
+  console.error('[api] ' + where + ':', e);
+  return err(c, 500, 'Something went wrong.');
+}
+
+// L2: true only when a present Origin/Referer header is cross-origin.
+// Absent headers are allowed (non-browser clients send none).
+function isCrossOriginRequest(c) {
+  const origin = c.req.header('Origin') || c.req.header('Referer') || '';
+  if (!origin) return false;
+  let o;
+  try { o = new URL(origin).origin; } catch { return true; }
+  let self;
+  try { self = new URL(c.req.url).origin; } catch { return false; }
+  return o !== self;
+}
+
 function validatePromo(menu, code, subtotal) {
   const c = String(code || '').trim().toUpperCase();
   if (!c) return { ok: false };
@@ -103,14 +122,56 @@ export function createApp() {
 
   // ---------- Public ----------
 
+  // M1: the public menu never includes promos. The stored document keeps
+  // them, and GET /api/admin/menu still returns the full document.
+  // Promo validation/preview is via POST /api/promo-check instead.
   app.get('/api/menu', async (c) => {
     try {
       const db = getDb(c);
       const menu = await getState(db, MENU_KEY, {});
-      return json(c, 200, menu);
+      const { promos, ...publicMenu } = menu || {};
+      return json(c, 200, publicMenu);
     } catch (e) {
-      return err(c, 500, 'Menu unavailable. ' + e.message);
+      return serverError(c, e, 'GET /api/menu');
     }
+  });
+
+  // M1: validate a single promo code without ever exposing the promo list,
+  // usage counters, or any other promo's data. Rate-limited 8/min/IP,
+  // same numbers as orders (separate bucket so checks never eat order quota).
+  app.post('/api/promo-check', async (c) => {
+    let db;
+    try {
+      db = getDb(c);
+    } catch (e) {
+      return serverError(c, e, 'POST /api/promo-check db');
+    }
+    const ip = clientIp(c);
+    if (!(await rateOk(db, 'promo:' + ip))) return err(c, 429, 'Too many promo checks. Please try again shortly.');
+    let b;
+    try {
+      b = await c.req.json();
+    } catch {
+      return err(c, 400, 'Invalid request.');
+    }
+    const code = cleanString(b.code, 40);
+    if (!code) return json(c, 200, { valid: false, error: 'Enter a promo code.' });
+    const subtotal = Number(b.subtotal);
+    if (!Number.isFinite(subtotal) || subtotal < 0) return err(c, 400, 'Invalid subtotal.');
+    let menu;
+    try {
+      menu = await getState(db, MENU_KEY, {});
+    } catch (e) {
+      return serverError(c, e, 'POST /api/promo-check menu');
+    }
+    const v = validatePromo(menu, code, subtotal);
+    if (!v.ok) return json(c, 200, { valid: false, error: v.error || 'Invalid promo code.' });
+    return json(c, 200, {
+      valid: true,
+      type: v.promo.type === 'pct' ? 'pct' : 'fixed',
+      value: Number(v.promo.value) || 0,
+      discount: v.discount,
+    });
   });
 
   app.post('/api/orders', async (c) => {
@@ -118,7 +179,7 @@ export function createApp() {
     try {
       db = getDb(c);
     } catch (e) {
-      return err(c, 500, e.message);
+      return serverError(c, e, 'POST /api/orders db');
     }
     const ip = clientIp(c);
     if (!(await rateOk(db, ip))) return err(c, 429, 'Too many order attempts. Please try again shortly.');
@@ -148,14 +209,15 @@ export function createApp() {
     try {
       menu = await getState(db, MENU_KEY, {});
     } catch (e) {
-      return err(c, 500, 'Menu unavailable. ' + e.message);
+      return serverError(c, e, 'POST /api/orders menu');
     }
     const { items: verifiedItems, serverTotal, unverifiedCount } = verifyOrderItems(items, menu);
     // P1 FIX: compute delivery fee server-side, never trust client value
     const settings = (menu && menu.settings) || {};
     const baseFee = Math.max(0, Number(settings.deliveryFee) || 0);
     const freeAbove = Math.max(0, Number(settings.freeDeliveryAbove) || 0);
-    const deliveryFee = (freeAbove > 0 && serverTotal >= freeAbove) ? 0 : baseFee;
+    const orderType = cleanString(b.orderType, 20) === 'pickup' ? 'pickup' : 'delivery';
+    const deliveryFee = orderType === 'pickup' ? 0 : ((freeAbove > 0 && serverTotal >= freeAbove) ? 0 : baseFee);
     const deliveryZone = cleanString(b.deliveryZone, 80);
     const promoCode = cleanString(b.promoCode, 40);
     let promoDiscount = 0, promoApplied = '';
@@ -164,7 +226,8 @@ export function createApp() {
       if (!v.ok) return err(c, 400, v.error || 'Invalid promo code.');
       promoDiscount = v.discount; promoApplied = String(v.promo.code || '').trim().toUpperCase();
     }
-    const orderId = 'KB-' + Date.now().toString(36).toUpperCase() + '-' + randomHex(2).toUpperCase();
+    // L1: 16 hex chars (64 bits) of randomness in the order ID.
+    const orderId = 'KB-' + Date.now().toString(36).toUpperCase() + '-' + randomHex(8).toUpperCase();
     const order = {
       id: orderId,
       createdAt: new Date().toISOString(),
@@ -175,6 +238,7 @@ export function createApp() {
       estimatedTotal: serverTotal,
       serverTotal,
       deliveryFee,
+      orderType,
       deliveryZone,
       promoCode: promoApplied,
       promoDiscount,
@@ -182,7 +246,7 @@ export function createApp() {
       items: verifiedItems,
     };
     const { error } = await db.from('orders').insert({ id: orderId, payload: order, status: 'New' });
-    if (error) return err(c, 500, 'Could not save the order. Please try again.');
+    if (error) return serverError(c, error, 'POST /api/orders insert');
     if (promoApplied && menu && Array.isArray(menu.promos)) {
       const pp = menu.promos.find((x) => x && String(x.code || '').trim().toUpperCase() === promoApplied);
       if (pp) { pp.uses = (Number(pp.uses) || 0) + 1; try { await setState(db, MENU_KEY, menu); } catch (e) { /* non-fatal */ } }
@@ -195,7 +259,7 @@ export function createApp() {
     try {
       db = getDb(c);
     } catch (e) {
-      return err(c, 500, e.message);
+      return serverError(c, e, 'GET /api/track db');
     }
     const id = decodeURIComponent(c.req.param('id') || '');
     const { data, error } = await db.from('orders').select('payload,status').eq('id', id).maybeSingle();
@@ -244,7 +308,7 @@ export function createApp() {
     } catch {
       return err(c, 400, 'Invalid request.');
     }
-    if (!safeEq(cleanString(body.password, 256), pw)) {
+    if (!await safeEq(cleanString(body.password, 256), pw)) {
       // small delay to slow brute force
       await new Promise((r) => setTimeout(r, 400));
       return err(c, 401, 'Incorrect password.');
@@ -265,6 +329,13 @@ export function createApp() {
   // Admin guard
   app.use('/api/admin/*', async (c, next) => {
     if (c.req.path === '/api/admin/login' || c.req.path === '/api/admin/logout') return next();
+    // L2 defence-in-depth: block cross-origin state-changing admin requests.
+    // Only a present Origin/Referer that is cross-origin is blocked; absent
+    // headers and same-origin requests (incl. login/logout above) pass.
+    const m = c.req.method;
+    if ((m === 'PUT' || m === 'POST' || m === 'PATCH' || m === 'DELETE') && isCrossOriginRequest(c)) {
+      return err(c, 403, 'Forbidden.');
+    }
     const token = getCookie(c, 'kb_admin');
     const secret = getEnv(c, 'ADMIN_JWT_SECRET') || adminPassword(c);
     const payload = token && secret ? await verifyToken(token, secret) : null;
@@ -284,11 +355,14 @@ export function createApp() {
       const db = getDb(c);
       return json(c, 200, await getState(db, MENU_KEY, {}));
     } catch (e) {
-      return err(c, 500, e.message);
+      return serverError(c, e, 'GET /api/admin/menu');
     }
   });
 
   app.put('/api/admin/menu', async (c) => {
+    // L8: reject oversized menu documents (1 MB cap) before parsing.
+    const contentLength = Number(c.req.header('content-length'));
+    if (Number.isFinite(contentLength) && contentLength > 1024 * 1024) return err(c, 413, 'Menu data is too large.');
     let body;
     try {
       body = await c.req.json();
@@ -296,6 +370,8 @@ export function createApp() {
       return err(c, 400, 'Invalid menu data.');
     }
     if (!body || typeof body !== 'object' || Array.isArray(body)) return err(c, 400, 'Invalid menu data.');
+    // Same cap for bodies without a Content-Length header (chunked clients).
+    if (new TextEncoder().encode(JSON.stringify(body)).length > 1024 * 1024) return err(c, 413, 'Menu data is too large.');
     // P3 FIX: sanity-check menu shape before overwriting the live menu
     const bad = validateMenuShape(body);
     if (bad) return err(c, 400, bad);
@@ -305,7 +381,7 @@ export function createApp() {
       await setState(db, MENU_KEY, body);
       return json(c, 200, await getState(db, MENU_KEY, {}));
     } catch (e) {
-      return err(c, 500, e.message);
+      return serverError(c, e, 'PUT /api/admin/menu');
     }
   });
 
@@ -316,7 +392,7 @@ export function createApp() {
       if (error) throw error;
       return json(c, 200, (data || []).map((r) => ({ ...(r.payload || {}), status: r.status || (r.payload || {}).status || 'New' })));
     } catch (e) {
-      return err(c, 500, e.message);
+      return serverError(c, e, 'GET /api/admin/orders');
     }
   });
 
@@ -346,7 +422,7 @@ export function createApp() {
       c.header('Content-Disposition', `attachment; filename="${fname}"`);
       return c.body('\ufeff' + lines.join('\r\n'));
     } catch (e) {
-      return err(c, 500, e.message);
+      return serverError(c, e, 'GET /api/admin/orders/report');
     }
   });
 
@@ -360,7 +436,7 @@ export function createApp() {
       if (error) throw error;
       return json(c, 200, { ok: true, deleted: count || 0, cutoff });
     } catch (e) {
-      return err(c, 500, e.message);
+      return serverError(c, e, 'DELETE /api/admin/orders/old');
     }
   });
 
@@ -384,7 +460,7 @@ export function createApp() {
       if (upErr) throw upErr;
       return json(c, 200, { ok: true });
     } catch (e) {
-      return err(c, 500, e.message);
+      return serverError(c, e, 'PATCH /api/admin/orders/:id');
     }
   });
 
@@ -415,7 +491,7 @@ export function createApp() {
       const { data } = db.storage.from('uploads').getPublicUrl(name);
       return json(c, 201, { ok: true, url: data.publicUrl });
     } catch (e) {
-      return err(c, 500, 'Upload failed. ' + e.message);
+      return serverError(c, e, 'POST /api/admin/upload');
     }
   });
 
