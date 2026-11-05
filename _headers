@@ -1,12 +1,32 @@
 # Cloudflare Pages _headers (mirrors vercel.json)
+# CSP lives ONLY in the per-page rules below — never in /* — so each path
+# emits exactly one Content-Security-Policy header (previously /admin.html
+# got two: the /* rule plus its own rule; browsers enforce the intersection).
+# HSTS (I1) is set on /* so it applies to every response.
+# The admin pages keep the stricter CSP (no frame-src); the homepage keeps
+# its CSP with frame-src for the Google/Facebook embeds.
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+/
+  Content-Security-Policy: default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; font-src 'self' data:; base-uri 'self'; form-action 'self'; frame-src https://www.google.com https://www.facebook.com; frame-ancestors 'none'
+
+/index.html
+  Content-Security-Policy: default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; font-src 'self' data:; base-uri 'self'; form-action 'self'; frame-src https://www.google.com https://www.facebook.com; frame-ancestors 'none'
+
+/404.html
   Content-Security-Policy: default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; font-src 'self' data:; base-uri 'self'; form-action 'self'; frame-src https://www.google.com https://www.facebook.com; frame-ancestors 'none'
 
 /admin.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store, max-age=0
+  Content-Security-Policy: default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+
+/admin
   X-Robots-Tag: noindex, nofollow, noarchive
   Cache-Control: no-store, max-age=0
   Content-Security-Policy: default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
