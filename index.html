@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://iytalsxwxqssttsxrmjz.supabase.co" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="index.css?v=14">
+<link rel="stylesheet" href="index.css?v=15">
 <link rel="stylesheet" href="mobile-app.css?v=19"><!-- card theme v5 -->
 <link rel="stylesheet" href="icons.css?v=1">
 </head>
@@ -151,7 +151,7 @@ function openLightbox(i){
 <section class="section visit" id="visit"><div class="container"><div class="section-head"><div><div class="section-kicker" data-i18n="visit_kicker">Come say hello</div><h2 data-i18n="visit_h2">Your next bite is nearby.</h2></div><p>Visit us in Gujranwala or send your order directly to WhatsApp to confirm availability and delivery.</p></div><div class="visit-grid"><div class="visit-card"><h3>Find KOKAB BITES</h3><div class="visit-row"><span class="ic ic-pin" aria-hidden="true"></span><div><b>Our location</b>Hafizabad Road, Near Fazal Masjid, Sadiq Road, Gujranwala</div></div><div class="visit-row"><span class="ic ic-clock" aria-hidden="true"></span><div><b>Hours</b><span id="visitHours">Open daily</span></div></div><div class="visit-row"><span class="ic ic-phone" aria-hidden="true"></span><div><b>Call / WhatsApp</b><a href="tel:+923184345994">0318 4345994</a></div></div><div class="visit-row"><span class="ic ic-arrow-up-right" aria-hidden="true"></span><div><b>Ordering</b>Choose menu items and send your order on WhatsApp for confirmation.</div></div><a class="btn" href="https://www.google.com/maps/search/?api=1&query=Hafizabad+Road+Near+Fazal+Masjid+Sadiq+Road+Gujranwala" target="_blank" rel="noopener">Open map directions <span class="ic ic-arrow-up-right" aria-hidden="true"></span></a></div><div class="map-wrap"><iframe title="KOKAB BITES location map" src="https://www.google.com/maps/embed?origin=mfe&pb=!1m3!2m1!1s32.1544664,74.1661432!6i17!3m1!1sen!5m1!1sen" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe><a href="https://www.google.com/maps/dir/?api=1&destination=32.1544664,74.1661432" target="_blank" rel="noopener" class="btn btn-dark map-cta">Get directions <span class="ic ic-arrow-up-right" aria-hidden="true"></span></a></div></div></div></section>
 </main>
 
-<footer><div class="container"><div class="footer-top"><div><a class="brand" href="#home" aria-label="KOKAB BITES home"><img class="brand-logo" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp?v=2" alt="KOKAB BITES — Taste Good Mood Always"></a><p class="footer-about">Good Food. Better Mood. Always. Your local spot for satisfying burgers, pizza, shawarma and more in Gujranwala.</p></div><div class="footer-col"><b data-i18n="foot_explore">Explore</b><a href="#menu" data-i18n="foot_menu">Menu</a><a href="#deal" data-i18n="foot_deal">Special deal</a><a href="#track">Track order</a></div><div class="footer-col"><b data-i18n="foot_visit">Visit</b><a href="#visit" data-i18n="foot_contact">Location & contact</a><a href="https://wa.me/923184345994" target="_blank" rel="noopener" data-i18n="foot_wa">WhatsApp us</a><a href="#home" data-i18n-html="foot_top">Back to top <span class="ic ic-arrow-up" aria-hidden="true"></span></a></div></div><div class="footer-bottom"><span>© <span id="year"></span> KOKAB BITES. All rights reserved.</span><span>Made for good-food moments.</span><span>Icons by <a href="https://www.flaticon.com/" target="_blank" rel="noopener">Flaticon</a></span></div></div></footer>
+<footer><div class="container"><div class="footer-top"><div><a class="brand" href="#home" aria-label="KOKAB BITES home"><img class="brand-logo" src="https://iytalsxwxqssttsxrmjz.supabase.co/storage/v1/object/public/uploads/logo.webp?v=2" alt="KOKAB BITES — Taste Good Mood Always"></a><p class="footer-about">Good Food. Better Mood. Always. Your local spot for satisfying burgers, pizza, shawarma and more in Gujranwala.</p></div><div class="footer-col"><b data-i18n="foot_explore">Explore</b><a href="#menu" data-i18n="foot_menu">Menu</a><a href="#deal" data-i18n="foot_deal">Special deal</a><a href="#track">Track order</a></div><div class="footer-col"><b data-i18n="foot_visit">Visit</b><a href="#visit" data-i18n="foot_contact">Location & contact</a><a href="https://wa.me/923184345994" target="_blank" rel="noopener" data-i18n="foot_wa">WhatsApp us</a><a href="#home" data-i18n-html="foot_top">Back to top <span class="ic ic-arrow-up" aria-hidden="true"></span></a></div></div><div class="footer-bottom"><span><span class="nowrap">© <span id="year"></span></span> KOKAB BITES. All rights reserved.</span><span>Made for good-food moments.</span><span>Icons by <a href="https://www.flaticon.com/" target="_blank" rel="noopener">Flaticon</a></span></div></div></footer>
 <div class="app-status" id="appStatus" role="status"><span class="status-dot"></span><span id="connectionLabel">Ready to browse</span></div><nav class="mobile-app-nav" aria-label="Quick navigation">
 <a href="#home" data-tab="home"><span class="ic ic-home" aria-hidden="true"></span><em data-i18n="nav_home" style="font-style:normal">Home</em></a>
 <a href="#menu" data-tab="menu"><span class="ic ic-grid" aria-hidden="true"></span><em data-i18n="nav_menu" style="font-style:normal">Menu</em></a>
@@ -501,7 +501,7 @@ function setLang(l){
 })();
 
 /* Customer order tracking */
-async function trackOrder(){
+async function trackOrder(auto){
   var id = document.getElementById("trackId").value.trim();
   var box = document.getElementById("trackResult");
   if(!id){ box.innerHTML = ""; notify("Please enter your order ID."); return; }
@@ -534,11 +534,11 @@ async function trackOrder(){
       stepsHtml +
       '<ul style="color:var(--muted);line-height:1.9;font-size:.86rem">' + items + "</ul>" +
       (d.unverifiedCount ? '<p class="muted" style="font-size:.78rem">' + d.unverifiedCount + " item(s) need price confirmation on WhatsApp.</p>" : "");
-  }catch(e){ box.innerHTML = '<p class="muted">' + esc(e.message) + "</p>"; }
+  }catch(e){ if(auto && /not found/i.test(e.message||"")){ try{ localStorage.removeItem("kokab-last-order"); }catch(_e){} document.getElementById("trackId").value = ""; box.innerHTML = ""; return; } box.innerHTML = '<p class="muted">' + esc(e.message) + "</p>"; }
 }
-document.getElementById("trackBtn").addEventListener("click", trackOrder);
+document.getElementById("trackBtn").addEventListener("click", function(){ trackOrder(); });
 document.getElementById("trackId").addEventListener("keydown", function(e){ if(e.key === "Enter") trackOrder(); });
-try{ var last = localStorage.getItem("kokab-last-order"); if(last){ document.getElementById("trackId").value = last; trackOrder(); } }catch(e){}
+try{ var last = localStorage.getItem("kokab-last-order"); if(last){ document.getElementById("trackId").value = last; trackOrder(true); } }catch(e){}
 </script>
 
 
@@ -621,6 +621,9 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
       var src=img?(img.getAttribute('src')||''):'';
       var price='Price to confirm';
       try{ if(typeof getProductOption==='function'){ var g=getProductOption(c); if(g.price!==null&&g.price!==undefined) price=(typeof money==='function'?money(g.price):('Rs. '+g.price)); } }catch(e){}
+      /* Fallback: simple items (burgers etc.) have no option select, so getProductOption returns null even though simplePrices holds their real price. Mirror the menu grid: simplePrices first, then the card's own filled price label. */
+      try{ if(price==='Price to confirm'&&typeof simplePrices!=='undefined'&&Object.prototype.hasOwnProperty.call(simplePrices,name)){ var sp=simplePrices[name]; if(sp!==null&&sp!==undefined) price=(typeof money==='function'?money(sp):('Rs. '+sp)); else if(name==='Next Cola 1 Litre'||name==='Crispy Chicken') price='Price confirmed on WhatsApp'; } }catch(e){}
+      try{ if(price==='Price to confirm'){ var lab=c.querySelector('.product-bottom .price'); if(lab){ var pm=lab.textContent.replace(/,/g,'').match(/(\d+)/); if(pm) price=(typeof money==='function'?money(Number(pm[1])):('Rs. '+pm[1])); else if(/WhatsApp/.test(lab.textContent)) price='Price confirmed on WhatsApp'; } } }catch(e){}
       var media=src?'<img loading="lazy" src="'+esc(src)+'" alt="">':'<span class="sf-pop-ph" aria-hidden="true">'+esc(kbInitials(name))+'</span>';
       return '<article class="sf-pop-card">'+media
         +'<div class="sf-pop-body"><h3 class="sf-pop-name">'+esc(c.querySelector('h3')?c.querySelector('h3').textContent:name)+'</h3>'
