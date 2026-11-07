@@ -294,6 +294,14 @@ body.motion-ready .motion-reveal.is-visible{opacity:1;transform:translate3d(0,0,
   .sf-pop-card>img,.sf-pop-ph{height:150px}
 }
 @media(max-width:760px){
+  .nav{gap:10px}
+  /* Mobile header: let the brand shrink into the space left by the
+     action buttons instead of forcing its full width (defensive —
+     the current square logo renders 52px and fits, but a wider
+     wordmark or a failed-logo alt-text run must never spill the
+     390px header into page-level horizontal scroll). */
+  header .brand{flex-shrink:1;min-width:0}
+  header .brand-logo{height:40px;max-width:100%}
   .navlinks{position:absolute;top:100%;left:0;right:0;display:none;flex-direction:column;align-items:flex-start;gap:4px;padding:14px 5%;background:var(--bg);border-bottom:1px solid var(--line);box-shadow:0 18px 40px rgba(0,0,0,.18)}
   .navlinks.show{display:flex}
   .navlinks a{font-size:.98rem;padding:10px 2px;min-height:44px;display:flex;align-items:center}
