@@ -1,7 +1,7 @@
 /* KOKAB BITES service worker — offline-first app shell + menu cache */
  // Bump VERSION whenever the app shell (index.html / css) changes, or
  // returning visitors keep serving the old cached shell forever.
-const VERSION = 'kokab-v5';
+const VERSION = 'kokab-v6';
 const SHELL = [
   './',
   './index.html',
@@ -44,7 +44,7 @@ self.addEventListener('fetch', e => {
   // M3: NEVER cache or serve /api/admin/* responses — they contain full
   // customer PII (names, phones, addresses). Return early, before
   // respondWith, so the request goes straight to the network and nothing
-  // is stored in Cache Storage. (Bumping VERSION to kokab-v5 makes
+  // is stored in Cache Storage. (Bumping VERSION to kokab-v6 makes
   // activation delete the v4 cache, which may hold cached admin responses.)
   if (url.pathname.startsWith('/api/admin/')) return;
 
